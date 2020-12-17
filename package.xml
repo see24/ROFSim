@@ -4,14 +4,21 @@
   displayName="ROF SyncroSim Package"
   version="0.0.1">
   <transformers>
+    <transformer name="Primary" isPrimary="True">
+      <runtime>
+        <transformer name="ProcessSpadesOutputs"/>
+        <transformer name="RunCaribouRSF"/>
+      </runtime>
+    </transformer>
     <transformer
       name="ProcessSpadesOutputs"
-      isPrimary="True"
+      userRunnable="True"
+      runContext="LocalOnly"
       programName="Rscript"
       programArguments="process_spades_outputs.R">
     </transformer>
     <transformer
-      name="CaribouRSF"
+      name="RunCaribouRSF"
       userRunnable="True"
       runContext="LocalOnly"
       programName="Rscript"
