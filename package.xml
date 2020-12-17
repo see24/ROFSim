@@ -12,6 +12,8 @@
     </transformer>
     <transformer
       name="CaribouRSF"
+      userRunnable="True"
+      runContext="LocalOnly"
       programName="Rscript"
       programArguments="run_caribou_model.R">
     </transformer>
