@@ -58,9 +58,9 @@
           <datasheets>
             <datasheet name="SpatialInputsVectors" displayName="Input Vectors">
               <columns>
-                <column name="ProjectPolyFileName" displayName="Project Polygon File Path" isExternalFile="True" allowDbNull="False" isRaster="False"/>
-                <column name="EskerFileNameVec" displayName="Eskers File Path" isExternalFile="True" allowDbNull="True" isRaster="False"/>
-                <column name="LinFeatFileNameVec" displayName="Linear Features file Path" isExternalFile="True" allowDbNull="True" isRaster="False"/>
+                <column name="ProjectPolyFileName" displayName="Project Polygon File Path" dataType="String" isExternalFile="True" allowDbNull="False" isRaster="False"/>
+                <column name="EskerFileNameVec" displayName="Eskers File Path" dataType="String" isExternalFile="True" allowDbNull="True" isRaster="False"/>
+                <column name="LinFeatFileNameVec" displayName="Linear Features file Path" dataType="String" isExternalFile="True" allowDbNull="True" isRaster="False"/>
               </columns>
             </datasheet>
           </datasheets>
