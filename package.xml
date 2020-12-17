@@ -38,7 +38,7 @@
       <datafeeds>
         <datafeed name="SpatialInputsRasters" displayName="Input Rasters" dataScope="Scenario">
           <datasheets>
-            <datasheet name="SpatialInputsRastersFilePaths" displayName="Input Rasters">
+            <datasheet name="SpatialInputsRasters" displayName="Input Rasters">
               <columns>
                 <column name="InitialConditionsSpatialID" dataType="Integer" isPrimary="True"/>
                 <column name="ScenarioID" dataType="Integer"/>
@@ -54,7 +54,7 @@
             </datasheet>
           </datasheets>
         </datafeed>
-        <datafeed name="SpatialInputsVectorsFilePaths" displayName="Input Vectors" dataScope="Scenario">
+        <datafeed name="SpatialInputsVectors" displayName="Input Vectors" dataScope="Scenario">
           <datasheets>
             <datasheet name="SpatialInputsVectors" displayName="Input Vectors">
               <columns>
