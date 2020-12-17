@@ -2,7 +2,7 @@
 <package
   name="ROfSim"
   displayName="ROF SyncroSim Package"
-  version="0.0.1">
+  version="0.0.2">
   <transformers>
     <transformer name="Primary" isPrimary="True">
       <runtime>
@@ -21,7 +21,7 @@
           <datasheets>
             <datasheet name="InputSpadesObjectFilePath" displayName="Input SpaDES Object File Path">
               <columns>
-                <column name="ScenarioID" dataType="Integer" />
+                <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
                 <!-- <column name="Iteration" dataType="Integer" format="d"/> -->
                 <!-- <column name="Timestep" dataType="Integer" displayNameSource="stsim_Terminology" displayNameColumn="TimestepUnits" format="d"/> -->
                 <!-- <column name="StateClassID" dataType="Integer" displayName="State Class" validationType="Datasheet" formula1="StateClass" allowDbNull="False"/> -->
