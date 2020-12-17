@@ -68,6 +68,7 @@
       <group name="Strata">
         <item name="Stratum"/>
       </group>
+    </layout>
     <layout name="coreforms_ScenarioDatafeeds">
       <item name="InputSpadesObject"/>
     </layout>
