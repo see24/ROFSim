@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package
+  name="ROfSim"
+  displayName="ROF SyncroSim Package"
+  version="0.0.1">
+  <transformers>
+    <transformer
+      name="ProcessSpadesOutputs"
+      isPrimary="True"
+      programName="Rscript"
+      programArguments="process_spades_outputs.R">
+    </transformer>
+    <transformer
+      name="CaribouRSF"
+      isPrimary="False"
+      programName="Rscript"
+      programArguments="run_caribou_model.R">
+    </transformer>
+  </transformers>
+  <layouts>
+    <layout name="coreforms_LibraryDatafeeds">
+      <item name="core_Rconfig"/>
+    </layout>
+  </layouts>
+</package>
