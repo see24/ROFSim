@@ -38,24 +38,26 @@
       runContext="LocalOnly"
       programName="Rscript"
       programArguments="run_caribou_model.R">
-      <datafeed name="Stratum" dataScope="Project" displayNameSource="Terminology" displayNameColumn="PrimaryStratumLabel">
-          <datasheets>
-            <datasheet name="Stratum" valueMember="StratumID" displayMember="Name" displayNameSource="Terminology" displayNameColumn="PrimaryStratumLabel">
-              <columns>
-                <column name="StratumID" dataType="Integer" isPrimary="True"/>
-                <column name="ProjectID" dataType="Integer"/>
-                <column name="Name" dataType="String" fillWeight="10"/>
-                <column name="ID" dataType="Integer" isOptional="True" fillWeight="5" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0"/>
-                <column name="Color" dataType="String" isOptional="True" isReadOnly="True" autoSizeMode="None" width="35"/>
-                <column name="Legend" displayName="Map Legend" dataType="String" isOptional="True" fillWeight="20"/>
-                <column name="Description" dataType="String" isOptional="True" fillWeight="20"/>
-              </columns>
-              <validations>
-                <validation validationType="UniqueOrNull" columns="ID"/>
-              </validations>
-            </datasheet>
-          </datasheets>
-        </datafeed>
+      <datafeeds>
+        <datafeed name="Stratum" dataScope="Project" displayNameSource="Terminology" displayNameColumn="PrimaryStratumLabel">
+            <datasheets>
+              <datasheet name="Stratum" valueMember="StratumID" displayMember="Name" displayNameSource="Terminology" displayNameColumn="PrimaryStratumLabel">
+                <columns>
+                  <column name="StratumID" dataType="Integer" isPrimary="True"/>
+                  <column name="ProjectID" dataType="Integer"/>
+                  <column name="Name" dataType="String" fillWeight="10"/>
+                  <column name="ID" dataType="Integer" isOptional="True" fillWeight="5" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0"/>
+                  <column name="Color" dataType="String" isOptional="True" isReadOnly="True" autoSizeMode="None" width="35"/>
+                  <column name="Legend" displayName="Map Legend" dataType="String" isOptional="True" fillWeight="20"/>
+                  <column name="Description" dataType="String" isOptional="True" fillWeight="20"/>
+                </columns>
+                <validations>
+                  <validation validationType="UniqueOrNull" columns="ID"/>
+                </validations>
+              </datasheet>
+            </datasheets>
+          </datafeed>
+      </datafeeds>    
     </transformer>
   </transformers>
   <layouts>
