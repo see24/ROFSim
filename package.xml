@@ -16,7 +16,7 @@
       runContext="LocalOnly"
       programName="Rscript"
       programArguments="process_spades_outputs.R">
-      <datafeeds>
+      <!-- <datafeeds>
         <datafeed name="InputSpadesObject" displayName="Input SpaDES Object" dataScope="Scenario">
           <datasheets>
             <datasheet name="InputSpadesObjectFilePath" displayName="Input SpaDES Object File Path">
@@ -27,7 +27,7 @@
             </datasheet>
           </datasheets>
         </datafeed>
-      </datafeeds>
+      </datafeeds> -->
     </transformer>
     <transformer
       name="RunCaribouRSF"
