@@ -74,10 +74,8 @@
     </layout>
     <layout name="coreforms_ScenarioDatafeeds">
       <item name="InputSpadesObject"/>
-      <group name="SpatialInputs" displayName="Spatial Inputs">
-        <item name="SpatialInputsRasters"/>
-        <item name="SpatialInputsVectors"/>
-      </group>
+      <item name="SpatialInputsRasters"/>
+      <item name="SpatialInputsVectors"/>
     </layout>
   </layouts>
 </package>
