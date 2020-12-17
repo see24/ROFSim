@@ -2,7 +2,7 @@
 <package
   name="ROFSim"
   displayName="ROF SyncroSim Package"
-  version="0.0.5">
+  version="0.0.6">
   <transformers>
     <transformer name="Primary" isPrimary="True">
       <runtime>
