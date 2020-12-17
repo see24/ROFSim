@@ -37,22 +37,25 @@
       programArguments="run_caribou_model.R">
       <datafeeds>
         <datafeed name="SpatialInputsRasters" displayName="Input Rasters" dataScope="Scenario">
-          <datasheet name="SpatialInputsRasters" displayName="Input Rasters">
-            <columns>
-              <column name="InitialConditionsSpatialID" dataType="Integer" isPrimary="True"/>
-              <column name="ScenarioID" dataType="Integer"/>
-              <column name="PlcFileName" displayName="Land Cover File path" dataType="String" isExternalFile="True" allowDbNull="False" isRaster="True"/>
-              <column name="FriFileName" displayName="FRI File Path" dataType="String" isExternalFile="True" allowDbNull="False" isRaster="True"/>
-              <column name="AgeFileName" displayName="Age File Path" dataType="String" isExternalFile="True" allowDbNull="False" isRaster="True"/>
-              <column name="NatDistFileName" displayName="Natural Disturbances File Path" dataType="String" isExternalFile="True" allowDbNull="False" isRaster="True"/>
-              <column name="AnthroDistFileName" displayName="Anthro. Distrurbances File Path" dataType="String" isExternalFile="True" allowDbNull="False" isRaster="True"/>
-              <column name="HarvFileName" displayName="Harvest File Path" dataType="String" isExternalFile="True" allowDbNull="False" isRaster="True"/>
-              <column name="EskerFileNameRas" displayName="Eskers File Path" dataType="String" isExternalFile="True" allowDbNull="True" isRaster="True"/>
-              <column name="LinFeatFileNameRas" displayName="Linear Features file Path" dataType="String" isExternalFile="True" allowDbNull="True" isRaster="True"/>
-            </columns>
-          </datasheet>
-          </datafeed>
-          <datafeed name="SpatialInputsVectors" displayName="Input Vectors" dataScope="Scenario">
+          <datasheets>
+            <datasheet name="SpatialInputsRasters" displayName="Input Rasters">
+              <columns>
+                <column name="InitialConditionsSpatialID" dataType="Integer" isPrimary="True"/>
+                <column name="ScenarioID" dataType="Integer"/>
+                <column name="PlcFileName" displayName="Land Cover File path" dataType="String" isExternalFile="True" allowDbNull="False" isRaster="True"/>
+                <column name="FriFileName" displayName="FRI File Path" dataType="String" isExternalFile="True" allowDbNull="False" isRaster="True"/>
+                <column name="AgeFileName" displayName="Age File Path" dataType="String" isExternalFile="True" allowDbNull="False" isRaster="True"/>
+                <column name="NatDistFileName" displayName="Natural Disturbances File Path" dataType="String" isExternalFile="True" allowDbNull="False" isRaster="True"/>
+                <column name="AnthroDistFileName" displayName="Anthro. Distrurbances File Path" dataType="String" isExternalFile="True" allowDbNull="False" isRaster="True"/>
+                <column name="HarvFileName" displayName="Harvest File Path" dataType="String" isExternalFile="True" allowDbNull="False" isRaster="True"/>
+                <column name="EskerFileNameRas" displayName="Eskers File Path" dataType="String" isExternalFile="True" allowDbNull="True" isRaster="True"/>
+                <column name="LinFeatFileNameRas" displayName="Linear Features file Path" dataType="String" isExternalFile="True" allowDbNull="True" isRaster="True"/>
+              </columns>
+            </datasheet>
+          </datasheets>
+        </datafeed>
+        <datafeed name="SpatialInputsVectors" displayName="Input Vectors" dataScope="Scenario">
+          <datasheets>
             <datasheet name="SpatialInputsVectors" displayName="Input Vectors">
               <columns>
                 <column name="ProjectPolyFileName" displayName="Project Polygon File Path" isExternalFile="True" allowDbNull="False" isRaster="False"/>
@@ -60,9 +63,10 @@
                 <column name="LinFeatFileNameVec" displayName="Linear Features file Path" isExternalFile="True" allowDbNull="True" isRaster="False"/>
               </columns>
             </datasheet>
+          </datasheets>
         </datafeed>
       </datafeeds>
-      </transformer>
+    </transformer>
   </transformers>
   <layouts>
     <layout name="coreforms_LibraryDatafeeds">
@@ -70,8 +74,8 @@
     </layout>
     <layout name="coreforms_ScenarioDatafeeds">
       <item name="InputSpadesObject"/>
-      <item name="SpatialInputsRasters" displayName="Spatial Inputs Rasters"/>
-      <item name="SpatialInputsVectors" displayName="Spatial Input Vectors"/>
+      <item name="SpatialInputsRasters"/>
+      <item name="SpatialInputsVectors"/>
     </layout>
   </layouts>
 </package>
