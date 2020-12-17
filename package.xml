@@ -2,7 +2,7 @@
 <package
   name="ROFSim"
   displayName="ROF SyncroSim Package"
-  version="0.0.4">
+  version="0.0.5">
   <transformers>
     <transformer name="Primary" isPrimary="True">
       <runtime>
@@ -70,10 +70,8 @@
     </layout>
     <layout name="coreforms_ScenarioDatafeeds">
       <item name="InputSpadesObject"/>
-      <group name="SpatialInputs" displayName="Spatial Inputs">
-        <item name="SpatialInputsRasters" displayName="Spatial Inputs Rasters"/>
-        <item name="SpatialInputsVectors" displayName="Spatial Input Vectors"/>
-      </group>
+      <item name="SpatialInputsRasters" displayName="Spatial Inputs Rasters"/>
+      <item name="SpatialInputsVectors" displayName="Spatial Input Vectors"/>
     </layout>
   </layouts>
 </package>
