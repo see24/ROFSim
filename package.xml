@@ -16,6 +16,21 @@
       runContext="LocalOnly"
       programName="Rscript"
       programArguments="process_spades_outputs.R">
+      <datafeeds>
+        <datafeed name="InputSpadesObject" displayName="Input SpaDES Object" dataScope="Scenario">
+          <datasheets>
+            <datasheet name="InputSpadesObjectFilePath" displayName="Input SpaDES Object File Path">
+              <columns>
+                <column name="ScenarioID" dataType="Integer" />
+                <!-- <column name="Iteration" dataType="Integer" format="d"/> -->
+                <!-- <column name="Timestep" dataType="Integer" displayNameSource="stsim_Terminology" displayNameColumn="TimestepUnits" format="d"/> -->
+                <!-- <column name="StateClassID" dataType="Integer" displayName="State Class" validationType="Datasheet" formula1="StateClass" allowDbNull="False"/> -->
+                <column name="Filename" displayName="Spades Object Path" dataType="String" allowDbNull="False" isExternalFile="True"/>
+              </columns>
+            </datasheet>
+          </datasheets>
+        </datafeed>
+      </datafeeds>
     </transformer>
     <transformer
       name="RunCaribouRSF"
@@ -29,5 +44,9 @@
     <layout name="coreforms_LibraryDatafeeds">
       <item name="core_Rconfig"/>
     </layout>
+    <layout name="coreforms_ProjectDatafeeds">
+      <group name="Strata">
+        <item name="Stratum"/>
+      </group>
   </layouts>
 </package>
