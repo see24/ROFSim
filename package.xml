@@ -131,7 +131,6 @@
                 <column name="PadFocal" displayName="Focal Padding" dataType="Boolean"/>
                 <column name="EskerSave" displayName="Saving Esker Raster" dataType="Boolean"/>
                 <column name="LinFeatSave" displayName="Saving Linear Fearure Raster" dataType="Boolean"/>
-                <column name="OutputSave" displayName="Output Files Path" dataType="String"/>
               </columns>
             </datasheet>
           </datasheets>

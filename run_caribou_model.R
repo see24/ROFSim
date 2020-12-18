@@ -94,9 +94,10 @@ res <- caribouHabitat(# Rasters
   # Model options
   eskerSave = optArg(allParams$ROFSim_ModelOptions$EskerSave),
   linFeatSave = optArg(allParams$ROFSim_ModelOptions$LinFeatSave),
+  # TODO Implement the outputting of these files
   padProjPoly = optArg(allParams$ROFSim_ModelOptions$PadProjPoly),
   padFocal = optArg(allParams$ROFSim_ModelOptions$PadFocal),
-  saveOutput = optArg(allParams$ROFSim_ModelOptions$OutputSave), 
+  saveOutput = FALSE, # outputs are saved afterwards
   
   # TEMPORARY, for test purposes only
   winArea = 500)
