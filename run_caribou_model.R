@@ -28,7 +28,8 @@ myDatasheetsNamesFiltered <-
 
 allParams <- lapply(myDatasheetsNamesFiltered, 
                     FUN = datasheet, 
-                    ssimObject = mySce)
+                    ssimObject = mySce, 
+                    lookupsAsFactors = FALSE)
 names(allParams) <- myDatasheetsNamesFiltered
 
 # Verify if linear inputs are vectors or rasters
@@ -63,8 +64,12 @@ if(is.na(allParams$ROFSim_SpatialInputsRasters$LinFeatFileNameRas)){
 
 # Function to process optional arguments
 optArg <- function(arg){
-  if(is.na(arg)){
-    arg <- NULL
+  if(length(arg)==0){
+    arg <- FALSE
+  } else if (arg == "Yes"){
+    arg <- TRUE
+  } else if (arg == "No"){
+    arg <- FALSE
   }
   arg
 }
@@ -92,12 +97,13 @@ res <- caribouHabitat(# Rasters
   friLU = allParams$ROFSim_FriLookUpTable,
   
   # Model options
-  eskerSave = optArg(allParams$ROFSim_ModelOptions$EskerSave),
-  linFeatSave = optArg(allParams$ROFSim_ModelOptions$LinFeatSave),
-  # TODO Implement the outputting of these files
   padProjPoly = optArg(allParams$ROFSim_ModelOptions$PadProjPoly),
   padFocal = optArg(allParams$ROFSim_ModelOptions$PadFocal),
-  saveOutput = FALSE, # outputs are saved afterwards
+  
+  # outputs are saved afterwards
+  eskerSave = NULL,
+  linFeatSave = NULL,
+  saveOutput = NULL,
   
   # TEMPORARY, for test purposes only
   winArea = 500)

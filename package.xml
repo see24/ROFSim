@@ -2,7 +2,7 @@
 <package
   name="ROFSim"
   displayName="ROF SyncroSim Package"
-  version="0.2.2">
+  version="0.2.3">
   <transformers>
     <transformer name="Primary" isPrimary="True">
       <runtime>
@@ -129,8 +129,6 @@
                 <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
                 <column name="PadProjPoly" displayName="Project Polygon Padding" dataType="Boolean"/>
                 <column name="PadFocal" displayName="Focal Padding" dataType="Boolean"/>
-                <column name="EskerSave" displayName="Saving Esker Raster" dataType="Boolean"/>
-                <column name="LinFeatSave" displayName="Saving Linear Fearure Raster" dataType="Boolean"/>
               </columns>
             </datasheet>
           </datasheets>
