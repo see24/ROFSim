@@ -42,7 +42,7 @@
             <datasheet name="FriLookUpTable" displayName="FRI Lookup Table">
               <columns>
                 <column name="FriLookUpTableID" dataType="Integer" isPrimary="True"/>
-                <column name="ProjectID" dataType="Integer" isCompositeIndex="True"/>
+                <column name="ProjectID" dataType="Integer"/>
                 <column name="ID" displayName="FriID" dataType="Integer"/>
                 <column name="RFU" displayName="RFU" dataType="String"/>
               </columns>
@@ -130,7 +130,7 @@
             <datasheet name="OutputHabitatUse" displayName="Output Habitat Use">
               <columns>
                 <column name="OutputHabitatUseID" dataType="Integer" isPrimary="True"/>
-                <column name="ScenarioID" dataType="Integer" isCompositeIndex="True"/>
+                <column name="ScenarioID" dataType="Integer"/>
                 <column name="Season" displayName="Season" dataType="String"/>
                 <column name="HabitatUse" displayName="Habitat Use" dataType="String" isExternalFile="True" isRaster="True"/>
               </columns>
