@@ -2,7 +2,7 @@
 <package
   name="ROFSim"
   displayName="ROF SyncroSim Package"
-  version="0.0.11">
+  version="0.0.12">
   <transformers>
     <transformer name="Primary" isPrimary="True">
       <runtime>
@@ -80,7 +80,7 @@
             <datasheet name="FriLookUpTable" displayName="FRI Lookup Table">
               <columns>
                 <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
-                <column name="ID" displayName="FriID" dataType="Integer"/>
+                <column name="FriID" displayName="FriID" dataType="Integer"/>
                 <column name="RFU" displayName="RFU" dataType="String"/>
               </columns>
             </datasheet>
