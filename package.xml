@@ -51,11 +51,11 @@
         </datafeed>
         <datafeed name="CaribouRangeLabels" displayName="Caribou Ranges" dataScope="Project">
           <datasheets>
-            <datasheet name="CaribouRangeLabels" displayName="Caribou Ranges" valueMember="CaribouRangeLabelsID" displayMember="CaribouRangeID">
+            <datasheet name="CaribouRangeLabels" displayName="Caribou Ranges" valueMember="CaribouRangeLabelsID" displayMember="Ranges">
               <columns>
                 <column name="CaribouRangeLabelsID" dataType="Integer" isPrimary="True"/>
                 <column name="ProjectID" dataType="Integer"/>
-                <column name="CaribouRangeID" dataType="String" allowDbNull="False"/>
+                <column name="Ranges" dataType="String" allowDbNull="False"/>
               </columns>
             </datasheet>
           </datasheets>
