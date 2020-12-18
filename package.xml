@@ -53,6 +53,7 @@
           <datasheets>
             <datasheet name="CaribouRangeLabels" displayName="Caribou Ranges">
               <columns>
+                <column name="CaribouRangeLabelsID" dataType="Integer" isPrimary="True"/>
                 <column name="ProjectID" dataType="Integer"/>
                 <column name="CaribouRangeID" dataType="String" allowDbNull="False"/>
               </columns>
