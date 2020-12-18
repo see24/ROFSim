@@ -91,8 +91,8 @@
                 <column name="NatDistFileName" displayName="Natural Disturbances File Path" dataType="String" isExternalFile="True" allowDbNull="False" isRaster="True"/>
                 <column name="AnthroDistFileName" displayName="Anthro. Distrurbances File Path" dataType="String" isExternalFile="True" allowDbNull="False" isRaster="True"/>
                 <column name="HarvFileName" displayName="Harvest File Path" dataType="String" isExternalFile="True" allowDbNull="False" isRaster="True"/>
-                <column name="EskerFileNameRas" displayName="Eskers File Path" dataType="String" isExternalFile="True" allowDbNull="True" isRaster="True"/>
-                <column name="LinFeatFileNameRas" displayName="Linear Features file Path" dataType="String" isExternalFile="True" allowDbNull="True" isRaster="True"/>
+                <column name="EskerFileNameRas" displayName="Eskers File Path" dataType="String" isExternalFile="True" isRaster="True"/>
+                <column name="LinFeatFileNameRas" displayName="Linear Features file Path" dataType="String" isExternalFile="True" isRaster="True"/>
               </columns>
             </datasheet>
           </datasheets>
@@ -105,8 +105,8 @@
                 <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
                 <column name="ProjectPolyFileName" displayName="Project Polygon File Path" dataType="String" allowDbNull="False" isRaster="False"/>
-                <column name="EskerFileNameVec" displayName="Eskers File Path" dataType="String" allowDbNull="True" isRaster="False"/>
-                <column name="LinFeatFileNameVec" displayName="Linear Features file Path" dataType="String" allowDbNull="True" isRaster="False"/>
+                <column name="EskerFileNameVec" displayName="Eskers File Path" dataType="String" isRaster="False"/>
+                <column name="LinFeatFileNameVec" displayName="Linear Features file Path" dataType="String" isRaster="False"/>
               </columns>
             </datasheet>
           </datasheets>
