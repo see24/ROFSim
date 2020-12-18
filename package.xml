@@ -42,7 +42,7 @@
             <datasheet name="FriLookUpTable" displayName="FRI Lookup Table">
               <columns>
                 <column name="FriLookUpTableID" dataType="Integer" isPrimary="True"/>
-                <column name="ScenarioID" dataType="Integer" isCompositeIndex="True"/>
+                <column name="ProjectID" dataType="Integer" isCompositeIndex="True"/>
                 <column name="ID" displayName="FriID" dataType="Integer"/>
                 <column name="RFU" displayName="RFU" dataType="String"/>
               </columns>
