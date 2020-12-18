@@ -2,7 +2,7 @@
 <package
   name="ROFSim"
   displayName="ROF SyncroSim Package"
-  version="0.2.0">
+  version="0.2.1">
   <transformers>
     <transformer name="Primary" isPrimary="True">
       <runtime>
@@ -49,11 +49,11 @@
             </datasheet>
           </datasheets>
         </datafeed>
-        <datafeed name="CaribouRangeLabels" displayName="Caribou Ranges" dataScope="Project">
+        <datafeed name="CaribouRanges" displayName="Caribou Ranges" dataScope="Project">
           <datasheets>
-            <datasheet name="CaribouRangeLabels" displayName="Caribou Ranges" valueMember="CaribouRangeLabelsID" displayMember="Ranges">
+            <datasheet name="CaribouRanges" displayName="Caribou Ranges" valueMember="CaribouRangesID" displayMember="Ranges">
               <columns>
-                <column name="CaribouRangeLabelsID" dataType="Integer" isPrimary="True"/>
+                <column name="CaribouRangesID" dataType="Integer" isPrimary="True"/>
                 <column name="ProjectID" dataType="Integer"/>
                 <column name="Ranges" dataType="String" allowDbNull="False"/>
               </columns>
@@ -117,7 +117,7 @@
             <datasheet name="CaribouRange" displayName="Caribou Range Name" isSingleRow="True">
               <columns>
                 <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
-                <column name="Range" displayName="Range" dataType="String" validationType="Datasheet" formula1="CaribouRangeLabels" allowDbNull="False"/>
+                <column name="Range" displayName="Range" dataType="String" validationType="Datasheet" formula1="CaribouRanges" allowDbNull="False"/>
               </columns>
             </datasheet>
           </datasheets>
@@ -157,7 +157,7 @@
     </layout>
     <layout name="coreforms_ProjectDatafeeds">
       <item name="FriLookUpTable"/>
-      <item name="CaribouRangeLabels"/>
+      <item name="CaribouRanges"/>
     </layout>
     <layout name="coreforms_ScenarioDatafeeds">
       <item name="RunControl"/>
