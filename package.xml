@@ -49,6 +49,16 @@
             </datasheet>
           </datasheets>
         </datafeed>
+        <datafeed name="CaribouRangeLabels" displayName="Caribou Ranges" dataScope="Project">
+          <datasheets>
+            <datasheet name="CaribouRangeLabels" displayName="Caribou Ranges">
+              <columns>
+                <column name="ProjectID" dataType="Integer"/>
+                <column name="CaribouRangeID" dataType="String" allowDbNull="False"/>
+              </columns>
+            </datasheet>
+          </datasheets>
+        </datafeed>
         <!-- Scenario Datafeeds -->
         <datafeed name="RunControl" displayName="Run Control" dataScope="Scenario">
           <datasheets>
