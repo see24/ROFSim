@@ -2,7 +2,7 @@
 <package
   name="ROFSim"
   displayName="ROF SyncroSim Package"
-  version="0.0.16">
+  version="0.0.17">
   <transformers>
     <transformer name="Primary" isPrimary="True">
       <runtime>
@@ -105,7 +105,7 @@
           <datasheets>
             <datasheet name="OutputHabitatUse" displayName="Output Habitat Use">
               <columns>
-                <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
+                <column name="ScenarioID" dataType="Integer" isCompositeIndex="True"/>
                 <column name="Season" displayName="Season" dataType="String"/>
                 <column name="HabitatUse" displayName="Habitat Use" dataType="String" isExternalFile="True" isRaster="True"/>
               </columns>
