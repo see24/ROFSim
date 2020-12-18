@@ -2,7 +2,7 @@
 <package
   name="ROFSim"
   displayName="ROF SyncroSim Package"
-  version="0.1.3">
+  version="0.1.4">
   <transformers>
     <transformer name="Primary" isPrimary="True">
       <runtime>
@@ -49,7 +49,7 @@
             </datasheet>
           </datasheets>
         </datafeed>
-        <datafeed name="CaribouRangeLabels" displayName="Caribou Ranges" dataScope="Project">
+        <datafeed name="CaribouRangeLabels" displayName="Caribou Ranges" valueMember="CaribouRangeID" displayMember="Name" dataScope="Project">
           <datasheets>
             <datasheet name="CaribouRangeLabels" displayName="Caribou Ranges">
               <columns>
