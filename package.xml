@@ -2,7 +2,7 @@
 <package
   name="ROFSim"
   displayName="ROF SyncroSim Package"
-  version="0.0.14">
+  version="0.0.15">
   <transformers>
     <transformer name="Primary" isPrimary="True">
       <runtime>
@@ -97,6 +97,17 @@
                 <column name="EskerSave" displayName="Saving Esker Raster" dataType="Boolean"/>
                 <column name="LinFeatSave" displayName="Saving Linear Fearure Raster" dataType="Boolean"/>
                 <column name="OutputSave" displayName="Output Files Path" dataType="String"/>
+              </columns>
+            </datasheet>
+          </datasheets>
+        </datafeed>
+        <datafeed name="OutputHabitatUse" displayName="Output Habitat Use" dataScope="Scenario" isOutput="True">
+          <datasheets>
+            <datasheet name="OutputHabitatUse" displayName="Output Habitat Use">
+              <columns>
+                <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
+                <column name="Season" displayName="Season" dataType="String"/>
+                <column name="HabitatUse" displayName="Habitat Use" dataType="String" isExternalFile="True" isRaster="True"/>
               </columns>
             </datasheet>
           </datasheets>
