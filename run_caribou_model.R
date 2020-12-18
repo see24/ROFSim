@@ -41,6 +41,9 @@ if(is.na(allParams$ROFSim_SpatialInputsRasters$EskerFileNameRas)){
     eskerFile <- st_read(allParams$ROFSim_SpatialInputsVectors$EskerFileNameVec)
   }
 } else {
+  if(!is.na(allParams$ROFSim_SpatialInputsVectors$EskerFileNameVec)){
+    message("Both raster and vector outputs have been specified. Loading raster.")
+  }
   eskerFile <- raster(allParams$ROFSim_SpatialInputsRasters$EskerFileNameRas)
 }
 
@@ -52,11 +55,11 @@ if(is.na(allParams$ROFSim_SpatialInputsRasters$LinFeatFileNameRas)){
     linFeatFile <- st_read(allParams$ROFSim_SpatialInputsVectors$LinFeatFileNameVec)
   }
 } else {
+  if(!is.na(allParams$ROFSim_SpatialInputsVectors$LinFeatFileNameVec)){
+    message("Both raster and vector outputs have been specified. Loading raster.")
+  }
   linFeatFile <- raster(allParams$ROFSim_SpatialInputsRasters$LinFeatFileNameRas)
 }
-
-# Verify that Caribou Range is correctly specified
-# TODO
 
 # Function to process optional arguments
 optArg <- function(arg){
