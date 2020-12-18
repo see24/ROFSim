@@ -36,9 +36,23 @@
       programName="Rscript"
       programArguments="run_caribou_model.R">
       <datafeeds>
+        <!-- Project Datafeeds -->
+        <datafeed name="FriLookUpTable" displayName="FRI Lookup Table" dataScope="Project">
+          <datasheets>
+            <datasheet name="FriLookUpTable" displayName="FRI Lookup Table">
+              <columns>
+                <column name="FriLookUpTableID" dataType="Integer" isPrimary="True"/>
+                <column name="ScenarioID" dataType="Integer" isCompositeIndex="True"/>
+                <column name="ID" displayName="FriID" dataType="Integer"/>
+                <column name="RFU" displayName="RFU" dataType="String"/>
+              </columns>
+            </datasheet>
+          </datasheets>
+        </datafeed>
+        <!-- Scenario Datafeeds -->
         <datafeed name="SpatialInputsRasters" displayName="Input Rasters" dataScope="Scenario">
           <datasheets>
-            <datasheet name="SpatialInputsRasters" displayName="Input Rasters" isSingleRow="True">
+            <datasheet name="SpatialInputsRasters" displayName="Input Rasters">
               <columns>
                 <column name="ScenarioID" dataType="Integer"/>
                 <column name="PlcFileName" displayName="Land Cover File path" dataType="String" isExternalFile="True" allowDbNull="False" isRaster="True"/>
@@ -55,7 +69,7 @@
         </datafeed>
         <datafeed name="SpatialInputsVectors" displayName="Input Vectors" dataScope="Scenario">
           <datasheets>
-            <datasheet name="SpatialInputsVectors" displayName="Input Vectors" isSingleRow="True">
+            <datasheet name="SpatialInputsVectors" displayName="Input Vectors">
               <columns>
                 <column name="ScenarioID" dataType="Integer"/>
                 <column name="ProjectPolyFileName" displayName="Project Polygon File Path" dataType="String" allowDbNull="False" isRaster="False"/>
@@ -67,22 +81,10 @@
         </datafeed>
         <datafeed name="CaribouRangeID" displayName="Caribou Range Name" dataScope="Scenario" isSingleRow="True">
           <datasheets>
-            <datasheet name="CaribouRangeID" displayName="Caribou Range Name">
+            <datasheet name="CaribouRangeID" displayName="Caribou Range Name" isSingleRow="True">
               <columns>
                 <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
                 <column name="CaribouRangeID" dataType="String" allowDbNull="False"/>
-              </columns>
-            </datasheet>
-          </datasheets>
-        </datafeed>
-        <datafeed name="FriLookUpTable" displayName="FRI Lookup Table" dataScope="Scenario">
-          <datasheets>
-            <datasheet name="FriLookUpTable" displayName="FRI Lookup Table">
-              <columns>
-                <column name="FriLookUpTableID" dataType="Integer" isPrimary="True"/>
-                <column name="ScenarioID" dataType="Integer" isCompositeIndex="True"/>
-                <column name="ID" displayName="FriID" dataType="Integer"/>
-                <column name="RFU" displayName="RFU" dataType="String"/>
               </columns>
             </datasheet>
           </datasheets>
@@ -120,6 +122,9 @@
     <layout name="coreforms_LibraryDatafeeds">
       <item name="core_Rconfig"/>
     </layout>
+    <layout name="coreforms_ProjectDatafeeds">
+      <item name="FriLookUpTable"/>
+    </layout>
     <layout name="coreforms_ScenarioDatafeeds">
       <item name="InputSpadesObject"/>
       <group name="SpatialInputs" displayName="Spatial Inputs">
@@ -127,7 +132,6 @@
         <item name="SpatialInputsVectors"/>
       </group>
       <item name="CaribouRangeID"/>
-      <item name="FriLookUpTable"/>
       <item name="ModelOptions"/>
       <item name="OutputHabitatUse"/>
     </layout>
