@@ -156,8 +156,10 @@
     </layout>
     <layout name="coreforms_ProjectDatafeeds">
       <item name="FriLookUpTable"/>
+      <item name="CaribouRangeLabels"/>
     </layout>
     <layout name="coreforms_ScenarioDatafeeds">
+      <item name="RunControl"/>
       <item name="InputSpadesObject"/>
       <group name="SpatialInputs" displayName="Spatial Inputs">
         <item name="SpatialInputsRasters"/>
