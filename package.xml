@@ -50,6 +50,24 @@
           </datasheets>
         </datafeed>
         <!-- Scenario Datafeeds -->
+        <datafeed name="RunControl" displayName="Run Control" dataScope="Scenario">
+          <datasheets>
+            <datasheet name="RunControl" displayName="Run Control" isSingleRow="True">
+              <columns>
+                <column name="RunControlID" dataType="Integer" isPrimary="True"/>
+                <column name="ScenarioID" dataType="Integer"/>
+                <column name="MinimumIteration" dataType="Integer" defaultValue="1" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="1" format="d"/>
+                <column name="MaximumIteration" dataType="Integer" defaultValue="1" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="1" format="d"/>
+                <column name="MinimumTimestep" dataType="Integer" defaultValue="0" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" format="d"/>
+                <column name="MaximumTimestep" dataType="Integer" defaultValue="0" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" format="d"/>
+              </columns>
+              <validations>
+                <validation validationType="LessEqual" columns="MinimumIteration|MaximumIteration"/>
+                <validation validationType="LessEqual" columns="MinimumTimestep|MaximumTimestep"/>
+              </validations>
+            </datasheet>
+          </datasheets>
+        </datafeed>
         <datafeed name="SpatialInputsRasters" displayName="Input Rasters" dataScope="Scenario">
           <datasheets>
             <datasheet name="SpatialInputsRasters" displayName="Rasters">
