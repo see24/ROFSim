@@ -19,7 +19,7 @@
       <datafeeds>
         <datafeed name="InputSpadesObject" displayName="Input SpaDES Object" dataScope="Scenario">
           <datasheets>
-            <datasheet name="InputSpadesObject" displayName="Input SpaDES Object File Path">
+            <datasheet name="InputSpadesObject" displayName="Input SpaDES Object File Path" isSingleRow="True">
               <columns>
                 <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
                 <column name="Filename" displayName="SpaDES Object Path" dataType="String" allowDbNull="False" isExternalFile="True"/>
@@ -38,7 +38,7 @@
       <datafeeds>
         <datafeed name="SpatialInputsRasters" displayName="Input Rasters" dataScope="Scenario">
           <datasheets>
-            <datasheet name="SpatialInputsRasters" displayName="Input Rasters">
+            <datasheet name="SpatialInputsRasters" displayName="Input Rasters" isSingleRow="True">
               <columns>
                 <column name="ScenarioID" dataType="Integer"/>
                 <column name="PlcFileName" displayName="Land Cover File path" dataType="String" isExternalFile="True" allowDbNull="False" isRaster="True"/>
@@ -55,7 +55,7 @@
         </datafeed>
         <datafeed name="SpatialInputsVectors" displayName="Input Vectors" dataScope="Scenario">
           <datasheets>
-            <datasheet name="SpatialInputsVectors" displayName="Input Vectors">
+            <datasheet name="SpatialInputsVectors" displayName="Input Vectors" isSingleRow="True">
               <columns>
                 <column name="ScenarioID" dataType="Integer"/>
                 <column name="ProjectPolyFileName" displayName="Project Polygon File Path" dataType="String" allowDbNull="False" isRaster="False"/>
@@ -65,7 +65,7 @@
             </datasheet>
           </datasheets>
         </datafeed>
-        <datafeed name="CaribouRangeID" displayName="Caribou Range Name" dataScope="Scenario">
+        <datafeed name="CaribouRangeID" displayName="Caribou Range Name" dataScope="Scenario" isSingleRow="True">
           <datasheets>
             <datasheet name="CaribouRangeID" displayName="Caribou Range Name">
               <columns>
@@ -87,7 +87,7 @@
             </datasheet>
           </datasheets>
         </datafeed>
-        <datafeed name="ModelOptions" displayName="Model Options" dataScope="Scenario">
+        <datafeed name="ModelOptions" displayName="Model Options" dataScope="Scenario" isSingleRow="True">
           <datasheets>
             <datasheet name="ModelOptions" displayName="Model Options">
               <columns>
