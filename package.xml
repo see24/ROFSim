@@ -116,7 +116,7 @@
             <datasheet name="CaribouRangeID" displayName="Caribou Range Name" isSingleRow="True">
               <columns>
                 <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
-                <column name="CaribouRangeID" dataType="String" allowDbNull="False"/>
+                <column name="CaribouRangeID" dataType="String" validationType="Datasheet" formula1="CaribouRangeLabels" allowDbNull="False"/>
               </columns>
             </datasheet>
           </datasheets>
