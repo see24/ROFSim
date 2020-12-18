@@ -35,28 +35,28 @@ names(allParams) <- myDatasheetsNamesFiltered
 # Verify if linear inputs are vectors or rasters
 
 # Eskers
-if(is.na(allParams$ROFSim_SpatialInputsRasters$EskerFileNameRas)){
-  if(is.na(allParams$ROFSim_SpatialInputsVectors$EskerFileNameVec)){
+if(is.null(allParams$ROFSim_SpatialInputsRasters$EskerFileNameRas)){
+  if(is.null(allParams$ROFSim_SpatialInputsVectors$EskerFileNameVec)){
     stop("Both esker vector and raster inputs are unspecified - please specify one")
   } else {
     eskerFile <- st_read(allParams$ROFSim_SpatialInputsVectors$EskerFileNameVec)
   }
 } else {
-  if(!is.na(allParams$ROFSim_SpatialInputsVectors$EskerFileNameVec)){
+  if(!is.null(allParams$ROFSim_SpatialInputsVectors$EskerFileNameVec)){
     message("Both raster and vector outputs have been specified. Loading raster.")
   }
   eskerFile <- raster(allParams$ROFSim_SpatialInputsRasters$EskerFileNameRas)
 }
 
 # Linear features
-if(is.na(allParams$ROFSim_SpatialInputsRasters$LinFeatFileNameRas)){
-  if(is.na(allParams$ROFSim_SpatialInputsVectors$LinFeatFileNameVec)){
+if(is.null(allParams$ROFSim_SpatialInputsRasters$LinFeatFileNameRas)){
+  if(is.null(allParams$ROFSim_SpatialInputsVectors$LinFeatFileNameVec)){
     stop("Both esker vector and raster inputs are unspecified - please specify one")
   } else {
     linFeatFile <- st_read(allParams$ROFSim_SpatialInputsVectors$LinFeatFileNameVec)
   }
 } else {
-  if(!is.na(allParams$ROFSim_SpatialInputsVectors$LinFeatFileNameVec)){
+  if(!is.null(allParams$ROFSim_SpatialInputsVectors$LinFeatFileNameVec)){
     message("Both raster and vector outputs have been specified. Loading raster.")
   }
   linFeatFile <- raster(allParams$ROFSim_SpatialInputsRasters$LinFeatFileNameRas)
