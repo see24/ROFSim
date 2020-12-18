@@ -52,9 +52,11 @@
         <!-- Scenario Datafeeds -->
         <datafeed name="SpatialInputsRasters" displayName="Input Rasters" dataScope="Scenario">
           <datasheets>
-            <datasheet name="SpatialInputsRasters" displayName="Input Rasters">
+            <datasheet name="SpatialInputsRasters" displayName="Rasters">
               <columns>
                 <column name="ScenarioID" dataType="Integer"/>
+                <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
+                <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
                 <column name="PlcFileName" displayName="Land Cover File path" dataType="String" isExternalFile="True" allowDbNull="False" isRaster="True"/>
                 <column name="FriFileName" displayName="FRI File Path" dataType="String" isExternalFile="True" allowDbNull="False" isRaster="True"/>
                 <column name="AgeFileName" displayName="Age File Path" dataType="String" isExternalFile="True" allowDbNull="False" isRaster="True"/>
@@ -69,9 +71,11 @@
         </datafeed>
         <datafeed name="SpatialInputsVectors" displayName="Input Vectors" dataScope="Scenario">
           <datasheets>
-            <datasheet name="SpatialInputsVectors" displayName="Input Vectors">
+            <datasheet name="SpatialInputsVectors" displayName="Vectors">
               <columns>
                 <column name="ScenarioID" dataType="Integer"/>
+                <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
+                <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
                 <column name="ProjectPolyFileName" displayName="Project Polygon File Path" dataType="String" allowDbNull="False" isRaster="False"/>
                 <column name="EskerFileNameVec" displayName="Eskers File Path" dataType="String" allowDbNull="True" isRaster="False"/>
                 <column name="LinFeatFileNameVec" displayName="Linear Features file Path" dataType="String" allowDbNull="True" isRaster="False"/>
