@@ -21,9 +21,10 @@ myDatasheets <- datasheet(mySce)
 subFilter <- sapply(X = myDatasheets$name, FUN = grepl, pattern="^(ROF)\\w+")
 myDatasheetsFiltered <- myDatasheets[subFilter,]
 myDatasheetsNames <- myDatasheetsFiltered$name
-# Remove the SpadesObject datasheet which can be empty
+# Remove the SpadesObject and outputs datasheet which can be empty
 myDatasheetsNamesFiltered <- 
-  myDatasheetsNames[myDatasheetsNames != "ROFSim_InputSpadesObject"]
+  myDatasheetsNames[!(myDatasheetsNames %in% c("ROFSim_InputSpadesObject",
+                                               "ROFSim_OutputHabitatUse"))]
 
 allParams <- lapply(myDatasheetsNamesFiltered, 
                     FUN = datasheet, 
