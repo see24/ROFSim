@@ -122,8 +122,10 @@
     </layout>
     <layout name="coreforms_ScenarioDatafeeds">
       <item name="InputSpadesObject"/>
-      <item name="SpatialInputsRasters"/>
-      <item name="SpatialInputsVectors"/>
+      <group name="SpatialInputs" displayName="Spatial Inputs">
+        <item name="SpatialInputsRasters"/>
+        <item name="SpatialInputsVectors"/>
+      </group>
       <item name="CaribouRangeID"/>
       <item name="FriLookUpTable"/>
       <item name="ModelOptions"/>
