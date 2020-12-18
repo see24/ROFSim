@@ -82,7 +82,7 @@ res <- caribouHabitat(# Rasters
   projectPoly = st_read(allParams$ROFSim_SpatialInputsVectors$ProjectPolyFileName), 
   
   # String
-  caribouRange = allParams$ROFSim_CaribouRangeID$CaribouRangeID, 
+  caribouRange = allParams$ROFSim_CaribouRange$Range, 
   
   # Rasters or vectors
   esker = eskerFile,
