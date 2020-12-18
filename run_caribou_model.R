@@ -98,3 +98,15 @@ res <- caribouHabitat(# Rasters
   # TEMPORARY, for test purposes only
   winArea = 500)
 
+## Save to tmp folder
+tempDir <- tempdir()
+writeRaster(res@habitatUse, bylayer = TRUE, format = "GTiff",
+            suffix = paste(1:4, names(res@habitatUse), sep = "_"),
+            filename = file.path(getwd(), "HabitatUse", fsep = "\\"), 
+            overwrite = TRUE)
+
+# Build df and save the datasheet
+habitatUseDf <- data.frame(Season = names(res@habitatUse), 
+                           HabitatUse = list.files(getwd(), full.names = TRUE, 
+                                                   pattern = ".tif"))
+saveDatasheet(ssimObject = mySce, name = "ROFSim_OutputHabitatUse", data = habitatUseDf)
