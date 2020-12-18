@@ -2,7 +2,7 @@
 <package
   name="ROFSim"
   displayName="ROF SyncroSim Package"
-  version="0.0.10">
+  version="0.0.11">
   <transformers>
     <transformer name="Primary" isPrimary="True">
       <runtime>
@@ -85,7 +85,21 @@
               </columns>
             </datasheet>
           </datasheets>
-        </datafeed> 
+        </datafeed>
+        <datafeed name="ModelOptions" displayName="Model Options" dataScope="Scenario">
+          <datasheets>
+            <datasheet name="ModelOptions" displayName="Model Options">
+              <columns>
+                <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
+                <column name="PadProjPoly" displayName="Project Polygon Padding" dataType="Boolean"/>
+                <column name="PadFocal" displayName="Focal Padding" dataType="Boolean"/>
+                <column name="EskerSave" displayName="Saving Esker Raster" dataType="Boolean"/>
+                <column name="LinFeatSave" displayName="Saving Linear Fearure Raster" dataType="Boolean"/>
+                <column name="OutputSave" displayName="Output Files Path" dataType="String"/>
+              </columns>
+            </datasheet>
+          </datasheets>
+        </datafeed>
       </datafeeds>
     </transformer>
   </transformers>
@@ -99,6 +113,7 @@
       <item name="SpatialInputsVectors"/>
       <item name="CaribouRangeID"/>
       <item name="FriLookUpTable"/>
+      <item name="ModelOptions"/>
     </layout>
   </layouts>
 </package>
