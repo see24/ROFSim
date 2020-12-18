@@ -105,6 +105,7 @@
           <datasheets>
             <datasheet name="OutputHabitatUse" displayName="Output Habitat Use">
               <columns>
+                <column name="OutputHabitatUseID" dataType="Integer" isPrimary="True"/>
                 <column name="ScenarioID" dataType="Integer" isCompositeIndex="True"/>
                 <column name="Season" displayName="Season" dataType="String"/>
                 <column name="HabitatUse" displayName="Habitat Use" dataType="String" isExternalFile="True" isRaster="True"/>
