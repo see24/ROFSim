@@ -101,20 +101,14 @@ res <- caribouHabitat(# Rasters
   # TEMPORARY, for test purposes only
   winArea = 500)
 
-## Save to tmp folder
-outDir <- ifelse(is.na(allParams$ROFSim_ModelOptions$OutputSave), 
-                 file.path(e$TempDirectory, paste0("Scenario-", e$ScenarioId), "HabitatUse"), 
-                 allParams$ROFSim_ModelOptions$OutputSave)
-if(!(dir.exists(outDir))){
-  dir.create(outDir, recursive=TRUE)
-}
+## Save to DATA folder
 writeRaster(res@habitatUse, bylayer = TRUE, format = "GTiff",
             suffix = paste(1:4, names(res@habitatUse), sep = "_"),
-            filename = file.path(outDir, "HabitatUse"), 
+            filename = file.path(e$TransferDirectory, "OutputHabitatUse"), 
             overwrite = TRUE)
 
 # Build df and save the datasheet
 habitatUseDf <- data.frame(Season = names(res@habitatUse), 
-                           HabitatUse = list.files(outDir, full.names = TRUE, 
+                           HabitatUse = list.files(e$TransferDirectory, full.names = FALSE, 
                                                    pattern = ".tif"))
 saveDatasheet(ssimObject = mySce, name = "ROFSim_OutputHabitatUse", data = habitatUseDf)
