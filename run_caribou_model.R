@@ -16,7 +16,7 @@ myLib <- ssimLibrary()
 mySce <- scenario()
 
 # Source the helpers
-source("helpers.R")
+source(file.path(e$PackageDirectory, "helpers.R"))
 
 # Access all datasheets of importance
 myDatasheets <- datasheet(mySce)
@@ -140,5 +140,10 @@ for (iteration in iterationSet) {
     
   }
 }
-habitatUseMerged <- bind(unlist(habitatUseAll, recursive = F))
+
+if (length(habitatUseAll) > 1) {
+  habitatUseMerged <- bind(unlist(habitatUseAll, recursive = F))
+} else{
+  habitatUseMerged <- unlist(habitatUseAll, recursive = F)[[1]]
+}
 saveDatasheet(ssimObject = mySce, name = "ROFSim_OutputHabitatUse", data = habitatUseMerged)
