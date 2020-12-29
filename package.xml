@@ -36,6 +36,9 @@
       userRunnable="True"
       runContext="LocalOnly"
       programName="Rscript"
+      className="SyncroSim.StochasticTime.StochasticTimeTransformer"
+      classAssembly="SyncroSim.StochasticTime"
+      configurationSheet="stsim_RunControl"
       programArguments="run_caribou_model.R">
       <datafeeds>
         <!-- Project Datafeeds -->
