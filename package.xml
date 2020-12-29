@@ -71,7 +71,7 @@
               <columns>
                 <column name="SeasonsID" dataType="Integer" isPrimary="True"/>
                 <column name="ProjectID" dataType="Integer"/>
-                <column name="Seasons" displayName="Season Name" dataType="String" allowDbNull="False"/>
+                <column name="Season" displayName="Season Name" dataType="String" allowDbNull="False"/>
               </columns>
             </datasheet>
           </datasheets>
