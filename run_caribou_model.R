@@ -15,6 +15,9 @@ e <- ssimEnvironment()
 myLib <- ssimLibrary()
 mySce <- scenario()
 
+# Source the helpers
+source("helpers.R")
+
 # Access all datasheets of importance
 myDatasheets <- datasheet(mySce)
 # Only select datasheets from the ROF package 
@@ -62,61 +65,74 @@ if(is.null(allParams$ROFSim_SpatialInputsRasters$LinFeatFileNameRas)){
   linFeatFile <- raster(allParams$ROFSim_SpatialInputsRasters$LinFeatFileNameRas)
 }
 
-# Function to process optional arguments
-optArg <- function(arg){
-  if(length(arg)==0){
-    arg <- FALSE
-  } else if (arg == "Yes"){
-    arg <- TRUE
-  } else if (arg == "No"){
-    arg <- FALSE
+# Set of timesteps to analyse
+timestepSet <- GLOBAL_MinTimestep:GLOBAL_MaxTimestep
+iterationSet <- GLOBAL_MinIteration:GLOBAL_MaxIteration
+
+#Simulation
+envBeginSimulation(GLOBAL_TotalIterations * GLOBAL_TotalTimesteps)
+
+# Empty list to start
+
+habitatUseAll <- NULL
+
+for (iteration in iterationSet) {
+  
+  for (timestep in timestepSet) {
+    
+    envReportProgress(iteration, timestep)
+    
+    # Call the main function with all arguments extracted from datasheets
+    res <- caribouHabitat(# Rasters
+      plc = raster(allParams$ROFSim_SpatialInputsRasters$PlcFileName),
+      fri = raster(allParams$ROFSim_SpatialInputsRasters$FriFileName), 
+      age = raster(allParams$ROFSim_SpatialInputsRasters$AgeFileName), 
+      natDist = raster(allParams$ROFSim_SpatialInputsRasters$NatDistFileName), 
+      anthroDist = raster(allParams$ROFSim_SpatialInputsRasters$AnthroDistFileName), 
+      harv = raster(allParams$ROFSim_SpatialInputsRasters$HarvFileName), 
+      
+      # Vectors
+      projectPoly = st_read(allParams$ROFSim_SpatialInputsVectors$ProjectPolyFileName), 
+      
+      # String
+      caribouRange = allParams$ROFSim_CaribouRange$Range, 
+      
+      # Rasters or vectors
+      esker = eskerFile,
+      linFeat = linFeatFile,
+      
+      # Look up table
+      friLU = allParams$ROFSim_FriLookUpTable[,c(2,1)], # Necessary as expecting this order
+      
+      # Model options
+      padProjPoly = optArg(allParams$ROFSim_ModelOptions$PadProjPoly),
+      padFocal = optArg(allParams$ROFSim_ModelOptions$PadFocal),
+      
+      # outputs are saved afterwards
+      eskerSave = NULL,
+      linFeatSave = NULL,
+      saveOutput = NULL,
+      
+      # TEMPORARY, for test purposes only
+      winArea = 500)
+    
+    ## Save to DATA folder
+    writeRaster(res@habitatUse, bylayer = TRUE, format = "GTiff",
+                suffix = paste(1:4, names(res@habitatUse), sep = "_"),
+                filename = file.path(e$TransferDirectory, "OutputHabitatUse"), 
+                overwrite = TRUE)
+    
+    # Build df and save the datasheet
+    habitatUseDf <- data.frame(Season = names(res@habitatUse), 
+                               Iteration = iteration,
+                               Timestep = timestep,
+                               Range = allParams$ROFSim_CaribouRange$Range,
+                               HabitatUse = list.files(e$TransferDirectory, full.names = FALSE, 
+                                                       pattern = ".tif"))
+    
+    habitatUseAll[[paste0("it_",iteration)]][[paste0("ts_",timestep)]] <- habitatUseDf
+    
   }
-  arg
 }
-
-# Call the main function with all arguments extracted from datasheets
-res <- caribouHabitat(# Rasters
-  plc = raster(allParams$ROFSim_SpatialInputsRasters$PlcFileName),
-  fri = raster(allParams$ROFSim_SpatialInputsRasters$FriFileName), 
-  age = raster(allParams$ROFSim_SpatialInputsRasters$AgeFileName), 
-  natDist = raster(allParams$ROFSim_SpatialInputsRasters$NatDistFileName), 
-  anthroDist = raster(allParams$ROFSim_SpatialInputsRasters$AnthroDistFileName), 
-  harv = raster(allParams$ROFSim_SpatialInputsRasters$HarvFileName), 
-  
-  # Vectors
-  projectPoly = st_read(allParams$ROFSim_SpatialInputsVectors$ProjectPolyFileName), 
-  
-  # String
-  caribouRange = allParams$ROFSim_CaribouRange$Range, 
-  
-  # Rasters or vectors
-  esker = eskerFile,
-  linFeat = linFeatFile,
-  
-  # Look up table
-  friLU = allParams$ROFSim_FriLookUpTable[,c(2,1)], # Necessary as expecting this order
-  
-  # Model options
-  padProjPoly = optArg(allParams$ROFSim_ModelOptions$PadProjPoly),
-  padFocal = optArg(allParams$ROFSim_ModelOptions$PadFocal),
-  
-  # outputs are saved afterwards
-  eskerSave = NULL,
-  linFeatSave = NULL,
-  saveOutput = NULL,
-  
-  # TEMPORARY, for test purposes only
-  winArea = 500)
-
-## Save to DATA folder
-writeRaster(res@habitatUse, bylayer = TRUE, format = "GTiff",
-            suffix = paste(1:4, names(res@habitatUse), sep = "_"),
-            filename = file.path(e$TransferDirectory, "OutputHabitatUse"), 
-            overwrite = TRUE)
-
-# Build df and save the datasheet
-habitatUseDf <- data.frame(Season = names(res@habitatUse), 
-                           Range = allParams$ROFSim_CaribouRange$Range,
-                           HabitatUse = list.files(e$TransferDirectory, full.names = FALSE, 
-                                                   pattern = ".tif"))
-saveDatasheet(ssimObject = mySce, name = "ROFSim_OutputHabitatUse", data = habitatUseDf)
+habitatUseMerged <- bind(unlist(habitatUseAll, recursive = F))
+saveDatasheet(ssimObject = mySce, name = "ROFSim_OutputHabitatUse", data = habitatUseMerged)
