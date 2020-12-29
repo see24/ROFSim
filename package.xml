@@ -65,6 +65,17 @@
             </datasheet>
           </datasheets>
         </datafeed>
+        <datafeed name="Seasons" displayName="Seasons" dataScope="Project">
+          <datasheets>
+            <datasheet name="Seasons" displayName="Seasons" valueMember="SeasonsID" displayMember="Seasons">
+              <columns>
+                <column name="SeasonsID" dataType="Integer" isPrimary="True"/>
+                <column name="ProjectID" dataType="Integer"/>
+                <column name="Seasons" displayName="Season Name" dataType="String" allowDbNull="False"/>
+              </columns>
+            </datasheet>
+          </datasheets>
+        </datafeed>
         <!-- Scenario Datafeeds -->
         <datafeed name="RunControl" displayName="Run Control" dataScope="Scenario">
           <datasheets>
@@ -146,7 +157,8 @@
                 <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
                 <column name="ScenarioID" dataType="Integer"/>
-                <column name="Season" displayName="Season" dataType="String"/>
+                <!-- <column name="Range" displayName="Range Name" dataType="String" validationType="Datasheet" formula1="CaribouRanges" allowDbNull="False"/> -->
+                <column name="Season" displayName="Season Name" dataType="String" validationType="Datasheet" formula1="Seasons" allowDbNull="False"/>
                 <column name="HabitatUse" displayName="Habitat Use" dataType="String" isExternalFile="True" isRaster="True"/>
               </columns>
             </datasheet>
@@ -163,6 +175,7 @@
     <layout name="coreforms_ProjectDatafeeds">
       <item name="FriLookUpTable"/>
       <item name="CaribouRanges"/>
+      <item name="Seasons" />
     </layout>
     <layout name="coreforms_ScenarioDatafeeds">
       <item name="RunControl"/>
