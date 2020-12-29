@@ -19,9 +19,9 @@
       programArguments="process_spades_outputs.R">
       <datafeeds>
         <!-- Scenario Datafeeds -->
-        <datafeed name="InputSpadesObject" displayName="Input SpaDES Object" dataScope="Scenario">
+        <datafeed name="InputSpadesObject" displayName="SpaDES" dataScope="Scenario">
           <datasheets>
-            <datasheet name="InputSpadesObject" displayName="Input SpaDES Object File Path" isSingleRow="True">
+            <datasheet name="InputSpadesObject" displayName="SpaDES" isSingleRow="True">
               <columns>
                 <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
                 <column name="Filename" displayName="SpaDES Object Path" dataType="String" allowDbNull="False" isExternalFile="True"/>
