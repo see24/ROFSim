@@ -188,5 +188,11 @@
       <item name="ModelOptions"/>
       <item name="OutputHabitatUse"/>
     </layout>
+    <!--Maps Layout-->
+    <layout name="corestimeforms_Maps" configurationSheet="ROFSim_RunControl">
+      <group name="OutputHabitatUse" displayName="Habitat Use">
+        <item name="HabitatUse" displayName="Habitat Use" dataSheet="ROFSim_OutputHabitatUse" column="HabitatUse" filter="Season"/>
+      </group>
+    </layout>
   </layouts>
 </package>
