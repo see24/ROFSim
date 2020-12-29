@@ -116,6 +116,7 @@ writeRaster(res@habitatUse, bylayer = TRUE, format = "GTiff",
 
 # Build df and save the datasheet
 habitatUseDf <- data.frame(Season = names(res@habitatUse), 
+                           Range = allParams$ROFSim_CaribouRange$Range,
                            HabitatUse = list.files(e$TransferDirectory, full.names = FALSE, 
                                                    pattern = ".tif"))
 saveDatasheet(ssimObject = mySce, name = "ROFSim_OutputHabitatUse", data = habitatUseDf)
