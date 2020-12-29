@@ -39,14 +39,14 @@
       programArguments="run_caribou_model.R">
       <datafeeds>
         <!-- Project Datafeeds -->
-        <datafeed name="FriLookUpTable" displayName="FRI Lookup Table" dataScope="Project">
+        <datafeed name="FriLookUpTable" displayName="Forest Units" dataScope="Project">
           <datasheets>
-            <datasheet name="FriLookUpTable" displayName="FRI Lookup Table">
+            <datasheet name="FriLookUpTable" displayName="Forest Units">
               <columns>
                 <column name="FriLookUpTableID" dataType="Integer" isPrimary="True"/>
                 <column name="ProjectID" dataType="Integer"/>
-                <column name="ID" displayName="FriID" dataType="Integer"/>
-                <column name="RFU" displayName="RFU" dataType="String"/>
+                <column name="RFU" displayName="Forest Unit" dataType="String"/>
+                <column name="ID" displayName="Forest Unit ID" dataType="Integer"/>
               </columns>
             </datasheet>
           </datasheets>
@@ -57,7 +57,7 @@
               <columns>
                 <column name="CaribouRangesID" dataType="Integer" isPrimary="True"/>
                 <column name="ProjectID" dataType="Integer"/>
-                <column name="Ranges" dataType="String" allowDbNull="False"/>
+                <column name="Ranges" displayName="Range Name" dataType="String" allowDbNull="False"/>
               </columns>
             </datasheet>
           </datasheets>
@@ -69,10 +69,10 @@
               <columns>
                 <column name="RunControlID" dataType="Integer" isPrimary="True"/>
                 <column name="ScenarioID" dataType="Integer"/>
-                <column name="MinimumIteration" dataType="Integer" defaultValue="1" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="1" format="d"/>
-                <column name="MaximumIteration" dataType="Integer" defaultValue="1" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="1" format="d"/>
-                <column name="MinimumTimestep" dataType="Integer" defaultValue="0" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" format="d"/>
-                <column name="MaximumTimestep" dataType="Integer" defaultValue="0" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" format="d"/>
+                <column name="MinimumIteration" displayName="Minimum Iteration" dataType="Integer" defaultValue="1" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="1" format="d"/>
+                <column name="MaximumIteration" displayName="Total Iterations" dataType="Integer" defaultValue="1" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="1" format="d"/>
+                <column name="MinimumTimestep" displayName="Minimum Timestep" dataType="Integer" defaultValue="0" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" format="d"/>
+                <column name="MaximumTimestep" displayName="Maximum Timestep" dataType="Integer" defaultValue="0" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" format="d"/>
               </columns>
               <validations>
                 <validation validationType="LessEqual" columns="MinimumIteration|MaximumIteration"/>
@@ -114,12 +114,12 @@
             </datasheet>
           </datasheets>
         </datafeed>
-        <datafeed name="CaribouRange" displayName="Caribou Range Name" dataScope="Scenario">
+        <datafeed name="CaribouRange" displayName="Caribou Range" dataScope="Scenario">
           <datasheets>
-            <datasheet name="CaribouRange" displayName="Caribou Range Name" isSingleRow="True">
+            <datasheet name="CaribouRange" displayName="Caribou Range" isSingleRow="True">
               <columns>
                 <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
-                <column name="Range" displayName="Range" dataType="String" validationType="Datasheet" formula1="CaribouRanges" allowDbNull="False"/>
+                <column name="Range" displayName="Range Name" dataType="String" validationType="Datasheet" formula1="CaribouRanges" allowDbNull="False"/>
               </columns>
             </datasheet>
           </datasheets>
