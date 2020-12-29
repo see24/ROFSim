@@ -143,6 +143,8 @@
             <datasheet name="OutputHabitatUse" displayName="Output Habitat Use">
               <columns>
                 <column name="OutputHabitatUseID" dataType="Integer" isPrimary="True"/>
+                <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
+                <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
                 <column name="ScenarioID" dataType="Integer"/>
                 <column name="Season" displayName="Season" dataType="String"/>
                 <column name="HabitatUse" displayName="Habitat Use" dataType="String" isExternalFile="True" isRaster="True"/>
