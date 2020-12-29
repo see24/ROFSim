@@ -16,7 +16,7 @@ myLib <- ssimLibrary()
 mySce <- scenario()
 
 # Source the helpers
-source("helpers.R")
+source(file.path(e$PackageDirectory, "helpers.R"))
 
 # Access all datasheets of importance
 myDatasheets <- datasheet(mySce)
