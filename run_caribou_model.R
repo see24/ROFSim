@@ -118,7 +118,9 @@ for (iteration in iterationSet) {
     
     ## Save to DATA folder
     writeRaster(res@habitatUse, bylayer = TRUE, format = "GTiff",
-                suffix = paste(1:4, names(res@habitatUse), sep = "_"),
+                suffix = paste(names(res@habitatUse), 
+                               paste0("it_",iteration), 
+                               paste0("ts_",timestep), sep = "_"),
                 filename = file.path(e$TransferDirectory, "OutputHabitatUse"), 
                 overwrite = TRUE)
     
@@ -126,9 +128,13 @@ for (iteration in iterationSet) {
     habitatUseDf <- data.frame(Season = names(res@habitatUse), 
                                Iteration = iteration,
                                Timestep = timestep,
-                               Range = allParams$ROFSim_CaribouRange$Range,
-                               HabitatUse = list.files(e$TransferDirectory, full.names = FALSE, 
-                                                       pattern = ".tif"))
+                               Range = allParams$ROFSim_CaribouRange$Range)
+    habitatUseDf$HabitatUse <- file.path(e$TransferDirectory, 
+                                         paste0(paste("OutputHabitatUse",
+                                                      habitatUseDf$Season,
+                                                      "it", habitatUseDf$Iteration, 
+                                                      "ts", habitatUseDf$Timestep,
+                                                      sep= "_"), ".tif"))
     
     habitatUseAll[[paste0("it_",iteration)]][[paste0("ts_",timestep)]] <- habitatUseDf
     
