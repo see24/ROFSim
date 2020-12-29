@@ -10,6 +10,9 @@
         <transformer name="ProcessSpadesOutputs"/>
         <transformer name="RunCaribouRSF"/>
       </runtime>
+      <include>
+        <transformer name="corestime_Runtime"/>
+      </include>
     </transformer>
     <transformer
       name="ProcessSpadesOutputs"
@@ -187,6 +190,10 @@
       <item name="CaribouRange"/>
       <item name="ModelOptions"/>
       <item name="OutputHabitatUse"/>
+    </layout>
+    <!--Results transformer Layout-->
+    <layout name="coreforms_ResultTransformers">
+      <item name="corestime_MapTransformer"/>
     </layout>
     <!--Maps Layout-->
     <layout name="corestimeforms_Maps" configurationSheet="ROFSim_RunControl">
