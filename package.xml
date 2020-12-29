@@ -3,6 +3,7 @@
   name="ROFSim"
   displayName="ROF SyncroSim Package"
   version="0.2.4">
+  <!-- Transformers -->
   <transformers>
     <transformer name="Primary" isPrimary="True">
       <runtime>
@@ -17,6 +18,7 @@
       programName="Rscript"
       programArguments="process_spades_outputs.R">
       <datafeeds>
+        <!-- Scenario Datafeeds -->
         <datafeed name="InputSpadesObject" displayName="Input SpaDES Object" dataScope="Scenario">
           <datasheets>
             <datasheet name="InputSpadesObject" displayName="Input SpaDES Object File Path" isSingleRow="True">
@@ -148,6 +150,7 @@
       </datafeeds>
     </transformer>
   </transformers>
+  <!-- Layouts -->
   <layouts>
     <layout name="coreforms_LibraryDatafeeds">
       <item name="core_Rconfig"/>
