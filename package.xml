@@ -67,7 +67,7 @@
         </datafeed>
         <datafeed name="Seasons" displayName="Seasons" dataScope="Project">
           <datasheets>
-            <datasheet name="Seasons" displayName="Seasons" valueMember="SeasonsID" displayMember="Seasons">
+            <datasheet name="Seasons" displayName="Seasons" valueMember="SeasonsID" displayMember="Season">
               <columns>
                 <column name="SeasonsID" dataType="Integer" isPrimary="True"/>
                 <column name="ProjectID" dataType="Integer"/>
