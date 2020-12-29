@@ -94,7 +94,7 @@ res <- caribouHabitat(# Rasters
   linFeat = linFeatFile,
   
   # Look up table
-  friLU = allParams$ROFSim_FriLookUpTable,
+  friLU = allParams$ROFSim_FriLookUpTable[,c(2,1)], # Necessary as expecting this order
   
   # Model options
   padProjPoly = optArg(allParams$ROFSim_ModelOptions$PadProjPoly),
