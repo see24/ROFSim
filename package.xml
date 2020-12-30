@@ -102,7 +102,7 @@
           <datasheets>
             <datasheet name="SpatialInputsRasters" displayName="Rasters">
               <columns>
-                <column name="RasterInpuID" dataType="Integer" isPrimary="True/>
+                <column name="RasterInpuID" dataType="Integer" isPrimary="True"/>
                 <column name="ScenarioID" dataType="Integer"/>
                 <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
