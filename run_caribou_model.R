@@ -35,35 +35,16 @@ allParams <- lapply(myDatasheetsNamesFiltered,
                     lookupsAsFactors = FALSE)
 names(allParams) <- myDatasheetsNamesFiltered
 
-# Verify if linear inputs are vectors or rasters
+# Function to filter inputs based on iterations and timesteps
 
-# Eskers
-if(is.null(allParams$ROFSim_SpatialInputsRasters$EskerFileNameRas)){
-  if(is.null(allParams$ROFSim_SpatialInputsVectors$EskerFileNameVec)){
-    stop("Both esker vector and raster inputs are unspecified - please specify one")
-  } else {
-    eskerFile <- st_read(allParams$ROFSim_SpatialInputsVectors$EskerFileNameVec)
-  }
-} else {
-  if(!is.null(allParams$ROFSim_SpatialInputsVectors$EskerFileNameVec)){
-    message("Both raster and vector outputs have been specified. Loading raster.")
-  }
-  eskerFile <- raster(allParams$ROFSim_SpatialInputsRasters$EskerFileNameRas)
-}
+# params <- data.frame(data = c("NA_NA","2_2", "NA_4","3_10", "3_34", "NA_7", "4_1"), 
+#                      Iteration = c(NA,2,NA,3,3,NA,4), 
+#                      Timestep = c(NA,2,4,10,34,7,10))
+# filterInputs(params, 5, 33)
+# iter <- 5
+# ts <- 33
 
-# Linear features
-if(is.null(allParams$ROFSim_SpatialInputsRasters$LinFeatFileNameRas)){
-  if(is.null(allParams$ROFSim_SpatialInputsVectors$LinFeatFileNameVec)){
-    stop("Both esker vector and raster inputs are unspecified - please specify one")
-  } else {
-    linFeatFile <- st_read(allParams$ROFSim_SpatialInputsVectors$LinFeatFileNameVec)
-  }
-} else {
-  if(!is.null(allParams$ROFSim_SpatialInputsVectors$LinFeatFileNameVec)){
-    message("Both raster and vector outputs have been specified. Loading raster.")
-  }
-  linFeatFile <- raster(allParams$ROFSim_SpatialInputsRasters$LinFeatFileNameRas)
-}
+# Function to select raster or vectors for esker + linfeat
 
 # Set of timesteps to analyse
 timestepSet <- GLOBAL_MinTimestep:GLOBAL_MaxTimestep
@@ -82,24 +63,31 @@ for (iteration in iterationSet) {
     
     envReportProgress(iteration, timestep)
     
+    # Filter inputs based on iteration and timestep
+    # rasters
+    InputRasters <- filterInputs(allParams$ROFSim_SpatialInputsRasters, 
+                                 iteration, timestep)
+    InputVectors <- filterInputs(allParams$ROFSim_SpatialInputsVectors,
+                                 iteration, timestep)
+    
     # Call the main function with all arguments extracted from datasheets
     res <- caribouHabitat(# Rasters
-      plc = raster(allParams$ROFSim_SpatialInputsRasters$PlcFileName),
-      fri = raster(allParams$ROFSim_SpatialInputsRasters$FriFileName), 
-      age = raster(allParams$ROFSim_SpatialInputsRasters$AgeFileName), 
-      natDist = raster(allParams$ROFSim_SpatialInputsRasters$NatDistFileName), 
-      anthroDist = raster(allParams$ROFSim_SpatialInputsRasters$AnthroDistFileName), 
-      harv = raster(allParams$ROFSim_SpatialInputsRasters$HarvFileName), 
+      plc = raster(InputRasters$PlcFileName),
+      fri = raster(InputRasters$FriFileName), 
+      age = raster(InputRasters$AgeFileName), 
+      natDist = raster(InputRasters$NatDistFileName), 
+      anthroDist = raster(InputRasters$AnthroDistFileName), 
+      harv = raster(InputRasters$HarvFileName), 
       
       # Vectors
-      projectPoly = st_read(allParams$ROFSim_SpatialInputsVectors$ProjectPolyFileName), 
+      projectPoly = st_read(InputVectors$ProjectPolyFileName), 
       
       # String
       caribouRange = allParams$ROFSim_CaribouRange$Range, 
       
       # Rasters or vectors
-      esker = eskerFile,
-      linFeat = linFeatFile,
+      esker = selectInputs(InputRasters, InputVectors, "EskerFileName"),
+      linFeat = selectInputs(InputRasters, InputVectors, "LinFeatFileName"),
       
       # Look up table
       friLU = allParams$ROFSim_FriLookUpTable[,c(2,1)], # Necessary as expecting this order

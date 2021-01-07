@@ -42,3 +42,116 @@ GLOBAL_MinTimestep = GetSingleValueExpectData(GLOBAL_RunControl, "MinimumTimeste
 GLOBAL_MaxTimestep = GetSingleValueExpectData(GLOBAL_RunControl, "MaximumTimestep")
 GLOBAL_TotalIterations = (GLOBAL_MaxIteration - GLOBAL_MinIteration + 1)
 GLOBAL_TotalTimesteps = (GLOBAL_MaxTimestep - GLOBAL_MinTimestep + 1)
+
+## Functions for wildcard
+
+filterInputs <- function(params, iter, ts, min_ts = 1){
+  
+  # Cases where One or Both columns are missing
+  if(!sum(is.element(names(params), "Iteration"))){
+    print("No Iteration column")
+    if(!sum(is.element(names(params), "Timestep"))){
+      print("No Timestep column either")
+      if(nrow(params) > 1){
+        stop("No timestep nor iteration specified, yet multiple inputs are provided")
+      } else{
+        return(params)
+      }
+    } else{
+      print("Only Iteration is missing, assuming current iteration")
+      params$Iteration <- iter
+    }
+  } else if(!sum(is.element(names(params), "Timestep"))){
+    print("Only Timestep is missing, assuming current timestep")
+    params$Timestep <- ts
+  }
+  
+  # Cases when more than one NA timestep inputs are provided (need to check before filling wildcards)
+  NACount <- sum(is.na(params$Timestep))
+  if(sum(NACount > 1 & NACount < nrow(params))){
+    stop("More than one NA input for timesteps are provided, cannot align with timestep")
+  }
+  
+  # Fill in the NAs for filtering
+  params$Iteration <- fillWildcardITER(params$Iteration, iter)
+  params$Timestep <- fillWildcardTS(params$Timestep, ts, min_ts)
+  
+  # Cases when there is more than one unique input
+  iterAndTs <- params[, c("Iteration", "Timestep")]
+  if(nrow(unique(iterAndTs)) != nrow(iterAndTs)){
+    stop("More than one unique combination of timesteps and iteration")
+  }
+  
+  # Now we are reading to select the right inputs
+  # If the iteration or timestep doesnt match, we select the one closest one under
+  # Try a perfect match, otherwise find next best match
+  theSubset <- subset(params, Iteration == iter & Timestep == ts)
+  if(nrow(theSubset) == 1){
+    return(theSubset)
+  } else {
+    theSubset <- subset(params, Iteration == iter)
+    if (nrow(theSubset) == 1){
+      if(theSubset$Timestep > ts){
+        theSubset <- subset(params, Iteration == 1 & Timestep == min_ts)
+        return(theSubset)
+      } else{
+        return(theSubset)
+      }
+    } else if(nrow(theSubset) > 1) {
+      nearestval <- suppressWarnings(max(subset(theSubset$Timestep, 
+                                                theSubset$Timestep<ts)))
+      theSubset <- subset(theSubset, Timestep == nearestval)
+      print(theSubset)
+      if(nrow(theSubset) == 0){
+        theSubset <- subset(params, Iteration == 1 & Timestep == min_ts)
+        return(theSubset)
+      }
+    } else{
+      theSubset <- subset(params, Iteration == 1 & Timestep == min_ts)
+      return(theSubset)
+    }
+  }
+  return(theSubset)
+}
+
+# which.min(abs(x - your.number))
+
+# Function to fill NA for wildcards
+
+fillWildcardTS <- function(x, fill, min_ts){
+  NACount <- sum(is.na(x))
+  if (NACount == length(x)){
+    # If all empty, assume current timestep
+    x[which(is.na(x))] <- fill
+  } else {
+    # otherwise, assume NAs are timestep 1
+    x[which(is.na(x))] <- min_ts
+  }
+  return(x)
+}
+
+fillWildcardITER <- function(x, fill){
+  # Fill NAs to iteration 1
+  x[which(is.na(x))] <- 1
+  return(x)
+}
+
+selectInputs <- function(rasters, vectors, column){
+  
+  columnRas <- paste0(column, "Ras")
+  columnVec <- paste0(column, "Vec")
+  
+  if(is.null(rasters[[columnRas]])){
+    if(is.null(vectors[[columnVec]])){
+      stop("Both esker vector and raster inputs are unspecified - please specify one")
+    } else {
+      theFile <- st_read(vectors[[columnVec]])
+    }
+  } else {
+    if(!is.null(vectors[[columnVec]])){
+      message("Both raster and vector outputs have been specified. Loading raster.")
+    }
+    theFile <- raster(rasters[[columnRas]])
+  }
+  return(theFile)
+}
