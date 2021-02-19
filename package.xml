@@ -12,6 +12,8 @@
       </runtime>
       <include>
         <transformer name="corestime_Runtime"/>
+        <transformer name="ProcessSpadesOutputs"/>
+        <transformer name="RunCaribouRSF"/>
       </include>
     </transformer>
     <transformer
@@ -181,6 +183,11 @@
       <item name="FriLookUpTable"/>
       <item name="CaribouRanges"/>
       <item name="Seasons" />
+      <group name="Pipeline">
+        <item name="core_Transformer"/>
+        <item name="core_StageName"/>
+        <item name="core_StageValue"/>        
+      </group>
     </layout>
     <layout name="coreforms_ScenarioDatafeeds">
       <item name="RunControl"/>
@@ -192,6 +199,7 @@
       <item name="CaribouRange"/>
       <item name="ModelOptions"/>
       <item name="OutputHabitatUse"/>
+      <item name="core_Pipeline"/>
     </layout>
     <!--Results transformer Layout-->
     <layout name="coreforms_ResultTransformers">
