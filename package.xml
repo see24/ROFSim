@@ -3,6 +3,7 @@
   name="ROFSim"
   displayName="ROF SyncroSim Package"
   version="0.2.5">
+  
   <!-- Transformers -->
   <transformers>
     <transformer name="Primary" isPrimary="True">
@@ -16,6 +17,7 @@
         <transformer name="RunCaribouRSF"/>
       </include>
     </transformer>
+    
     <transformer
       name="LoadSpadesOutputs"
       isRunnable="True"
@@ -23,6 +25,7 @@
       programName="Rscript"
       programArguments="load_spades_outputs.R">
       <datafeeds>
+        
         <!-- Scenario Datafeeds -->
         <datafeed name="InputSpadesObject" displayName="SpaDES" dataScope="Scenario">
           <datasheets>
@@ -34,8 +37,10 @@
             </datasheet>
           </datasheets>
         </datafeed>
+      
       </datafeeds>
     </transformer>
+    
     <transformer
       name="PrepareHabitatModel"
       isRunnable="True"
@@ -44,6 +49,7 @@
       programArguments="prepare_habitat_model.R">
       <!-- NO Datafeeds in this transformer-->
     </transformer>
+    
     <transformer
       name="RunCaribouRSF"
       isRunnable="True"
@@ -54,41 +60,43 @@
       configurationSheet="ROFSim_RunControl"
       programArguments="run_caribou_model.R">
       <datafeeds>
+        
         <!-- Project Datafeeds -->
-        <datafeed name="FriLookUpTable" displayName="Forest Units" dataScope="Project">
+        <datafeed name="ForestUnit" displayName="Forest Unit" dataScope="Project">
           <datasheets>
-            <datasheet name="FriLookUpTable" displayName="Forest Units">
+            <datasheet name="ForestUnit" displayName="Forest Unit">
               <columns>
-                <column name="FriLookUpTableID" dataType="Integer" isPrimary="True"/>
+                <column name="ForestUnitID" dataType="Integer" isPrimary="True"/>
                 <column name="ProjectID" dataType="Integer"/>
-                <column name="RFU" displayName="Forest Unit" dataType="String"/>
+                <column name="Name" displayName="Forest Unit" dataType="String"/>
                 <column name="ID" displayName="Forest Unit ID" dataType="Integer"/>
               </columns>
             </datasheet>
           </datasheets>
         </datafeed>
-        <datafeed name="CaribouRanges" displayName="Caribou Ranges" dataScope="Project">
+        <datafeed name="CaribouRange" displayName="Caribou Range" dataScope="Project">
           <datasheets>
-            <datasheet name="CaribouRanges" displayName="Caribou Ranges" valueMember="CaribouRangesID" displayMember="Ranges">
+            <datasheet name="CaribouRange" displayName="Caribou Range" valueMember="CaribouRangeID" displayMember="Name">
               <columns>
-                <column name="CaribouRangesID" dataType="Integer" isPrimary="True"/>
+                <column name="CaribouRangeID" dataType="Integer" isPrimary="True"/>
                 <column name="ProjectID" dataType="Integer"/>
-                <column name="Ranges" displayName="Range Name" dataType="String" allowDbNull="False"/>
+                <column name="Name" dataType="String" allowDbNull="False"/>
               </columns>
             </datasheet>
           </datasheets>
         </datafeed>
-        <datafeed name="Seasons" displayName="Seasons" dataScope="Project">
+        <datafeed name="Season" displayName="Season" dataScope="Project">
           <datasheets>
-            <datasheet name="Seasons" displayName="Seasons" valueMember="SeasonsID" displayMember="Season">
+            <datasheet name="Season" displayName="Season" valueMember="SeasonID" displayMember="Name">
               <columns>
-                <column name="SeasonsID" dataType="Integer" isPrimary="True"/>
+                <column name="SeasonID" dataType="Integer" isPrimary="True"/>
                 <column name="ProjectID" dataType="Integer"/>
-                <column name="Season" displayName="Season Name" dataType="String" allowDbNull="False"/>
+                <column name="Name" dataType="String" allowDbNull="False"/>
               </columns>
             </datasheet>
           </datasheets>
         </datafeed>
+        
         <!-- Scenario Datafeeds -->
         <datafeed name="RunControl" displayName="Run Control" dataScope="Scenario">
           <datasheets>
@@ -106,8 +114,16 @@
                 <validation validationType="LessEqual" columns="MinimumTimestep|MaximumTimestep"/>
               </validations>
             </datasheet>
+            <datasheet name="RunCaribouRange" displayName="Caribou Range">
+              <columns>
+                <column name="RunCaribouRangeID" dataType="Integer" isPrimary="True"/>
+                <column name="ScenarioID" dataType="Integer"/>
+                <column name="RangeID" dataType="Integer"/>
+              </columns>
+            </datasheet>
           </datasheets>
         </datafeed>
+        <!-- old Datafeeds
         <datafeed name="SpatialInputsRasters" displayName="Input Rasters" dataScope="Scenario">
           <datasheets>
             <datasheet name="SpatialInputsRasters" displayName="Rasters">
@@ -152,6 +168,7 @@
             </datasheet>
           </datasheets>
         </datafeed>
+        -->
         <datafeed name="ModelOptions" displayName="Model Options" dataScope="Scenario">
           <datasheets>
             <datasheet name="ModelOptions" displayName="Model Options" isSingleRow="True">
@@ -163,6 +180,8 @@
             </datasheet>
           </datasheets>
         </datafeed>
+        
+        <!-- Outputs Datafeeds --> 
         <datafeed name="OutputHabitatUse" displayName="Output Habitat Use" dataScope="Scenario" isOutput="True">
           <datasheets>
             <datasheet name="OutputHabitatUse" displayName="Output Habitat Use">
@@ -180,8 +199,11 @@
           </datasheets>
         </datafeed>
       </datafeeds>
+      
     </transformer>
+    
   </transformers>
+  
   <!-- Layouts -->
   <layouts>
     <layout name="coreforms_LibraryDatafeeds">
@@ -220,4 +242,5 @@
       </group>
     </layout>
   </layouts>
+
 </package>
