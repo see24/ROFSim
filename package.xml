@@ -17,11 +17,11 @@
       </include>
     </transformer>
     <transformer
-      name="ProcessSpadesOutputs"
+      name="LoadSpadesOutputs"
       isRunnable="True"
       runContext="LocalOnly"
       programName="Rscript"
-      programArguments="process_spades_outputs.R">
+      programArguments="load_spades_outputs.R">
       <datafeeds>
         <!-- Scenario Datafeeds -->
         <datafeed name="InputSpadesObject" displayName="SpaDES" dataScope="Scenario">
@@ -35,6 +35,13 @@
           </datasheets>
         </datafeed>
       </datafeeds>
+    </transformer>
+    <transformer
+      name="PrepareHabitatModel"
+      isRunnable="True"
+      runContext="LocalOnly"
+      programName="Rscript"
+      programArguments="prepare_habitat_model.R">
     </transformer>
     <transformer
       name="RunCaribouRSF"
