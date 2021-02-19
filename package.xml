@@ -145,6 +145,7 @@
             </datasheet>
           </datasheets>
         </datafeed>
+        
         <!-- old Datafeeds
         <datafeed name="SpatialInputsRasters" displayName="Input Rasters" dataScope="Scenario">
           <datasheets>
@@ -191,6 +192,7 @@
           </datasheets>
         </datafeed>
         -->
+        
         <datafeed name="ModelOptions" displayName="Model Options" dataScope="Scenario">
           <datasheets>
             <datasheet name="ModelOptions" displayName="Model Options" isSingleRow="True">
