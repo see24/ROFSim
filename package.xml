@@ -285,38 +285,56 @@
     <layout name="coreforms_LibraryDatafeeds">
       <item name="core_Rconfig"/>
     </layout>
+    
+     <!-- Project feeds layouts -->
     <layout name="coreforms_ProjectDatafeeds">
-      <item name="FriLookUpTable"/>
-      <item name="CaribouRanges"/>
-      <item name="Seasons" />
+      <item name="SpatialVariable"/>
+      <item name="TabularVariable"/>
+      <item name="ForestUnit"/>
+      <item name="LandCoverClass"/>
+      <item name="CaribouRange"/>
+      <item name="Seasons"/>
       <group name="Pipeline">
         <item name="core_Transformer"/>
         <item name="core_StageName"/>
         <item name="core_StageValue"/>        
       </group>
     </layout>
+    
+    <!-- Scenario feeds layouts -->
     <layout name="coreforms_ScenarioDatafeeds">
       <item name="RunControl"/>
       <item name="InputSpadesObject"/>
+      
+      <item name="SpatialVariableFiles"/>
+      <item name="TabularVariableValues"/>
+      
+      <!-- Old layouts
       <group name="SpatialInputs" displayName="Spatial Inputs">
         <item name="SpatialInputsRasters"/>
         <item name="SpatialInputsVectors"/>
       </group>
+      -->
+      
       <item name="CaribouRange"/>
       <item name="ModelOptions"/>
-      <item name="OutputHabitatUse"/>
+      <item name="OutputSpatialHabitat"/>
+      <item name="OutputHabitat"/>
       <item name="core_Pipeline"/>
     </layout>
+    
     <!--Results transformer Layout-->
     <layout name="coreforms_ResultTransformers">
       <item name="corestime_MapTransformer"/>
     </layout>
+    
     <!--Maps Layout-->
     <layout name="corestimeforms_Maps" configurationSheet="ROFSim_RunControl">
       <group name="OutputHabitatUse" displayName="Habitat Use">
         <item name="HabitatUse" displayName="Season" dataSheet="ROFSim_OutputHabitatUse" column="HabitatUse" filter="Season"/>
       </group>
     </layout>
+  
   </layouts>
 
 </package>
