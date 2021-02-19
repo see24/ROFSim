@@ -96,6 +96,18 @@
             </datasheet>
           </datasheets>
         </datafeed>
+        <datafeed name="LandCoverClass" displayName="Land Cover Class" dataScope="Project">
+          <datasheets>
+            <datasheet name="LandCoverClass" displayName="Land Cover Class">
+              <columns>
+                <column name="LandCoverClassID" dataType="Integer" isPrimary="True"/>
+                <column name="ProjectID" dataType="Integer"/>
+                <column name="Name" dataType="String"/>
+                <column name="ID" dataType="Integer"/>
+              </columns>
+            </datasheet>
+          </datasheets>
+        </datafeed>
         <datafeed name="CaribouRange" displayName="Caribou Range" dataScope="Project">
           <datasheets>
             <datasheet name="CaribouRange" displayName="Caribou Range" valueMember="CaribouRangeID" displayMember="Name">
