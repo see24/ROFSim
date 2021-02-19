@@ -42,6 +42,7 @@
       runContext="LocalOnly"
       programName="Rscript"
       programArguments="prepare_habitat_model.R">
+      <!-- NO Datafeeds in this transformer-->
     </transformer>
     <transformer
       name="RunCaribouRSF"
