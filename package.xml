@@ -242,22 +242,38 @@
         </datafeed>
         
         <!-- Outputs Datafeeds --> 
-        <datafeed name="OutputHabitatUse" displayName="Output Habitat Use" dataScope="Scenario" isOutput="True">
+        <datafeed name="OutputSpatialHabitat" displayName="Output Habitat Spatial" dataScope="Scenario" isOutput="True">
           <datasheets>
-            <datasheet name="OutputHabitatUse" displayName="Output Habitat Use">
+            <datasheet name="OutputSpatialHabitat" displayName="Output Habitat Spatial">
               <columns>
-                <column name="OutputHabitatUseID" dataType="Integer" isPrimary="True"/>
+                <column name="OutputSpatialHabitatID" dataType="Integer" isPrimary="True"/>
                 <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
                 <column name="ScenarioID" dataType="Integer"/>
-                <column name="Range" displayName="Range Name" dataType="Integer" validationType="Datasheet" formula1="CaribouRange" allowDbNull="False"/>
-                <column name="Season" displayName="Season Name" dataType="Integer" validationType="Datasheet" formula1="Season" allowDbNull="False"/>
-                <column name="HabitatUse" displayName="Habitat Use" dataType="String" isExternalFile="True" isRaster="True" bandColumn="Band" bandFilterColumn="Season" allowDbNull="False" filenameCode="habuse"/>
+                <column name="RangeID" dataType="Integer" validationType="Datasheet" formula1="CaribouRange" allowDbNull="False"/>
+                <column name="SeasonID" dataType="Integer" validationType="Datasheet" formula1="Season" allowDbNull="False"/>
+                <column name="FileName" dataType="String" isExternalFile="True" isRaster="True" bandColumn="Band" bandFilterColumn="Season" allowDbNull="False" filenameCode="habuse"/>
                 <column name="Band" dataType="Integer" isOptional="True"/>
               </columns>
             </datasheet>
           </datasheets>
         </datafeed>
+        <datafeed name="OutputHabitat" displayName="Output Habitat " dataScope="Scenario" isOutput="True">
+          <datasheets>
+            <datasheet name="OutputHabitat" displayName="Output Habitat">
+              <columns>
+                <column name="OutputHabitatID" dataType="Integer" isPrimary="True"/>
+                <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
+                <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
+                <column name="ScenarioID" dataType="Integer"/>
+                <column name="RangeID" dataType="Integer" validationType="Datasheet" formula1="CaribouRange" allowDbNull="False"/>
+                <column name="SeasonID" dataType="Integer" validationType="Datasheet" formula1="Season" allowDbNull="False"/>
+                <column name="Amount" dataType="Integer" />
+              </columns>
+            </datasheet>
+          </datasheets>
+        </datafeed>
+        
       </datafeeds>
       
     </transformer>
