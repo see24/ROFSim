@@ -18,7 +18,7 @@
     </transformer>
     <transformer
       name="ProcessSpadesOutputs"
-      userRunnable="True"
+      isRunnable="True"
       runContext="LocalOnly"
       programName="Rscript"
       programArguments="process_spades_outputs.R">
@@ -38,7 +38,7 @@
     </transformer>
     <transformer
       name="RunCaribouRSF"
-      userRunnable="True"
+      isRunnable="True"
       runContext="AllowRemote"
       programName="Rscript"
       className="SyncroSim.StochasticTime.StochasticTimeTransformer"
