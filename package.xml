@@ -214,8 +214,8 @@
                 <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
                 <column name="ScenarioID" dataType="Integer"/>
-                <column name="Range" displayName="Range Name" dataType="Integer" validationType="Datasheet" formula1="CaribouRanges" allowDbNull="False"/>
-                <column name="Season" displayName="Season Name" dataType="Integer" validationType="Datasheet" formula1="Seasons" allowDbNull="False"/>
+                <column name="Range" displayName="Range Name" dataType="Integer" validationType="Datasheet" formula1="CaribouRange" allowDbNull="False"/>
+                <column name="Season" displayName="Season Name" dataType="Integer" validationType="Datasheet" formula1="Season" allowDbNull="False"/>
                 <column name="HabitatUse" displayName="Habitat Use" dataType="String" isExternalFile="True" isRaster="True" bandColumn="Band" bandFilterColumn="Season" allowDbNull="False" filenameCode="habuse"/>
                 <column name="Band" dataType="Integer" isOptional="True"/>
               </columns>
