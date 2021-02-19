@@ -120,6 +120,32 @@
         </datafeed>
         
         <!-- Scenario Datafeeds -->
+        <datafeed name="SpatialVariableFiles" displayName="Spatial Variable Files" dataScope="Scenario">
+          <datasheets>
+            <datasheet name="SpatialVariableFiles" displayName="Spatial Variable Files">
+              <columns>
+                <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
+                <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
+                <column name="SpatialVariable" dataType="String"/>
+                <column name="File" dataType="String"/>
+              </columns>
+            </datasheet>
+          </datasheets>
+        </datafeed>
+        
+        <datafeed name="TabularVariableValues" displayName="Tabular Variable Values" dataScope="Scenario">
+          <datasheets>
+            <datasheet name="TabularVariableValues" displayName="Tabular Variable Values">
+              <columns>
+                <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
+                <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
+                <column name="TabularVariable" dataType="String"/>
+                <column name="Value" dataType="Integer"/>
+              </columns>
+            </datasheet>
+          </datasheets>
+        </datafeed>
+        
         <datafeed name="RunControl" displayName="Run Control" dataScope="Scenario">
           <datasheets>
             <datasheet name="RunControl" displayName="Run Control" isSingleRow="True">
