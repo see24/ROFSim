@@ -62,14 +62,38 @@
       <datafeeds>
         
         <!-- Project Datafeeds -->
+        <datafeed name="SpatialVariable" displayName="Spatial Variable" dataScope="Project">
+          <datasheets>
+            <datasheet name="Spatial Variable" displayName="Spatial Variable">
+              <columns>
+                <column name="VariableID" dataType="Integer" isPrimary="True"/>
+                <column name="ProjectID" dataType="Integer"/>
+                <column name="VariableName" dataType="String"/>
+              </columns>
+            </datasheet>
+          </datasheets>
+        </datafeed>
+        
+        <datafeed name="TabularVariable" displayName="Tabular Variable" dataScope="Project">
+          <datasheets>
+            <datasheet name="TabularVariable" displayName="Tabular Variable">
+              <columns>
+                <column name="VariableID" dataType="Integer" isPrimary="True"/>
+                <column name="ProjectID" dataType="Integer"/>
+                <column name="VariableName" dataType="String"/>
+              </columns>
+            </datasheet>
+          </datasheets>
+        </datafeed>
+              
         <datafeed name="ForestUnit" displayName="Forest Unit" dataScope="Project">
           <datasheets>
             <datasheet name="ForestUnit" displayName="Forest Unit">
               <columns>
                 <column name="ForestUnitID" dataType="Integer" isPrimary="True"/>
                 <column name="ProjectID" dataType="Integer"/>
-                <column name="Name" displayName="Forest Unit" dataType="String"/>
-                <column name="ID" displayName="Forest Unit ID" dataType="Integer"/>
+                <column name="Name" dataType="String"/>
+                <column name="ID" dataType="Integer"/>
               </columns>
             </datasheet>
           </datasheets>
