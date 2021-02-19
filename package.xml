@@ -73,7 +73,6 @@
             </datasheet>
           </datasheets>
         </datafeed>
-        
         <datafeed name="TabularVariable" displayName="Tabular Variable" dataScope="Project">
           <datasheets>
             <datasheet name="TabularVariable" displayName="Tabular Variable">
@@ -85,7 +84,6 @@
             </datasheet>
           </datasheets>
         </datafeed>
-              
         <datafeed name="ForestUnit" displayName="Forest Unit" dataScope="Project">
           <datasheets>
             <datasheet name="ForestUnit" displayName="Forest Unit">
