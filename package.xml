@@ -141,7 +141,7 @@
                 <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
                 <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
-                <column name="SpatialVariable" dataType="String" validationType="Datasheet" formula1="SpatialVariable"/>
+                <column name="SpatialVariable" dataType="Integer" validationType="Datasheet" formula1="SpatialVariable"/>
                 <column name="File" dataType="String"/>
               </columns>
             </datasheet>
@@ -154,7 +154,7 @@
                 <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
                 <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
-                <column name="TabularVariable" dataType="String" validationType="Datasheet" formula1="TabularVariable"/>
+                <column name="TabularVariable" dataType="Integer" validationType="Datasheet" formula1="TabularVariable"/>
                 <column name="Value" dataType="Integer"/>
               </columns>
             </datasheet>
@@ -309,7 +309,6 @@
     <layout name="coreforms_ScenarioDatafeeds">
       <item name="RunControl"/>
       <item name="InputSpadesObject"/>
-      
       <item name="SpatialVariableFiles"/>
       <item name="TabularVariableValues"/>
       
@@ -322,8 +321,8 @@
       
       <!-- <item name="RunCaribouRange"/> -->
       <item name="ModelOptions"/>
-      <item name="OutputSpatialHabitat"/>
       <item name="OutputHabitat"/>
+      <item name="OutputSpatialHabitat"/>
       <item name="core_Pipeline"/>
     </layout>
     
