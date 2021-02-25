@@ -136,6 +136,7 @@
           <datasheets>
             <datasheet name="SpatialVariableFiles" displayName="Spatial Variable Files">
               <columns>
+                <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
                 <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
                 <column name="SpatialVariable" dataType="String" validationType="Datasheet" formula1="SpatialVariable"/>
@@ -148,6 +149,7 @@
           <datasheets>
             <datasheet name="TabularVariableValues" displayName="Tabular Variable Values">
               <columns>
+                <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
                 <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
                 <column name="TabularVariable" dataType="String" validationType="Datasheet" formula1="TabularVariable"/>
