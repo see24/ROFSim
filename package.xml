@@ -297,7 +297,7 @@
       <item name="ForestUnit"/>
       <item name="LandCoverClass"/>
       <item name="CaribouRange"/>
-      <item name="Seasons"/>
+      <item name="Season"/>
       <group name="Pipeline">
         <item name="core_Transformer"/>
         <item name="core_StageName"/>
@@ -320,7 +320,7 @@
       </group>
       -->
       
-      <item name="CaribouRange"/>
+      <item name="RunCaribouRange"/>
       <item name="ModelOptions"/>
       <item name="OutputSpatialHabitat"/>
       <item name="OutputHabitat"/>
