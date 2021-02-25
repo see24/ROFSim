@@ -8,12 +8,14 @@
   <transformers>
     <transformer name="Primary" isPrimary="True">
       <runtime>
-        <transformer name="ProcessSpadesOutputs"/>
+        <transformer name="LoadSpadesOutputs"/>
+        <transformer name="PrepareHabitatModel"/>
         <transformer name="RunCaribouRSF"/>
       </runtime>
       <include>
         <transformer name="corestime_Runtime"/>
-        <transformer name="ProcessSpadesOutputs"/>
+        <transformer name="LoadSpadesOutputs"/>
+        <transformer name="PrepareHabitatModel"/>
         <transformer name="RunCaribouRSF"/>
       </include>
     </transformer>
