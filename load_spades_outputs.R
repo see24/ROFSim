@@ -12,6 +12,7 @@ library(qs)
 library(data.table)
 library(magrittr)
 library(dplyr)
+library(rlang)
 
 library(SpaDES.core)
 library(SpaDES.tools)
@@ -32,15 +33,25 @@ myDatasheetsNames <- myDatasheetsFiltered$name
 # Figure out variables to extract from spades -----------------------------
 
 # Get all vars data
-allSpatialVars <- datasheet(mySce, "ROFSim_SpatialVariable") %>% 
+allSpatialVars <- datasheet(mySce, "ROFSim_SpatialVariable", lookupsAsFactors = FALSE) %>% 
   mutate(type = "spatial")
-allTabularVars <- datasheet(mySce, "ROFSim_TabularVariable") %>% 
+allTabularVars <- datasheet(mySce, "ROFSim_TabularVariable", lookupsAsFactors = FALSE) %>% 
   mutate(type = "tabular")
 
-AllVars <- rbind(allSpatialVars, allTabularVars)
+allVars <- rbind(allSpatialVars, allTabularVars)
 
-spatialVarsSources <- datasheet(mySce, "ROFSim_SpatialVariableSources")
-tabularVarsSources <- datasheet(mySce, "ROFSim_TabularVariableSources")
+spatialVarsSources <- datasheet(mySce, "ROFSim_SpatialVariableSources", lookupsAsFactors = FALSE)
+tabularVarsSources <- datasheet(mySce, "ROFSim_TabularVariableSources", lookupsAsFactors = FALSE)
+
+# Join into one
+allVarsJoined <- left_join(allVars, spatialVarsSources, by = c("VariableName" = "SpatialVariable"))
+
+# TODO Can't join if datasheet is empty
+allVarsJoined <- left_join(allVars, spatialVarsSources, by = c("VariableName" = "SpatialVariable")) %>% 
+  left_join(tabularVarsSources,  by = c("VariableName" = "TabularVariable"))
+
+allVarsJoinedSpades <- allVarsJoined %>% 
+  filter(VariableSource == "SPADES")
 
 # Spades processing -------------------------------------------------------
 
@@ -74,6 +85,19 @@ cohort_data_summary <-
   cohort_data[,list(ageMax = max(age),
                     biomass = sum(B)),
               by = c("speciesCode", "pixelGroup")] ## takes max age within cohort
+
+test <- list(ageMax = expr(max(age)),
+              biomass =  expr(sum(B)))
+test <-c("age", "B")
+
+# THIS WILL ALLOW PROGRAMMAGIC ASSIGNMENT OF REDUCTION METHOD BASED ON VAR NAME
+cohort_data[ , lapply(.SD, function(x) {print(deparse(substitute(x)));sum(x)}), 
+  by = c("speciesCode", "pixelGroup"), .SD=test]
+
+cohort_data_summary <-
+  cohort_data[,test,
+              by = c("speciesCode", "pixelGroup")]
+head(cohort_data_summary)
 
 tmp <- list()
 for (species in unique(cohort_data$speciesCode)){
