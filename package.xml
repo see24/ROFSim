@@ -311,6 +311,7 @@
     <!-- Scenario feeds layouts -->
     <layout name="coreforms_ScenarioDatafeeds">
       <item name="RunControl"/>
+      <item name="RunCaribouRange"/>
       <item name="InputSpadesObject"/>
       <item name="SpatialVariableFiles"/>
       <item name="TabularVariableValues"/>
@@ -322,7 +323,6 @@
       </group>
       -->
       
-      <!-- <item name="RunCaribouRange"/> -->
       <item name="ModelOptions"/>
       <item name="OutputHabitat"/>
       <item name="OutputSpatialHabitat"/>
