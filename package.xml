@@ -332,8 +332,12 @@
       -->
       
       <item name="ModelOptions"/>
-      <item name="OutputHabitat"/>
-      <item name="OutputSpatialHabitat"/>
+      
+      <group name="Outputs" displayName="Outputs">
+        <item name="OutputHabitat"/>
+        <item name="OutputSpatialHabitat"/>
+      </group>
+      
       <item name="core_Pipeline"/>
     </layout>
     
