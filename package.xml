@@ -193,7 +193,7 @@
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
                 <column name="TabularVariable" dataType="Integer" validationType="Datasheet" formula1="TabularVariable"/>
                 <column name="Value" dataType="Integer"/>
-                <column name="FileSource" dataType="Integer" validationType="Datasheet" formula1="FileSource"/>
+                <!-- <column name="VariableSource" dataType="Integer" validationType="Datasheet" formula1="VariableSource"/> -->
               </columns>
             </datasheet>
           </datasheets>
