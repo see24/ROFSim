@@ -20,13 +20,13 @@ optArg <- function(arg){
 
 GetDataSheetExpectData <- function(name, ssimObj) {
   ds = datasheet(ssimObj, name)
-  if (nrow(ds) == 0) { stop(paste0("No data for: ", name)) }
+  if (nrow(ds) == 0) { warning(paste0("No data for: ", name)) }
   return(ds)
 }
 
 GetSingleValueExpectData <- function(df, name) {
   v = df[, name]
-  if (is.na(v)) { stop(paste0("Missing data for: ", name)) }
+  if (is.na(v)) { warning(paste0("Missing data for: ", name)) }
   return(v)
 }
 
