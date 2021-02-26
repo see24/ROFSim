@@ -312,11 +312,17 @@
     
     <!-- Scenario feeds layouts -->
     <layout name="coreforms_ScenarioDatafeeds">
-      <item name="RunControl"/>
-      <item name="RunCaribouRange"/>
-      <item name="InputSpadesObject"/>
-      <item name="SpatialVariableFiles"/>
-      <item name="TabularVariableValues"/>
+      
+      <group name="RunControlAll" displayName="Run Control">
+        <item name="RunControl"/>
+        <item name="RunCaribouRange"/>
+      </group>
+      
+      <group name="Inputs" displayName="Inputs">
+        <item name="InputSpadesObject"/>
+        <item name="SpatialVariableFiles"/>
+        <item name="TabularVariableValues"/>
+      </group>
       
       <!-- Old layouts
       <group name="SpatialInputs" displayName="Spatial Inputs">
@@ -338,8 +344,8 @@
     
     <!--Maps Layout-->
     <layout name="corestimeforms_Maps" configurationSheet="ROFSim_RunControl">
-      <group name="OutputHabitatUse" displayName="Habitat Use">
-        <item name="HabitatUse" displayName="Season" dataSheet="ROFSim_OutputHabitatUse" column="HabitatUse" filter="Season"/>
+      <group name="OutputHabitat" displayName="Habitat">
+        <item name="OutputSpatialHabitat" displayName="Season" dataSheet="ROFSim_OutputSpatialHabitat" column="FileName" filter="SeasonID"/>
       </group>
     </layout>
   
