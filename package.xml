@@ -213,7 +213,7 @@
             </datasheet>
           </datasheets>  
         </datafeed>
-        <datafeed name="RunCaribouRange" displayName="Run Caribou Range" dataScope="Scenario", isSingleRow="True">
+        <datafeed name="RunCaribouRange" displayName="Run Caribou Range" dataScope="Scenario" isSingleRow="True">
           <datasheets>
             <datasheet name="RunCaribouRange" displayName="Caribou Range">
               <columns>
