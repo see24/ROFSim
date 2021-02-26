@@ -28,41 +28,6 @@
       programArguments="load_spades_outputs.R">
       <datafeeds>
         
-        <!-- Scenario Datafeeds -->
-        <datafeed name="InputSpadesObject" displayName="SpaDES" dataScope="Scenario">
-          <datasheets>
-            <datasheet name="InputSpadesObject" displayName="SpaDES" isSingleRow="True">
-              <columns>
-                <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
-                <column name="Filename" displayName="SpaDES Object Path" dataType="String" allowDbNull="False" isExternalFile="True"/>
-              </columns>
-            </datasheet>
-          </datasheets>
-        </datafeed>
-      
-      </datafeeds>
-    </transformer>
-    
-    <transformer
-      name="PrepareHabitatModel"
-      isRunnable="True"
-      runContext="LocalOnly"
-      programName="Rscript"
-      programArguments="prepare_habitat_model.R">
-      <!-- NO Datafeeds in this transformer-->
-    </transformer>
-    
-    <transformer
-      name="RunCaribouRSF"
-      isRunnable="True"
-      runContext="AllowRemote"
-      programName="Rscript"
-      className="SyncroSim.StochasticTime.StochasticTimeTransformer"
-      classAssembly="SyncroSim.StochasticTime"
-      configurationSheet="ROFSim_RunControl"
-      programArguments="run_caribou_model.R">
-      <datafeeds>
-        
         <!-- Project Datafeeds -->
         <datafeed name="SpatialVariable" displayName="Spatial Variable" dataScope="Project">
           <datasheets>
@@ -146,6 +111,18 @@
         </datafeed>
         
         <!-- Scenario Datafeeds -->
+        <!-- Spades -->
+        <datafeed name="InputSpadesObject" displayName="SpaDES" dataScope="Scenario">
+          <datasheets>
+            <datasheet name="InputSpadesObject" displayName="SpaDES" isSingleRow="True">
+              <columns>
+                <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
+                <column name="Filename" displayName="SpaDES Object Path" dataType="String" allowDbNull="False" isExternalFile="True"/>
+              </columns>
+            </datasheet>
+          </datasheets>
+        </datafeed>
+        
         <!-- Spatial Variables -->
         <!-- Raster -->
         <datafeed name="RasterVariableFiles" displayName="Raster Variable Files" dataScope="Scenario">
@@ -224,6 +201,32 @@
             </datasheet>
           </datasheets>
         </datafeed>
+      
+      </datafeeds>
+    </transformer>
+    
+    <transformer
+      name="PrepareHabitatModel"
+      isRunnable="True"
+      runContext="LocalOnly"
+      programName="Rscript"
+      programArguments="prepare_habitat_model.R">
+      <!-- NO Datafeeds in this transformer YET-->
+      <!-- TODO Examine what must be added -->
+    </transformer>
+    
+    <transformer
+      name="RunCaribouRSF"
+      isRunnable="True"
+      runContext="AllowRemote"
+      programName="Rscript"
+      className="SyncroSim.StochasticTime.StochasticTimeTransformer"
+      classAssembly="SyncroSim.StochasticTime"
+      configurationSheet="ROFSim_RunControl"
+      programArguments="run_caribou_model.R">
+      <datafeeds>
+        
+        <!-- Scenario Datafeeds -->
         <datafeed name="ModelOptions" displayName="Model Options" dataScope="Scenario">
           <datasheets>
             <datasheet name="ModelOptions" displayName="Model Options" isSingleRow="True">
