@@ -133,6 +133,18 @@
           </datasheets>
         </datafeed>
         
+        <datafeed name="FileSource" displayName="File Source" dataScope="Project">
+          <datasheets>
+            <datasheet name="FileSource" displayName="File Source" valueMember="FileSourceID" displayMember="Name">
+              <columns>
+                <column name="FileSourceID" dataType="Integer" isPrimary="True"/>
+                <column name="ProjectID" dataType="Integer"/>
+                <column name="Name" dataType="String" allowDbNull="False"/>
+              </columns>
+            </datasheet>
+          </datasheets>
+        </datafeed>
+        
         <!-- Scenario Datafeeds -->
         <!-- Spatial Variables -->
         <!-- Raster -->
@@ -146,6 +158,7 @@
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
                 <column name="SpatialVariable" dataType="Integer" validationType="Datasheet" formula1="SpatialVariable"/>
                 <column name="File" dataType="String" isExternalFile="True" allowDbNull="True" isRaster="True"/>
+                <column name="FileSource" dataType="Integer" validationType="Datasheet" formula1="FileSource"/>
               </columns>
             </datasheet>
           </datasheets>
@@ -161,6 +174,7 @@
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
                 <column name="SpatialVariable" dataType="Integer" validationType="Datasheet" formula1="SpatialVariable"/>
                 <column name="File" dataType="String"/>
+                <column name="FileSource" dataType="Integer" validationType="Datasheet" formula1="FileSource"/>
               </columns>
             </datasheet>
           </datasheets>
@@ -176,6 +190,7 @@
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
                 <column name="TabularVariable" dataType="Integer" validationType="Datasheet" formula1="TabularVariable"/>
                 <column name="Value" dataType="Integer"/>
+                <column name="FileSource" dataType="Integer" validationType="Datasheet" formula1="FileSource"/>
               </columns>
             </datasheet>
           </datasheets>
@@ -279,6 +294,7 @@
         <item name="core_StageName"/>
         <item name="core_StageValue"/>        
       </group>
+      <group name="FileSource">
     </layout>
     
     <!-- Scenario feeds layouts -->
