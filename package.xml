@@ -66,7 +66,7 @@
         <!-- Project Datafeeds -->
         <datafeed name="SpatialVariable" displayName="Spatial Variable" dataScope="Project">
           <datasheets>
-            <datasheet name="SpatialVariable" displayName="Spatial Variable" valueMember="VariableID" displayMember="VariableName">
+            <datasheet name="SpatialVariable" displayName="Spatial Variable" valueMember="SpatialVariableID" displayMember="VariableName">
               <columns>
                 <column name="SpatialVariableID" dataType="Integer" isPrimary="True"/>
                 <column name="ProjectID" dataType="Integer"/>
@@ -77,7 +77,7 @@
         </datafeed>
         <datafeed name="TabularVariable" displayName="Tabular Variable" dataScope="Project">
           <datasheets>
-            <datasheet name="TabularVariable" displayName="Tabular Variable" valueMember="VariableID" displayMember="VariableName">
+            <datasheet name="TabularVariable" displayName="Tabular Variable" valueMember="TabularVariableID" displayMember="VariableName">
               <columns>
                 <column name="TabularVariableID" dataType="Integer" isPrimary="True"/>
                 <column name="ProjectID" dataType="Integer"/>
