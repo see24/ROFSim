@@ -294,7 +294,7 @@
         <item name="core_StageName"/>
         <item name="core_StageValue"/>        
       </group>
-      <group name="FileSource">
+      <item name="FileSource"/>
     </layout>
     
     <!-- Scenario feeds layouts -->
