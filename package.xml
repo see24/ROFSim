@@ -98,11 +98,11 @@
           </datasheets>
         </datafeed>
         
-        <datafeed name="FileSource" displayName="File Source" dataScope="Project">
+        <datafeed name="VariableSource" displayName="Variable Source" dataScope="Project">
           <datasheets>
-            <datasheet name="FileSource" displayName="File Source" valueMember="FileSourceID" displayMember="Name">
+            <datasheet name="VariableSource" displayName="Variable Source" valueMember="VariableSourceID" displayMember="Name">
               <columns>
-                <column name="FileSourceID" dataType="Integer" isPrimary="True"/>
+                <column name="VariableSourceID" dataType="Integer" isPrimary="True"/>
                 <column name="ProjectID" dataType="Integer"/>
                 <column name="Name" dataType="String" allowDbNull="False"/>
               </columns>
@@ -123,6 +123,30 @@
           </datasheets>
         </datafeed>
         
+        <datafeed name="SpatialVariableSources" displayName="Spatial Variable Sources" dataScope="Scenario">
+          <datasheets>
+            <datasheet name="SpatialVariableSources" displayName="Spatial Variable Sources" >
+              <columns>
+                <column name="SpatialVariableSourcesID" dataType="Integer" isPrimary="True"/>
+                <column name="SpatialVariable" dataType="Integer" validationType="Datasheet" formula1="SpatialVariable"/>
+                <column name="VariableSource" dataType="Integer" validationType="Datasheet" formula1="VariableSource"/>
+              </columns>
+            </datasheet>
+          </datasheets>
+        </datafeed>
+        
+        <datafeed name="TabularVariableSources" displayName="Tabular Variable Sources" dataScope="Scenario">
+          <datasheets>
+            <datasheet name="TabularVariableSources" displayName="Tabular Variable Sources" >
+              <columns>
+                <column name="TabularVariableSourcesID" dataType="Integer" isPrimary="True"/>
+                <column name="TabularVariable" dataType="Integer" validationType="Datasheet" formula1="TabularVariable"/>
+                <column name="VariableSource" dataType="Integer" validationType="Datasheet" formula1="VariableSource"/>
+              </columns>
+            </datasheet>
+          </datasheets>
+        </datafeed>
+        
         <!-- Spatial Variables -->
         <!-- Raster -->
         <datafeed name="RasterVariableFiles" displayName="Raster Variable Files" dataScope="Scenario">
@@ -135,7 +159,7 @@
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
                 <column name="SpatialVariable" dataType="Integer" validationType="Datasheet" formula1="SpatialVariable"/>
                 <column name="File" dataType="String" isExternalFile="True" allowDbNull="True" isRaster="True"/>
-                <column name="FileSource" dataType="Integer" validationType="Datasheet" formula1="FileSource"/>
+                <!-- <column name="VariableSource" dataType="Integer" validationType="Datasheet" formula1="VariableSource"/> -->
               </columns>
             </datasheet>
           </datasheets>
@@ -151,7 +175,7 @@
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
                 <column name="SpatialVariable" dataType="Integer" validationType="Datasheet" formula1="SpatialVariable"/>
                 <column name="File" dataType="String"/>
-                <column name="FileSource" dataType="Integer" validationType="Datasheet" formula1="FileSource"/>
+                <!-- <column name="VariableSource" dataType="Integer" validationType="Datasheet" formula1="VariableSource"/> -->
               </columns>
             </datasheet>
           </datasheets>
@@ -297,23 +321,31 @@
         <item name="core_StageName"/>
         <item name="core_StageValue"/>        
       </group>
-      <item name="FileSource"/>
+      <item name="VariableSource"/>
     </layout>
     
     <!-- Scenario feeds layouts -->
     <layout name="coreforms_ScenarioDatafeeds">
       
+      <group name="VariableSourcesAll" displayName="Variable Sources">
+        <item name="SpatialVariableSources"/>
+        <item name="TabularVariableSources"/>
+      </group>
+      
       <group name="RunControlAll" displayName="Run Control">
         <item name="RunControl"/>
         <item name="RunCaribouRange"/>
       </group>
+      
       <item name="ModelOptions"/>
+      
       <group name="Inputs" displayName="Inputs">
         <item name="InputSpadesObject"/>
         <item name="RasterVariableFiles"/>
         <item name="OtherSpatialVariableFiles"/>
         <item name="TabularVariableValues"/>
       </group>
+      
       <group name="Outputs" displayName="Outputs">
         <item name="OutputHabitat"/>
         <item name="OutputSpatialHabitat"/>
