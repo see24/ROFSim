@@ -177,6 +177,8 @@
                 <validation validationType="LessEqual" columns="MinimumTimestep|MaximumTimestep"/>
               </validations>
             </datasheet>
+        </datafeed>
+        <datafeed name="RunCaribouRange" displayName="Run Caribou Range" dataScope="Scenario">
             <datasheet name="RunCaribouRange" displayName="Caribou Range">
               <columns>
                 <column name="RunCaribouRangeID" dataType="Integer" isPrimary="True"/>
