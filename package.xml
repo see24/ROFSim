@@ -128,6 +128,7 @@
             <datasheet name="SpatialVariableSources" displayName="Spatial Variable Sources" >
               <columns>
                 <column name="SpatialVariableSourcesID" dataType="Integer" isPrimary="True"/>
+                <column name="ScenarioID" dataType="Integer"/>
                 <column name="SpatialVariable" dataType="Integer" validationType="Datasheet" formula1="SpatialVariable"/>
                 <column name="VariableSource" dataType="Integer" validationType="Datasheet" formula1="VariableSource"/>
               </columns>
@@ -140,6 +141,7 @@
             <datasheet name="TabularVariableSources" displayName="Tabular Variable Sources" >
               <columns>
                 <column name="TabularVariableSourcesID" dataType="Integer" isPrimary="True"/>
+                <column name="ScenarioID" dataType="Integer"/>
                 <column name="TabularVariable" dataType="Integer" validationType="Datasheet" formula1="TabularVariable"/>
                 <column name="VariableSource" dataType="Integer" validationType="Datasheet" formula1="VariableSource"/>
               </columns>
