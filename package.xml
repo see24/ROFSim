@@ -172,35 +172,6 @@
             </datasheet>
           </datasheets>
         </datafeed>
-        <datafeed name="RunControl" displayName="Run Control" dataScope="Scenario">
-          <datasheets>
-            <datasheet name="RunControl" displayName="Run Control" isSingleRow="True">
-              <columns>
-                <column name="RunControlID" dataType="Integer" isPrimary="True"/>
-                <column name="ScenarioID" dataType="Integer"/>
-                <column name="MinimumIteration" isVisible="False" displayName="Minimum Iteration" dataType="Integer" defaultValue="1" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="1" format="d"/>
-                <column name="MaximumIteration" displayName="Total Iterations" dataType="Integer" defaultValue="1" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="1" format="d"/>
-                <column name="MinimumTimestep" displayName="Minimum Timestep" dataType="Integer" defaultValue="0" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" format="d"/>
-                <column name="MaximumTimestep" displayName="Maximum Timestep" dataType="Integer" defaultValue="0" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" format="d"/>
-              </columns>
-              <validations>
-                <validation validationType="LessEqual" columns="MinimumIteration|MaximumIteration"/>
-                <validation validationType="LessEqual" columns="MinimumTimestep|MaximumTimestep"/>
-              </validations>
-            </datasheet>
-          </datasheets>  
-        </datafeed>
-        <datafeed name="RunCaribouRange" displayName="Run Caribou Range" dataScope="Scenario" isSingleRow="True">
-          <datasheets>
-            <datasheet name="RunCaribouRange" displayName="Caribou Range">
-              <columns>
-                <column name="RunCaribouRangeID" dataType="Integer" isPrimary="True"/>
-                <column name="ScenarioID" dataType="Integer"/>
-                <column name="RangeID" dataType="Integer" validationType="Datasheet" formula1="CaribouRange"/>
-              </columns>
-            </datasheet>
-          </datasheets>
-        </datafeed>
       
       </datafeeds>
     </transformer>
@@ -234,6 +205,35 @@
                 <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
                 <column name="PadProjPoly" displayName="Project Polygon Padding" dataType="Boolean"/>
                 <column name="PadFocal" displayName="Focal Padding" dataType="Boolean"/>
+              </columns>
+            </datasheet>
+          </datasheets>
+        </datafeed>
+        <datafeed name="RunControl" displayName="Run Control" dataScope="Scenario">
+          <datasheets>
+            <datasheet name="RunControl" displayName="Run Control" isSingleRow="True">
+              <columns>
+                <column name="RunControlID" dataType="Integer" isPrimary="True"/>
+                <column name="ScenarioID" dataType="Integer"/>
+                <column name="MinimumIteration" isVisible="False" displayName="Minimum Iteration" dataType="Integer" defaultValue="1" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="1" format="d"/>
+                <column name="MaximumIteration" displayName="Total Iterations" dataType="Integer" defaultValue="1" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="1" format="d"/>
+                <column name="MinimumTimestep" displayName="Minimum Timestep" dataType="Integer" defaultValue="0" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" format="d"/>
+                <column name="MaximumTimestep" displayName="Maximum Timestep" dataType="Integer" defaultValue="0" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" format="d"/>
+              </columns>
+              <validations>
+                <validation validationType="LessEqual" columns="MinimumIteration|MaximumIteration"/>
+                <validation validationType="LessEqual" columns="MinimumTimestep|MaximumTimestep"/>
+              </validations>
+            </datasheet>
+          </datasheets>  
+        </datafeed>
+        <datafeed name="RunCaribouRange" displayName="Run Caribou Range" dataScope="Scenario" isSingleRow="True">
+          <datasheets>
+            <datasheet name="RunCaribouRange" displayName="Caribou Range">
+              <columns>
+                <column name="RunCaribouRangeID" dataType="Integer" isPrimary="True"/>
+                <column name="ScenarioID" dataType="Integer"/>
+                <column name="RangeID" dataType="Integer" validationType="Datasheet" formula1="CaribouRange"/>
               </columns>
             </datasheet>
           </datasheets>
