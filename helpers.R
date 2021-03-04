@@ -141,6 +141,8 @@ fillWildcardITER <- function(x, fill){
   return(x)
 }
 
+# Function to discriminate raster/vectors inputs
+# TODO this might become obsolete
 selectInputs <- function(rasters, vectors, column){
   
   columnRas <- paste0(column, "Ras")
@@ -159,4 +161,9 @@ selectInputs <- function(rasters, vectors, column){
     theFile <- raster(rasters[[columnRas]])
   }
   return(theFile)
+}
+
+# Assign reduction function
+assignReductionFunction <- function(x) {
+  print(deparse(substitute(x)));
 }
