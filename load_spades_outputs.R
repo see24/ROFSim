@@ -91,7 +91,7 @@ test <- list(ageMax = expr(max(age)),
 test <-c("age", "B")
 
 # THIS WILL ALLOW PROGRAMMAGIC ASSIGNMENT OF REDUCTION METHOD BASED ON VAR NAME
-cohort_data[ , lapply(.SD, function(x) {print(deparse(substitute(x)));sum(x)}), 
+cohort_data[ , lapply(.SD, assign_reduction_function), 
   by = c("speciesCode", "pixelGroup"), .SD=test]
 
 cohort_data_summary <-
