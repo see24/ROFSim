@@ -117,7 +117,7 @@
             <datasheet name="InputSpadesObject" displayName="SpaDES" isSingleRow="True">
               <columns>
                 <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
-                <column name="Filename" displayName="SpaDES Object Path" dataType="String" allowDbNull="False" isExternalFile="True"/>
+                <column name="Filename" displayName="SpaDES Object Path" dataType="String" allowDbNull="False" isExternalFile="True" externalFileFilter="R data files |*.qs;*.txt;*.rds;*.rdata"/>
               </columns>
             </datasheet>
           </datasheets>
@@ -160,12 +160,13 @@
                 <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
                 <column name="SpatialVariable" dataType="Integer" validationType="Datasheet" formula1="SpatialVariable"/>
-                <column name="File" dataType="String" isExternalFile="True" allowDbNull="True" isRaster="True"/>
-                <!-- <column name="VariableSource" dataType="Integer" validationType="Datasheet" formula1="VariableSource"/> -->
+                <column name="File" dataType="String" isExternalFile="True" isRaster="True" allowDbNull="True" externalFileFilter="Rasters files (*.tif)|*.tif"/>
+                <column name="VariableSource" dataType="Integer" validationType="Datasheet" formula1="VariableSource"/>
               </columns>
             </datasheet>
           </datasheets>
         </datafeed>
+        
         <!-- Other, non-raster variables -->
         <datafeed name="OtherSpatialVariableFiles" displayName="Other Spatial Variable Files" dataScope="Scenario">
           <datasheets>
@@ -176,8 +177,8 @@
                 <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
                 <column name="SpatialVariable" dataType="Integer" validationType="Datasheet" formula1="SpatialVariable"/>
-                <column name="File" dataType="String"/>
-                <!-- <column name="VariableSource" dataType="Integer" validationType="Datasheet" formula1="VariableSource"/> -->
+                <column name="File" dataType="String" isExternalFile="True" allowDbNull="True" includeExtensions="*.shp|*.shx|*.dbf|*.prj" externalFileFilter="ShapeFiles (*.shp)|*.shp"/>
+                <column name="VariableSource" dataType="Integer" validationType="Datasheet" formula1="VariableSource"/>
               </columns>
             </datasheet>
           </datasheets>
@@ -193,7 +194,7 @@
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
                 <column name="TabularVariable" dataType="Integer" validationType="Datasheet" formula1="TabularVariable"/>
                 <column name="Value" dataType="Integer"/>
-                <!-- <column name="VariableSource" dataType="Integer" validationType="Datasheet" formula1="VariableSource"/> -->
+                <column name="VariableSource" dataType="Integer" validationType="Datasheet" formula1="VariableSource"/>
               </columns>
             </datasheet>
           </datasheets>
