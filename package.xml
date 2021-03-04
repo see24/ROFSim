@@ -161,7 +161,7 @@
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
                 <column name="SpatialVariable" dataType="Integer" validationType="Datasheet" formula1="SpatialVariable"/>
                 <column name="File" dataType="String" isExternalFile="True" isRaster="True" allowDbNull="True" externalFileFilter="Rasters files (*.tif)|*.tif"/>
-                <column name="VariableSource" dataType="Integer" validationType="Datasheet" formula1="VariableSource"/>
+                <column name="VariableSource" dataType="Integer" validationType="Datasheet" formula1="VariableSource" isOptional="True"/>
               </columns>
             </datasheet>
           </datasheets>
@@ -178,7 +178,7 @@
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
                 <column name="SpatialVariable" dataType="Integer" validationType="Datasheet" formula1="SpatialVariable"/>
                 <column name="File" dataType="String" isExternalFile="True" allowDbNull="True" includeExtensions="*.shp|*.shx|*.dbf|*.prj" externalFileFilter="ShapeFiles (*.shp)|*.shp"/>
-                <column name="VariableSource" dataType="Integer" validationType="Datasheet" formula1="VariableSource"/>
+                <column name="VariableSource" dataType="Integer" validationType="Datasheet" formula1="VariableSource" isOptional="True"/>
               </columns>
             </datasheet>
           </datasheets>
@@ -194,7 +194,7 @@
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
                 <column name="TabularVariable" dataType="Integer" validationType="Datasheet" formula1="TabularVariable"/>
                 <column name="Value" dataType="Integer"/>
-                <column name="VariableSource" dataType="Integer" validationType="Datasheet" formula1="VariableSource"/>
+                <column name="VariableSource" dataType="Integer" validationType="Datasheet" formula1="VariableSource" isOptional="True"/>
               </columns>
             </datasheet>
           </datasheets>
