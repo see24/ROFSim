@@ -153,7 +153,7 @@
         </datasheets>
       </datafeed>
 
-      <datafeed name="SpaDESRuntimeVariables" displayName="SpaDES Runtime Variables" dataScope="Scenario" isOutput="True">
+      <datafeed name="SpaDESRuntimeVariables" displayName="SpaDES Runtime Variables" dataScope="Scenario">
         <datasheets>
           <datasheet name="SpaDESRuntimeVariables" displayName="SpaDES Runtime Variables">
             <columns>
@@ -165,7 +165,7 @@
         </datasheets>
       </datafeed>
 
-      <datafeed name="SpaDESRuntimeRasters" displayName="SpaDES Runtime Rasters" dataScope="Scenario" isOutput="True">
+      <datafeed name="SpaDESRuntimeRasters" displayName="SpaDES Runtime Rasters" dataScope="Scenario">
         <datasheets>
           <datasheet name="SpaDESRuntimeRasters" displayName="SpaDES Runtime Rasters">
             <columns>
@@ -177,7 +177,7 @@
         </datasheets>
       </datafeed>
 
-      <datafeed name="SpaDESRuntimeFiles" displayName="SpaDES Runtime Files" dataScope="Scenario" isOutput="True">
+      <datafeed name="SpaDESRuntimeFiles" displayName="SpaDES Runtime Files" dataScope="Scenario">
         <datasheets>
           <datasheet name="SpaDESRuntimeFiles" displayName="SpaDES Runtime Files">
             <columns>
@@ -372,7 +372,7 @@
           <item name="RasterFile"/>
           <item name="ExternalFile"/>
         </group>
-        
+
       </group>
 
       <group name="Outputs" displayName="Outputs">
