@@ -22,6 +22,8 @@
         <transformer name="RunCaribouHabitatModel"/>
       </include>
 
+      <datafeeds>
+
       <!-- Project Datafeeds -->
 
       <datafeed name="Variable" displayName="Variables" dataScope="Project">
@@ -279,6 +281,8 @@
           </datasheet>
         </datasheets>
       </datafeed>
+
+    </datafeeds>
 
     </transformer>
 
