@@ -2,219 +2,301 @@
 <package
   name="ROFSim"
   displayName="ROF SyncroSim Package"
-  version="0.3.0">
-  
+  version="0.4.0">
+
   <!-- Transformers -->
   <transformers>
+
     <transformer name="Primary" isPrimary="True">
+
       <runtime>
         <transformer name="LoadSpadesOutputs"/>
-        <transformer name="PrepareHabitatModel"/>
-        <transformer name="RunCaribouRSF"/>
+        <transformer name="PrepareHabitatModelInputs"/>
+        <transformer name="RunCaribouHabitatModel"/>
       </runtime>
+
       <include>
         <transformer name="corestime_Runtime"/>
         <transformer name="LoadSpadesOutputs"/>
-        <transformer name="PrepareHabitatModel"/>
-        <transformer name="RunCaribouRSF"/>
+        <transformer name="PrepareHabitatModelInputs"/>
+        <transformer name="RunCaribouHabitatModel"/>
       </include>
+
+      <!-- Project Datafeeds -->
+
+      <datafeed name="Variable" displayName="Variables" dataScope="Project">
+        <datasheets>
+          <datasheet name="Variable" displayName="Variables" valueMember="VariableID" displayMember="Name">
+            <columns>
+              <column name="VariableID" dataType="Integer" isPrimary="True"/>
+              <column name="ProjectID" dataType="Integer"/>
+              <column name="Name" dataType="String"/>
+              <column name="Description" dataType="String" isOptional="True"/>
+            </columns>
+          </datasheet>
+        </datasheets>
+      </datafeed>
+
+      <datafeed name="RasterVariable" displayName="Raster Variables" dataScope="Project">
+        <datasheets>
+          <datasheet name="RasterVariable" displayName="Raster Variables" valueMember="RasterVariableID" displayMember="Name">
+            <columns>
+              <column name="RasterVariableID" dataType="Integer" isPrimary="True"/>
+              <column name="ProjectID" dataType="Integer"/>
+              <column name="Name" dataType="String"/>
+              <column name="Description" dataType="String" isOptional="True"/>
+            </columns>
+          </datasheet>
+        </datasheets>
+      </datafeed>
+
+      <datafeed name="FileVariable" displayName="File Variables" dataScope="Project">
+        <datasheets>
+          <datasheet name="FileVariable" displayName="File Variables" valueMember="FileVariableID" displayMember="Name">
+            <columns>
+              <column name="FileVariableID" dataType="Integer" isPrimary="True"/>
+              <column name="ProjectID" dataType="Integer"/>
+              <column name="Name" dataType="String"/>
+              <column name="Description" dataType="String" isOptional="True"/>
+            </columns>
+          </datasheet>
+        </datasheets>
+      </datafeed>
+
+      <datafeed name="ForestUnit" displayName="Forest Unit" dataScope="Project">
+        <datasheets>
+          <datasheet name="ForestUnit" displayName="Forest Unit">
+            <columns>
+              <column name="ForestUnitID" dataType="Integer" isPrimary="True"/>
+              <column name="ProjectID" dataType="Integer"/>
+              <column name="Name" dataType="String"/>
+              <column name="ID" dataType="Integer"/>
+            </columns>
+          </datasheet>
+        </datasheets>
+      </datafeed>
+
+      <datafeed name="LandCoverClass" displayName="Land Cover Class" dataScope="Project">
+        <datasheets>
+          <datasheet name="LandCoverClass" displayName="Land Cover Class">
+            <columns>
+              <column name="LandCoverClassID" dataType="Integer" isPrimary="True"/>
+              <column name="ProjectID" dataType="Integer"/>
+              <column name="Name" dataType="String"/>
+              <column name="ID" dataType="Integer"/>
+            </columns>
+          </datasheet>
+        </datasheets>
+      </datafeed>
+
+      <datafeed name="CaribouRange" displayName="Caribou Range" dataScope="Project">
+        <datasheets>
+          <datasheet name="CaribouRange" displayName="Caribou Range" valueMember="CaribouRangeID" displayMember="Name">
+            <columns>
+              <column name="CaribouRangeID" dataType="Integer" isPrimary="True"/>
+              <column name="ProjectID" dataType="Integer"/>
+              <column name="Name" dataType="String" allowDbNull="False"/>
+            </columns>
+          </datasheet>
+        </datasheets>
+      </datafeed>
+
+      <datafeed name="Season" displayName="Season" dataScope="Project">
+        <datasheets>
+          <datasheet name="Season" displayName="Season" valueMember="SeasonID" displayMember="Name">
+            <columns>
+              <column name="SeasonID" dataType="Integer" isPrimary="True"/>
+              <column name="ProjectID" dataType="Integer"/>
+              <column name="Name" dataType="String" allowDbNull="False"/>
+            </columns>
+          </datasheet>
+        </datasheets>
+      </datafeed>
+
+      <!-- Scenario Datafeeds -->
+
+      <!-- Spades -->
+
+      <datafeed name="SpaDESImportSettings" displayName="SpaDES Import Settings" dataScope="Scenario">
+        <datasheets>
+          <datasheet name="SpaDESImportSettings" displayName="SpaDES Import Settings" isSingleRow="True">
+            <columns>
+              <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
+              <!-- TODO Determine options here -->
+              <column name="TBD_1" dataType="Boolean"/>
+              <column name="TBD_2" dataType="Boolean"/>
+            </columns>
+          </datasheet>
+        </datasheets>
+      </datafeed>
+
+      <!-- NON-Spades -->
+
+      <datafeed name="RunControl" displayName="Run Control" dataScope="Scenario">
+        <datasheets>
+          <datasheet name="RunControl" displayName="Run Control" isSingleRow="True">
+            <columns>
+              <column name="RunControlID" dataType="Integer" isPrimary="True"/>
+              <column name="ScenarioID" dataType="Integer"/>
+              <column name="MinimumIteration" isVisible="False" displayName="Minimum Iteration" dataType="Integer" defaultValue="1" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="1" format="d"/>
+              <column name="MaximumIteration" displayName="Total Iterations" dataType="Integer" defaultValue="1" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="1" format="d"/>
+              <column name="MinimumTimestep" displayName="Minimum Timestep" dataType="Integer" defaultValue="0" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" format="d"/>
+              <column name="MaximumTimestep" displayName="Maximum Timestep" dataType="Integer" defaultValue="0" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" format="d"/>
+            </columns>
+            <validations>
+              <validation validationType="LessEqual" columns="MinimumIteration|MaximumIteration"/>
+              <validation validationType="LessEqual" columns="MinimumTimestep|MaximumTimestep"/>
+            </validations>
+          </datasheet>
+        </datasheets>
+      </datafeed>
+
+      <datafeed name="DataSummary" displayName="Data Summary" dataScope="Scenario">
+        <datasheets>
+          <datasheet name="DataSummary" displayName="Data Summary">
+            <columns>
+              <column name="DataSummaryID" dataType="Integer" isPrimary="True"/>
+              <column name="ScenarioID" dataType="Integer" />
+              <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
+              <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
+              <column name="Variable" dataType="Integer" validationType="Datasheet" formula1="Variable"/>
+              <column name="Value" dataType="Integer"/>
+            </columns>
+          </datasheet>
+        </datasheets>
+      </datafeed>
+
+      <datafeed name="RasterFile" displayName="Raster Files" dataScope="Scenario">
+        <datasheets>
+          <datasheet name="RasterFile" displayName="Raster Files">
+            <columns>
+              <column name="RasterFileID" dataType="Integer" isPrimary="True"/>
+              <column name="ScenarioID" dataType="Integer"/>
+              <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
+              <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
+              <column name="RasterVariableID" dataType="Integer" validationType="Datasheet" formula1="RasterVariable"/>
+              <column name="File" dataType="String" isExternalFile="True" isRaster="True" allowDbNull="True" externalFileFilter="Rasters files (*.tif)|*.tif"/>
+            </columns>
+          </datasheet>
+        </datasheets>
+      </datafeed>
+
+      <datafeed name="ExternalFile" displayName="External Files" dataScope="Scenario">
+        <datasheets>
+          <datasheet name="ExternalFile" displayName="External Files">
+            <columns>
+              <column name="ExternalFileID" dataType="Integer" isPrimary="True"/>
+              <column name="ScenarioID" dataType="Integer"/>
+              <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
+              <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
+              <column name="FileVariableID" dataType="Integer" validationType="Datasheet" formula1="FileVariable"/>
+              <!-- TODO review which types are allowed-->
+              <column name="File" dataType="String" isExternalFile="True" allowDbNull="True" includeExtensions="*.shp|*.shx|*.dbf|*.prj" externalFileFilter="ShapeFiles (*.shp)|*.shp"/>
+            </columns>
+          </datasheet>
+        </datasheets>
+      </datafeed>
+
+      <datafeed name="HabitatModelOptions" displayName="Habitat Model Options" dataScope="Scenario">
+        <datasheets>
+          <datasheet name="HabitatModelOptions" displayName="Habitat Model Options" isSingleRow="True">
+            <columns>
+              <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
+              <column name="PadProjPoly" displayName="Project Polygon Padding" dataType="Boolean"/>
+              <column name="PadFocal" displayName="Focal Padding" dataType="Boolean"/>
+            </columns>
+          </datasheet>
+        </datasheets>
+      </datafeed>
+
+      <!-- Outputs Datafeeds -->
+
+      <datafeed name="OutputSpatialHabitat" displayName="Output Habitat Spatial" dataScope="Scenario" isOutput="True">
+        <datasheets>
+          <datasheet name="OutputSpatialHabitat" displayName="Output Habitat Spatial">
+            <columns>
+              <column name="OutputSpatialHabitatID" dataType="Integer" isPrimary="True"/>
+              <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
+              <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
+              <column name="ScenarioID" dataType="Integer"/>
+              <column name="RangeID" dataType="Integer" validationType="Datasheet" formula1="CaribouRange" allowDbNull="False"/>
+              <column name="SeasonID" dataType="Integer" validationType="Datasheet" formula1="Season" allowDbNull="False"/>
+              <column name="FileName" dataType="String" isExternalFile="True" isRaster="True" bandColumn="Band" bandFilterColumn="Season" allowDbNull="False" filenameCode="habuse"/>
+              <column name="Band" dataType="Integer" isOptional="True"/>
+            </columns>
+          </datasheet>
+        </datasheets>
+      </datafeed>
+
+      <datafeed name="OutputHabitat" displayName="Output Habitat " dataScope="Scenario" isOutput="True">
+        <datasheets>
+          <datasheet name="OutputHabitat" displayName="Output Habitat">
+            <columns>
+              <column name="OutputHabitatID" dataType="Integer" isPrimary="True"/>
+              <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
+              <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
+              <column name="ScenarioID" dataType="Integer"/>
+              <column name="RangeID" dataType="Integer" validationType="Datasheet" formula1="CaribouRange" allowDbNull="False"/>
+              <column name="SeasonID" dataType="Integer" validationType="Datasheet" formula1="Season" allowDbNull="False"/>
+              <column name="Amount" dataType="Integer" />
+            </columns>
+          </datasheet>
+        </datasheets>
+      </datafeed>
+
+      <datafeed name="SpaDESRuntimeVariables" displayName="SpaDES Runtime Variables" dataScope="Scenario" isOutput="True">
+        <datasheets>
+          <datasheet name="SpaDESRuntimeVariables" displayName="SpaDES Runtime Variables">
+            <columns>
+              <column name="SpaDESRuntimeVariablesID" dataType="Integer" isPrimary="True"/>
+              <column name="ScenarioID" dataType="Integer"/>
+              <column name="VariableID" dataType="Integer" validationType="Datasheet" formula1="Variable" allowDbNull="False"/>
+            </columns>
+          </datasheet>
+        </datasheets>
+      </datafeed>
+
+      <datafeed name="SpaDESRuntimeRasters" displayName="SpaDES Runtime Rasters" dataScope="Scenario" isOutput="True">
+        <datasheets>
+          <datasheet name="SpaDESRuntimeRasters" displayName="SpaDES Runtime Rasters">
+            <columns>
+              <column name="SpaDESRuntimeRastersID" dataType="Integer" isPrimary="True"/>
+              <column name="ScenarioID" dataType="Integer"/>
+              <column name="RasterVariableID" dataType="Integer" validationType="Datasheet" formula1="RasterVariable" allowDbNull="False"/>
+            </columns>
+          </datasheet>
+        </datasheets>
+      </datafeed>
+
+      <datafeed name="SpaDESRuntimeFiles" displayName="SpaDES Runtime Files" dataScope="Scenario" isOutput="True">
+        <datasheets>
+          <datasheet name="SpaDESRuntimeFiles" displayName="SpaDES Runtime Files">
+            <columns>
+              <column name="SpaDESRuntimeFilesID" dataType="Integer" isPrimary="True"/>
+              <column name="ScenarioID" dataType="Integer"/>
+              <column name="FileVariableID" dataType="Integer" validationType="Datasheet" formula1="FileVariable" allowDbNull="False"/>
+            </columns>
+          </datasheet>
+        </datasheets>
+      </datafeed>
+
     </transformer>
-    
-    <transformer
-      name="LoadSpadesOutputs"
+
+    <transformer name="LoadSpadesOutputs"
       isRunnable="True"
       runContext="LocalOnly"
       programName="Rscript"
       programArguments="load_spades_outputs.R">
-      <datafeeds>
-        
-        <!-- Project Datafeeds -->
-        <datafeed name="SpatialVariable" displayName="Spatial Variable" dataScope="Project">
-          <datasheets>
-            <datasheet name="SpatialVariable" displayName="Spatial Variable" valueMember="SpatialVariableID" displayMember="VariableName">
-              <columns>
-                <column name="SpatialVariableID" dataType="Integer" isPrimary="True"/>
-                <column name="ProjectID" dataType="Integer"/>
-                <column name="VariableName" dataType="String"/>
-              </columns>
-            </datasheet>
-          </datasheets>
-        </datafeed>
-        <datafeed name="TabularVariable" displayName="Tabular Variable" dataScope="Project">
-          <datasheets>
-            <datasheet name="TabularVariable" displayName="Tabular Variable" valueMember="TabularVariableID" displayMember="VariableName">
-              <columns>
-                <column name="TabularVariableID" dataType="Integer" isPrimary="True"/>
-                <column name="ProjectID" dataType="Integer"/>
-                <column name="VariableName" dataType="String"/>
-              </columns>
-            </datasheet>
-          </datasheets>
-        </datafeed>
-        <datafeed name="ForestUnit" displayName="Forest Unit" dataScope="Project">
-          <datasheets>
-            <datasheet name="ForestUnit" displayName="Forest Unit">
-              <columns>
-                <column name="ForestUnitID" dataType="Integer" isPrimary="True"/>
-                <column name="ProjectID" dataType="Integer"/>
-                <column name="Name" dataType="String"/>
-                <column name="ID" dataType="Integer"/>
-              </columns>
-            </datasheet>
-          </datasheets>
-        </datafeed>
-        <datafeed name="LandCoverClass" displayName="Land Cover Class" dataScope="Project">
-          <datasheets>
-            <datasheet name="LandCoverClass" displayName="Land Cover Class">
-              <columns>
-                <column name="LandCoverClassID" dataType="Integer" isPrimary="True"/>
-                <column name="ProjectID" dataType="Integer"/>
-                <column name="Name" dataType="String"/>
-                <column name="ID" dataType="Integer"/>
-              </columns>
-            </datasheet>
-          </datasheets>
-        </datafeed>
-        <datafeed name="CaribouRange" displayName="Caribou Range" dataScope="Project">
-          <datasheets>
-            <datasheet name="CaribouRange" displayName="Caribou Range" valueMember="CaribouRangeID" displayMember="Name">
-              <columns>
-                <column name="CaribouRangeID" dataType="Integer" isPrimary="True"/>
-                <column name="ProjectID" dataType="Integer"/>
-                <column name="Name" dataType="String" allowDbNull="False"/>
-              </columns>
-            </datasheet>
-          </datasheets>
-        </datafeed>
-        <datafeed name="Season" displayName="Season" dataScope="Project">
-          <datasheets>
-            <datasheet name="Season" displayName="Season" valueMember="SeasonID" displayMember="Name">
-              <columns>
-                <column name="SeasonID" dataType="Integer" isPrimary="True"/>
-                <column name="ProjectID" dataType="Integer"/>
-                <column name="Name" dataType="String" allowDbNull="False"/>
-              </columns>
-            </datasheet>
-          </datasheets>
-        </datafeed>
-        
-        <datafeed name="VariableSource" displayName="Variable Source" dataScope="Project">
-          <datasheets>
-            <datasheet name="VariableSource" displayName="Variable Source" valueMember="VariableSourceID" displayMember="Name">
-              <columns>
-                <column name="VariableSourceID" dataType="Integer" isPrimary="True"/>
-                <column name="ProjectID" dataType="Integer"/>
-                <column name="Name" dataType="String" allowDbNull="False"/>
-              </columns>
-            </datasheet>
-          </datasheets>
-        </datafeed>
-        
-        <!-- Scenario Datafeeds -->
-        <!-- Spades -->
-        <datafeed name="InputSpadesObject" displayName="SpaDES" dataScope="Scenario">
-          <datasheets>
-            <datasheet name="InputSpadesObject" displayName="SpaDES" isSingleRow="True">
-              <columns>
-                <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
-                <column name="Filename" displayName="SpaDES Object Path" dataType="String" allowDbNull="False" isExternalFile="True" externalFileFilter="R data files |*.qs;*.txt;*.rds;*.rdata"/>
-              </columns>
-            </datasheet>
-          </datasheets>
-        </datafeed>
-        
-        <datafeed name="SpatialVariableSources" displayName="Spatial Variable Sources" dataScope="Scenario">
-          <datasheets>
-            <datasheet name="SpatialVariableSources" displayName="Spatial Variable Sources" >
-              <columns>
-                <column name="SpatialVariableSourcesID" dataType="Integer" isPrimary="True"/>
-                <column name="ScenarioID" dataType="Integer"/>
-                <column name="SpatialVariable" dataType="Integer" validationType="Datasheet" formula1="SpatialVariable"/>
-                <column name="VariableSource" dataType="Integer" validationType="Datasheet" formula1="VariableSource"/>
-              </columns>
-            </datasheet>
-          </datasheets>
-        </datafeed>
-        
-        <datafeed name="TabularVariableSources" displayName="Tabular Variable Sources" dataScope="Scenario">
-          <datasheets>
-            <datasheet name="TabularVariableSources" displayName="Tabular Variable Sources" >
-              <columns>
-                <column name="TabularVariableSourcesID" dataType="Integer" isPrimary="True"/>
-                <column name="ScenarioID" dataType="Integer"/>
-                <column name="TabularVariable" dataType="Integer" validationType="Datasheet" formula1="TabularVariable"/>
-                <column name="VariableSource" dataType="Integer" validationType="Datasheet" formula1="VariableSource"/>
-              </columns>
-            </datasheet>
-          </datasheets>
-        </datafeed>
-        
-        <!-- Spatial Variables -->
-        <!-- Raster -->
-        <datafeed name="RasterVariableFiles" displayName="Raster Variable Files" dataScope="Scenario">
-          <datasheets>
-            <datasheet name="RasterVariableFiles" displayName="Raster Variable Files">
-              <columns>
-                <column name="RasterVariableFilesID" dataType="Integer" isPrimary="True"/>
-                <column name="ScenarioID" dataType="Integer"/>
-                <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
-                <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
-                <column name="SpatialVariable" dataType="Integer" validationType="Datasheet" formula1="SpatialVariable"/>
-                <column name="File" dataType="String" isExternalFile="True" isRaster="True" allowDbNull="True" externalFileFilter="Rasters files (*.tif)|*.tif"/>
-                <column name="VariableSource" dataType="Integer" validationType="Datasheet" formula1="VariableSource" isOptional="True"/>
-              </columns>
-            </datasheet>
-          </datasheets>
-        </datafeed>
-        
-        <!-- Other, non-raster variables -->
-        <datafeed name="OtherSpatialVariableFiles" displayName="Other Spatial Variable Files" dataScope="Scenario">
-          <datasheets>
-            <datasheet name="OtherSpatialVariableFiles" displayName="Other Spatial Variable Files">
-              <columns>
-                <column name="OtherSpatialVariableFilesID" dataType="Integer" isPrimary="True"/>
-                <column name="ScenarioID" dataType="Integer"/>
-                <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
-                <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
-                <column name="SpatialVariable" dataType="Integer" validationType="Datasheet" formula1="SpatialVariable"/>
-                <column name="File" dataType="String" isExternalFile="True" allowDbNull="True" includeExtensions="*.shp|*.shx|*.dbf|*.prj" externalFileFilter="ShapeFiles (*.shp)|*.shp"/>
-                <column name="VariableSource" dataType="Integer" validationType="Datasheet" formula1="VariableSource" isOptional="True"/>
-              </columns>
-            </datasheet>
-          </datasheets>
-        </datafeed>
-        
-        <datafeed name="TabularVariableValues" displayName="Tabular Variable Values" dataScope="Scenario">
-          <datasheets>
-            <datasheet name="TabularVariableValues" displayName="Tabular Variable Values">
-              <columns>
-                <column name="TabularVariableValuesID" dataType="Integer" isPrimary="True"/>
-                <column name="ScenarioID" dataType="Integer" />
-                <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
-                <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
-                <column name="TabularVariable" dataType="Integer" validationType="Datasheet" formula1="TabularVariable"/>
-                <column name="Value" dataType="Integer"/>
-                <column name="VariableSource" dataType="Integer" validationType="Datasheet" formula1="VariableSource" isOptional="True"/>
-              </columns>
-            </datasheet>
-          </datasheets>
-        </datafeed>
-      
-      </datafeeds>
     </transformer>
-    
-    <transformer
-      name="PrepareHabitatModel"
+
+    <transformer name="PrepareHabitatModelInputs"
       isRunnable="True"
       runContext="LocalOnly"
       programName="Rscript"
       programArguments="prepare_habitat_model.R">
-      <!-- NO Datafeeds in this transformer YET-->
-      <!-- TODO Examine what must be added -->
     </transformer>
-    
-    <transformer
-      name="RunCaribouRSF"
+
+    <transformer name="RunCaribouHabitatModel"
       isRunnable="True"
       runContext="AllowRemote"
       programName="Rscript"
@@ -222,154 +304,78 @@
       classAssembly="SyncroSim.StochasticTime"
       configurationSheet="ROFSim_RunControl"
       programArguments="run_caribou_model.R">
-      <datafeeds>
-        
-        <!-- Scenario Datafeeds -->
-        <datafeed name="ModelOptions" displayName="Model Options" dataScope="Scenario">
-          <datasheets>
-            <datasheet name="ModelOptions" displayName="Model Options" isSingleRow="True">
-              <columns>
-                <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
-                <column name="PadProjPoly" displayName="Project Polygon Padding" dataType="Boolean"/>
-                <column name="PadFocal" displayName="Focal Padding" dataType="Boolean"/>
-              </columns>
-            </datasheet>
-          </datasheets>
-        </datafeed>
-        <datafeed name="RunControl" displayName="Run Control" dataScope="Scenario">
-          <datasheets>
-            <datasheet name="RunControl" displayName="Run Control" isSingleRow="True">
-              <columns>
-                <column name="RunControlID" dataType="Integer" isPrimary="True"/>
-                <column name="ScenarioID" dataType="Integer"/>
-                <column name="MinimumIteration" isVisible="False" displayName="Minimum Iteration" dataType="Integer" defaultValue="1" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="1" format="d"/>
-                <column name="MaximumIteration" displayName="Total Iterations" dataType="Integer" defaultValue="1" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="1" format="d"/>
-                <column name="MinimumTimestep" displayName="Minimum Timestep" dataType="Integer" defaultValue="0" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" format="d"/>
-                <column name="MaximumTimestep" displayName="Maximum Timestep" dataType="Integer" defaultValue="0" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" format="d"/>
-              </columns>
-              <validations>
-                <validation validationType="LessEqual" columns="MinimumIteration|MaximumIteration"/>
-                <validation validationType="LessEqual" columns="MinimumTimestep|MaximumTimestep"/>
-              </validations>
-            </datasheet>
-          </datasheets>  
-        </datafeed>
-        <datafeed name="RunCaribouRange" displayName="Run Caribou Range" dataScope="Scenario" isSingleRow="True">
-          <datasheets>
-            <datasheet name="RunCaribouRange" displayName="Caribou Range">
-              <columns>
-                <column name="RunCaribouRangeID" dataType="Integer" isPrimary="True"/>
-                <column name="ScenarioID" dataType="Integer"/>
-                <column name="RangeID" dataType="Integer" validationType="Datasheet" formula1="CaribouRange"/>
-              </columns>
-            </datasheet>
-          </datasheets>
-        </datafeed>
-        
-        <!-- Outputs Datafeeds --> 
-        <datafeed name="OutputSpatialHabitat" displayName="Output Habitat Spatial" dataScope="Scenario" isOutput="True">
-          <datasheets>
-            <datasheet name="OutputSpatialHabitat" displayName="Output Habitat Spatial">
-              <columns>
-                <column name="OutputSpatialHabitatID" dataType="Integer" isPrimary="True"/>
-                <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
-                <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
-                <column name="ScenarioID" dataType="Integer"/>
-                <column name="RangeID" dataType="Integer" validationType="Datasheet" formula1="CaribouRange" allowDbNull="False"/>
-                <column name="SeasonID" dataType="Integer" validationType="Datasheet" formula1="Season" allowDbNull="False"/>
-                <column name="FileName" dataType="String" isExternalFile="True" isRaster="True" bandColumn="Band" bandFilterColumn="Season" allowDbNull="False" filenameCode="habuse"/>
-                <column name="Band" dataType="Integer" isOptional="True"/>
-              </columns>
-            </datasheet>
-          </datasheets>
-        </datafeed>
-        <datafeed name="OutputHabitat" displayName="Output Habitat " dataScope="Scenario" isOutput="True">
-          <datasheets>
-            <datasheet name="OutputHabitat" displayName="Output Habitat">
-              <columns>
-                <column name="OutputHabitatID" dataType="Integer" isPrimary="True"/>
-                <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
-                <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
-                <column name="ScenarioID" dataType="Integer"/>
-                <column name="RangeID" dataType="Integer" validationType="Datasheet" formula1="CaribouRange" allowDbNull="False"/>
-                <column name="SeasonID" dataType="Integer" validationType="Datasheet" formula1="Season" allowDbNull="False"/>
-                <column name="Amount" dataType="Integer" />
-              </columns>
-            </datasheet>
-          </datasheets>
-        </datafeed>
-        
-      </datafeeds>
-      
     </transformer>
-    
+
   </transformers>
-  
+
   <!-- Layouts -->
   <layouts>
+
+    <!-- Ciore feeds layouts -->
     <layout name="coreforms_LibraryDatafeeds">
+
       <item name="core_Rconfig"/>
+
     </layout>
-    
+
      <!-- Project feeds layouts -->
     <layout name="coreforms_ProjectDatafeeds">
-      <item name="SpatialVariable"/>
-      <item name="TabularVariable"/>
-      <item name="ForestUnit"/>
-      <item name="LandCoverClass"/>
-      <item name="CaribouRange"/>
-      <item name="Season"/>
+
+      <group name="Inputs">
+        <item name="Variable"/>
+        <item name="RasterVariable"/>
+        <item name="FileVariable"/>
+      </group>
+
+      <group name="Caribou Model">
+        <item name="ForestUnit"/>
+        <item name="LandCoverClass"/>
+        <item name="CaribouRange"/>
+        <item name="Season"/>
+      </group>
+
       <group name="Pipeline">
         <item name="core_Transformer"/>
         <item name="core_StageName"/>
-        <item name="core_StageValue"/>        
+        <item name="core_StageValue"/>
       </group>
-      <item name="VariableSource"/>
+
     </layout>
-    
+
     <!-- Scenario feeds layouts -->
     <layout name="coreforms_ScenarioDatafeeds">
-      
-      <group name="VariableSourcesAll" displayName="Variable Sources">
-        <item name="SpatialVariableSources"/>
-        <item name="TabularVariableSources"/>
-      </group>
-      
-      <group name="RunControlAll" displayName="Run Control">
-        <item name="RunControl"/>
-        <item name="RunCaribouRange"/>
-      </group>
-      
-      <item name="ModelOptions"/>
-      
-      <group name="Inputs" displayName="Inputs">
-        <item name="InputSpadesObject"/>
-        <item name="RasterVariableFiles"/>
-        <item name="OtherSpatialVariableFiles"/>
-        <item name="TabularVariableValues"/>
-      </group>
-      
+
+      <item name="SpaDESImportSettings"/>
+      <item name="RunControl"/>
+      <item name="DataSummary"/>
+      <item name="RasterFile"/>
+      <item name="ExternalFile"/>
+      <item name="HabitatModelOptions"/>
+
       <group name="Outputs" displayName="Outputs">
         <item name="OutputHabitat"/>
         <item name="OutputSpatialHabitat"/>
+        <item name="SpaDESRuntimeVariables"/>
+        <item name="SpaDESRuntimeRasters"/>
+        <item name="SpaDESRuntimeFiles"/>
       </group>
-      
+
       <item name="core_Pipeline"/>
-      
+
     </layout>
-    
+
     <!--Results transformer Layout-->
     <layout name="coreforms_ResultTransformers">
+
       <item name="corestime_MapTransformer"/>
+
     </layout>
-    
+
     <!--Maps Layout-->
     <layout name="corestimeforms_Maps" configurationSheet="ROFSim_RunControl">
-      <group name="OutputHabitat" displayName="Habitat">
-        <item name="OutputSpatialHabitat" displayName="Season" dataSheet="ROFSim_OutputSpatialHabitat" column="FileName" filter="SeasonID"/>
-      </group>
+
     </layout>
-  
+
   </layouts>
 
 </package>
