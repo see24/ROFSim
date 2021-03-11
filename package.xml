@@ -11,14 +11,14 @@
 
       <runtime>
         <transformer name="LoadSpadesOutputs"/>
-        <transformer name="PrepareHabitatModelInputs"/>
+        <transformer name="makeLccFromCohortData"/>
         <transformer name="RunCaribouHabitatModel"/>
       </runtime>
 
       <include>
         <transformer name="corestime_Runtime"/>
         <transformer name="LoadSpadesOutputs"/>
-        <transformer name="PrepareHabitatModelInputs"/>
+        <transformer name="makeLccFromCohortData"/>
         <transformer name="RunCaribouHabitatModel"/>
       </include>
 
