@@ -199,6 +199,7 @@
               <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
               <column name="Variable" dataType="Integer" validationType="Datasheet" formula1="Variable"/>
               <column name="Value" dataType="Integer"/>
+              <column name="Source" dataType="String" isOptional="True"/>
             </columns>
           </datasheet>
         </datasheets>
@@ -214,6 +215,7 @@
               <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
               <column name="RasterVariableID" dataType="Integer" validationType="Datasheet" formula1="RasterVariable"/>
               <column name="File" dataType="String" isExternalFile="True" isRaster="True" allowDbNull="True" externalFileFilter="Rasters files (*.tif)|*.tif"/>
+              <column name="Source" dataType="String" isOptional="True"/>
             </columns>
           </datasheet>
         </datasheets>
@@ -230,6 +232,7 @@
               <column name="FileVariableID" dataType="Integer" validationType="Datasheet" formula1="FileVariable"/>
               <!-- TODO review which types are allowed-->
               <column name="File" dataType="String" isExternalFile="True" allowDbNull="True" includeExtensions="*.shp|*.shx|*.dbf|*.prj" externalFileFilter="ShapeFiles (*.shp)|*.shp"/>
+              <column name="Source" dataType="String" isOptional="True"/>
             </columns>
           </datasheet>
         </datasheets>
