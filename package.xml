@@ -353,14 +353,10 @@
 
       <item name="RunControl"/>
 
-      <group name="Options" >
-        <item name="SpaDESImportSettings"/>
-        <item name="HabitatModelOptions"/>
-      </group>
-
       <group name="Inputs" >
 
         <group name="SpaDES" displayName="SpaDES">
+          <item name="SpaDESImportSettings"/>
           <item name="SpaDESRuntimeVariables"/>
           <item name="SpaDESRuntimeRasters"/>
           <item name="SpaDESRuntimeFiles"/>
@@ -370,6 +366,9 @@
           <item name="DataSummary"/>
           <item name="RasterFile"/>
           <item name="ExternalFile"/>
+          <group name="Options" >
+            <item name="HabitatModelOptions"/>
+          </group>
         </group>
 
       </group>
