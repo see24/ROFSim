@@ -327,7 +327,7 @@
         <item name="FileVariable"/>
       </group>
 
-      <group name="Caribou Model">
+      <group name="CaribouModel">
         <item name="ForestUnit"/>
         <item name="LandCoverClass"/>
         <item name="CaribouRange"/>
