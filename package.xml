@@ -359,16 +359,20 @@
         <item name="HabitatModelOptions"/>
       </group>
 
-      <group name="SpaDES" displayName="SpaDES">
-        <item name="SpaDESRuntimeVariables"/>
-        <item name="SpaDESRuntimeRasters"/>
-        <item name="SpaDESRuntimeFiles"/>
-      </group>
+      <group name="Inputs" >
 
-      <group name="CaribouModel" displayName="Caribou Model">
-        <item name="DataSummary"/>
-        <item name="RasterFile"/>
-        <item name="ExternalFile"/>
+        <group name="SpaDES" displayName="SpaDES">
+          <item name="SpaDESRuntimeVariables"/>
+          <item name="SpaDESRuntimeRasters"/>
+          <item name="SpaDESRuntimeFiles"/>
+        </group>
+
+        <group name="CaribouModel" displayName="Caribou Model">
+          <item name="DataSummary"/>
+          <item name="RasterFile"/>
+          <item name="ExternalFile"/>
+        </group>
+        
       </group>
 
       <group name="Outputs" displayName="Outputs">
