@@ -167,3 +167,8 @@ selectInputs <- function(rasters, vectors, column){
 assignReductionFunction <- function(x) {
   print(deparse(substitute(x)));
 }
+
+# Assign Object name from var name
+assignObjectName() {
+  NULL
+}
