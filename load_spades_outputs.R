@@ -32,6 +32,7 @@ myDatasheetsNames <- myDatasheetsFiltered$name
 # Figure out variables to extract from spades -----------------------------
 
 # Get all vars data
+
 spadesVars <- datasheet(mySce, "ROFSim_SpaDESRuntimeVariables", 
                         lookupsAsFactors = FALSE) 
 if(nrow(spadesVars)>0){
@@ -39,6 +40,7 @@ if(nrow(spadesVars)>0){
     rename(var = VariableID) %>% 
     mutate(type = "var")
 }
+
 spadesRasterVars <- datasheet(mySce, "ROFSim_SpaDESRuntimeRasters", 
                               lookupsAsFactors = FALSE)
 if(nrow(spadesRasterVars)>0){
@@ -46,6 +48,7 @@ if(nrow(spadesRasterVars)>0){
     rename(var = RasterVariableID) %>% 
     mutate(type = "raster")
 }
+
 spadesFileVars <- datasheet(mySce, "ROFSim_SpaDESRuntimeFiles", 
                             lookupsAsFactors = FALSE)
 if(nrow(spadesFileVars)>0){
@@ -78,11 +81,25 @@ spadesObject <- qs::qread(spadesObjectPath)
 
 # Extract info ------------------------------------------------------------
 
-# Get time information
-# Start, End, Current
-runControl <- c(start(spadesObject), end(spadesObject), time(spadesObject))
+# Extract run control information
+runControl <- list(start = start(spadesObject), 
+                   end = end(spadesObject), 
+                   current = time(spadesObject))
 
+runControlSheet <- datasheet(mySce, "RunControl", empty = TRUE)
+runControlSheet <- addRow(runControlSheet, 
+                          list(MinimumIteration = 1, 
+                               MaximumIteration = 1, 
+                               MinimumTimestep = runControl$start, 
+                               MaximumTimestep = runControl$end))
+saveDatasheet(mySce, runControlSheet, "RunControl")
+
+# Extract the other vars
 tmp <- tempdir(check = TRUE)
+
+# For now, harcode Iteration + Timestep
+theIter <- 1
+theTs <- runControl$current
 
 for (rowVar in seq_len(length.out = nrow(allVars))){
   
@@ -95,34 +112,56 @@ for (rowVar in seq_len(length.out = nrow(allVars))){
     
     # Get info
     targetSheet <- "DataSummary"
-    filePath <- file.path(temp, paste0(var, ".csv"))
+    filePath <- file.path(tmp, paste0(theVar, ".csv"))
     
     # Write tmp file
     write.csv(object, filePath)
     
-    # Populate Sheet
+    # Populate sheet
+    theSheet <- datasheet(mySce, targetSheet, empty = TRUE, optional = TRUE)
+    addRow(theSheet, list(Iteration = theIter,
+                          Timestep = theTs,
+                          VariableID = theVar, 
+                          File = filePath,
+                          Source = "load_spades_outputs"))
   
   } else if (theVarType == "raster") {
     
     # Get info
     targetSheet <- "RasterFile"
-    filePath <- file.path(temp, paste0(var, ".tif"))
+    filePath <- file.path(tmp, paste0(theVar, ".tif"))
+    
+    # Write tmp file
+    writeRaster(object, filePath, overwrite = TRUE)
+    
+    # Populate sheet
+    theSheet <- datasheet(mySce, targetSheet, empty = TRUE, optional = TRUE)
+    addRow(theSheet, list(Iteration = theIter,
+                          Timestep = theTs,
+                          RasterVariableID = theVar, 
+                          File = filePath,
+                          Source = "load_spades_outputs"))
+  
+  } else if (theVarType == "file") {
+    
+    # TODO fix this case, how to get the file here?
+    targetSheet <- "ExternalFile"
+    filePath <- file.path(tmp, paste0(theVar, ".ext"))
     
     # Write tmp file
     writeRaster(object, filePath)
     
     # Populate sheet
-    theSheet <- datasheet(mySce, targetSheet)
-    addRow(theSheet, list())
-  
-  } else if (theVarType == "file") {
-    
-    targetSheet <- "ExternalFile"
-    # TODO file path?
+    theSheet <- datasheet(mySce, targetSheet, empty = TRUE, optional = TRUE)
+    addRow(theSheet, list(Iteration = theIter,
+                          Timestep = theTs,
+                          FileVariableID = theVar, 
+                          File = filePath,
+                          Source = "load_spades_outputs"))
   
   }
   
-  
+  saveDatasheet(mySce, theSheet, targetSheet)
   
 }
 
