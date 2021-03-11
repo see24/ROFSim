@@ -196,7 +196,7 @@
               <column name="ScenarioID" dataType="Integer" />
               <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
               <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
-              <column name="Variable" dataType="Integer" validationType="Datasheet" formula1="Variable"/>
+              <column name="VariableID" dataType="Integer" validationType="Datasheet" formula1="Variable"/>
               <column name="Value" dataType="Integer"/>
               <column name="Source" dataType="String" isOptional="True"/>
             </columns>
