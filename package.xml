@@ -296,7 +296,7 @@
       programArguments="load_spades_outputs.R">
     </transformer>
 
-    <transformer name="PrepareHabitatModelInputs"
+    <transformer name="makeLccFromCohortData"
       isRunnable="True"
       runContext="LocalOnly"
       programName="Rscript"
@@ -334,7 +334,7 @@
         <item name="FileVariable"/>
       </group>
 
-      <group name="CaribouModel">
+      <group name="CaribouModel" displayName="Caribou Model">
         <item name="ForestUnit"/>
         <item name="LandCoverClass"/>
         <item name="CaribouRange"/>
@@ -352,19 +352,28 @@
     <!-- Scenario feeds layouts -->
     <layout name="coreforms_ScenarioDatafeeds">
 
-      <item name="SpaDESImportSettings"/>
       <item name="RunControl"/>
-      <item name="DataSummary"/>
-      <item name="RasterFile"/>
-      <item name="ExternalFile"/>
-      <item name="HabitatModelOptions"/>
+
+      <group name="Options" >
+        <item name="SpaDESImportSettings"/>
+        <item name="HabitatModelOptions"/>
+      </group>
+
+      <group name="SpaDES" displayName="SpaDES">
+        <item name="SpaDESRuntimeVariables"/>
+        <item name="SpaDESRuntimeRasters"/>
+        <item name="SpaDESRuntimeFiles"/>
+      </group>
+
+      <group name="CaribouModel" displayName="Caribou Model">
+        <item name="DataSummary"/>
+        <item name="RasterFile"/>
+        <item name="ExternalFile"/>
+      </group>
 
       <group name="Outputs" displayName="Outputs">
         <item name="OutputHabitat"/>
         <item name="OutputSpatialHabitat"/>
-        <item name="SpaDESRuntimeVariables"/>
-        <item name="SpaDESRuntimeRasters"/>
-        <item name="SpaDESRuntimeFiles"/>
       </group>
 
       <item name="core_Pipeline"/>
