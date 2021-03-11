@@ -153,6 +153,42 @@
         </datasheets>
       </datafeed>
 
+      <datafeed name="SpaDESRuntimeVariables" displayName="SpaDES Runtime Variables" dataScope="Scenario" isOutput="True">
+        <datasheets>
+          <datasheet name="SpaDESRuntimeVariables" displayName="SpaDES Runtime Variables">
+            <columns>
+              <column name="SpaDESRuntimeVariablesID" dataType="Integer" isPrimary="True"/>
+              <column name="ScenarioID" dataType="Integer"/>
+              <column name="VariableID" dataType="Integer" validationType="Datasheet" formula1="Variable" allowDbNull="False"/>
+            </columns>
+          </datasheet>
+        </datasheets>
+      </datafeed>
+
+      <datafeed name="SpaDESRuntimeRasters" displayName="SpaDES Runtime Rasters" dataScope="Scenario" isOutput="True">
+        <datasheets>
+          <datasheet name="SpaDESRuntimeRasters" displayName="SpaDES Runtime Rasters">
+            <columns>
+              <column name="SpaDESRuntimeRastersID" dataType="Integer" isPrimary="True"/>
+              <column name="ScenarioID" dataType="Integer"/>
+              <column name="RasterVariableID" dataType="Integer" validationType="Datasheet" formula1="RasterVariable" allowDbNull="False"/>
+            </columns>
+          </datasheet>
+        </datasheets>
+      </datafeed>
+
+      <datafeed name="SpaDESRuntimeFiles" displayName="SpaDES Runtime Files" dataScope="Scenario" isOutput="True">
+        <datasheets>
+          <datasheet name="SpaDESRuntimeFiles" displayName="SpaDES Runtime Files">
+            <columns>
+              <column name="SpaDESRuntimeFilesID" dataType="Integer" isPrimary="True"/>
+              <column name="ScenarioID" dataType="Integer"/>
+              <column name="FileVariableID" dataType="Integer" validationType="Datasheet" formula1="FileVariable" allowDbNull="False"/>
+            </columns>
+          </datasheet>
+        </datasheets>
+      </datafeed>
+
       <datafeed name="DataSummary" displayName="Data Summary" dataScope="Scenario">
         <datasheets>
           <datasheet name="DataSummary" displayName="Data Summary">
