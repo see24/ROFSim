@@ -125,8 +125,7 @@
             <columns>
               <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
               <!-- TODO Determine options here -->
-              <column name="TBD_1" dataType="Boolean"/>
-              <column name="TBD_2" dataType="Boolean"/>
+              <column name="Filename" displayName="SpaDES Object Path" dataType="String" allowDbNull="False" isExternalFile="True" externalFileFilter="R data files |*.qs;*.txt;*.rds;*.rdata"/>
             </columns>
           </datasheet>
         </datasheets>
