@@ -75,6 +75,7 @@ if(nrow(rasterFiles) != 0){
   
   sheetSubset <- subset(rasterFiles, RasterVariableID == "rstLCC")
   restofSheet <- subset(rasterFiles, RasterVariableID != "rstLCC")
+  new_var <- "plc"
   
   if(nrow(sheetSubset) != 0){
     
@@ -82,22 +83,22 @@ if(nrow(rasterFiles) != 0){
     
     for (lccRow in seq_len(length.out = nrow(sheetSubset))){
       
-      the_iter <- sheetSubset[lccRow,]$Iteration
-      the_ts <- sheetSubset[lccRow,]$Timestep
+      theIter <- sheetSubset[lccRow,]$Iteration
+      theTs <- sheetSubset[lccRow,]$Timestep
       
-      file_name <- file.path(e$TransferDirectory, 
-                             paste0(paste(paste0("it_",the_iter), 
-                                          paste0("ts_",the_ts), sep = "_"), 
-                                    "rstLCC_updated.tif"))
+      filePath <- file.path(e$TransferDirectory, 
+                            paste0(new_var, "_", paste(paste0("it_",theIter), 
+                                                       paste0("ts_",theTs), sep = "_"), 
+                                   ".tif"))
       
       updated_LCC_tmp <- makeLCCfromCohortData(cohortData = cohort_data, 
                                                pixelGroupMap = pixelGroupMap, 
                                                rstLCC = rstLCC,
                                                lccClassTable = lccClassTable)
       writeRaster(updated_LCC_tmp, overwrite = TRUE,
-                  filename = file_name)
+                  filename = filePath)
       
-      sheetSubset[lccRow,]$File <- file_name
+      sheetSubset[lccRow,]$File <- filePath
       sheetSubset[lccRow,]$Source <- "makeLccFromCohortData"
       
     }
