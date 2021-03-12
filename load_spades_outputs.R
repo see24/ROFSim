@@ -95,11 +95,16 @@ runControlSheet <- addRow(runControlSheet,
 saveDatasheet(mySce, runControlSheet, "RunControl")
 
 # Extract the other vars
-tmp <- tempdir(check = TRUE)
+tmp <- e$TransferDirectory
 
 # For now, harcode Iteration + Timestep
 theIter <- 1
 theTs <- runControl$current
+
+# Get empty for all 3 cases
+dataSummary <- datasheet(mySce, "DataSummary", empty = TRUE, optional = TRUE)
+rasterFiles <- datasheet(mySce, "RasterFile", empty = TRUE, optional = TRUE)
+extFiles <- datasheet(mySce, "ExternalFile", empty = TRUE, optional = TRUE)
 
 for (rowVar in seq_len(length.out = nrow(allVars))){
   
@@ -111,59 +116,62 @@ for (rowVar in seq_len(length.out = nrow(allVars))){
   if (theVarType == "var"){
     
     # Get info
-    targetSheet <- "DataSummary"
     filePath <- file.path(tmp, paste0(theVar, ".csv"))
     
     # Write tmp file
     write.csv(object, filePath)
     
     # Populate sheet
-    theSheet <- datasheet(mySce, targetSheet, empty = TRUE, optional = TRUE)
-    addRow(theSheet, list(Iteration = theIter,
-                          Timestep = theTs,
-                          VariableID = theVar, 
-                          File = filePath,
-                          Source = "load_spades_outputs"))
-  
+    dataSummary <- addRow(dataSummary, list(Iteration = theIter,
+                                            Timestep = theTs,
+                                            VariableID = theVar, 
+                                            File = filePath,
+                                            Source = "load_spades_outputs"))
+    
   } else if (theVarType == "raster") {
     
     # Get info
-    targetSheet <- "RasterFile"
     filePath <- file.path(tmp, paste0(theVar, ".tif"))
     
     # Write tmp file
     writeRaster(object, filePath, overwrite = TRUE)
     
     # Populate sheet
-    theSheet <- datasheet(mySce, targetSheet, empty = TRUE, optional = TRUE)
-    addRow(theSheet, list(Iteration = theIter,
-                          Timestep = theTs,
-                          RasterVariableID = theVar, 
-                          File = filePath,
-                          Source = "load_spades_outputs"))
-  
+    rasterFiles <- addRow(rasterFiles, list(Iteration = theIter,
+                                            Timestep = theTs,
+                                            RasterVariableID = theVar, 
+                                            File = filePath,
+                                            Source = "load_spades_outputs"))
+    
   } else if (theVarType == "file") {
     
     # TODO fix this case, how to get the file here?
-    targetSheet <- "ExternalFile"
     filePath <- file.path(tmp, paste0(theVar, ".ext"))
     
     # Write tmp file
     writeRaster(object, filePath)
     
     # Populate sheet
-    theSheet <- datasheet(mySce, targetSheet, empty = TRUE, optional = TRUE)
-    addRow(theSheet, list(Iteration = theIter,
-                          Timestep = theTs,
-                          FileVariableID = theVar, 
-                          File = filePath,
-                          Source = "load_spades_outputs"))
-  
+    extFiles <- addRow(extFiles, list(Iteration = theIter,
+                                      Timestep = theTs,
+                                      FileVariableID = theVar, 
+                                      File = filePath,
+                                      Source = "load_spades_outputs"))
+    
   }
   
-  saveDatasheet(mySce, theSheet, targetSheet)
   
 }
+
+saveIfNotEmpty <- function(sheet, name){
+  if(nrow(sheet) != 0){
+    saveDatasheet(mySce, sheet, name)
+  }
+}
+
+mapply(list(dataSummary, rasterFiles, extFiles), 
+       FUN = saveIfNotEmpty, 
+       name = list("DataSummary", "RasterFile", "ExternalFile"))
 
 # unlink(tmp, recursive = TRUE)
 
