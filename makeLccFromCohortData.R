@@ -16,6 +16,8 @@ library(dplyr)
 library(SpaDES.core)
 library(SpaDES.tools)
 
+library(caribouMetrics)
+
 # Load environment
 e <- ssimEnvironment()
 myLib <- ssimLibrary()
@@ -28,6 +30,9 @@ myDatasheets <- datasheet(mySce)
 subFilter <- sapply(X = myDatasheets$name, FUN = grepl, pattern="^(ROF)\\w+")
 myDatasheetsFiltered <- myDatasheets[subFilter,]
 myDatasheetsNames <- myDatasheetsFiltered$name
+
+# Source Craig's function
+source(file.path(e$PackageDirectory, "makeLccFromCohortData_helper.R"))
 
 # Spades processing -------------------------------------------------------
 
@@ -48,4 +53,56 @@ if(nrow(spadesDatasheet) == 0){
 # Load the spades object 
 # TODO adding a warnings about memory could be usefull
 spadesObject <- qs::qread(spadesObjectPath)
+
 cohort_data <- spadesObject$cohortData
+pixelGroupMap <- spadesObject$pixelGroupMap
+rstLCC <- spadesObject$rstLCC
+
+lccClassTable = data.table(
+  standLeading = c("pureCon_dense", "pureCon_open", "pureCon_sparse",
+                   "pureCon_sparse",
+                   "pureDec_dense", "pureDec_open", "pureDec_sparse",
+                   "mixed_dense", "mixed_open", "mixed_sparse"), 
+  LCCclass = c(1,6,8,32,
+               2,11,11, 
+               3,13,13)) # HARDCODED TO MATCH LCC05 
+
+# Call the function -------------------------------------------------------
+
+rasterFiles <- datasheet(mySce, "RasterFile", optional = TRUE)
+
+if(nrow(rasterFiles) != 0){
+  
+  sheetSubset <- subset(rasterFiles, RasterVariableID == "rstLCC")
+  restofSheet <- subset(rasterFiles, RasterVariableID != "rstLCC")
+  
+  if(nrow(sheetSubset) != 0){
+    
+    updated_LCC_list <- vector(mode = "list", length = nrow(sheetSubset))
+    
+    for (lccRow in seq_len(length.out = nrow(sheetSubset))){
+      
+      the_iter <- sheetSubset[lccRow,]$Iteration
+      the_ts <- sheetSubset[lccRow,]$Timestep
+      
+      file_name <- file.path(e$TransferDirectory, 
+                             paste0(paste(paste0("it_",the_iter), 
+                                          paste0("ts_",the_ts), sep = "_"), 
+                                    "rstLCC_updated.tif"))
+      
+      updated_LCC_tmp <- makeLCCfromCohortData(cohortData = cohort_data, 
+                                               pixelGroupMap = pixelGroupMap, 
+                                               rstLCC = rstLCC,
+                                               lccClassTable = lccClassTable)
+      writeRaster(updated_LCC_tmp, overwrite = TRUE,
+                  filename = file_name)
+      
+      sheetSubset[lccRow,]$File <- file_name
+      sheetSubset[lccRow,]$Source <- "makeLccFromCohortData"
+      
+    }
+  }
+}
+
+fullSheet <- rbind(sheetSubset, restofSheet)
+saveDatasheet(mySce, fullSheet, "RasterFile")
