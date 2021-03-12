@@ -215,6 +215,7 @@
               <column name="RasterVariableID" dataType="Integer" validationType="Datasheet" formula1="RasterVariable"/>
               <column name="File" dataType="String" isExternalFile="True" isRaster="True" allowDbNull="True" externalFileFilter="Rasters files (*.tif)|*.tif"/>
               <column name="Source" dataType="String" isOptional="True"/>
+              <column name="Band" dataType="Integer" isOptional="True"/>
             </columns>
           </datasheet>
         </datasheets>
