@@ -116,7 +116,9 @@ for (rowVar in seq_len(length.out = nrow(allVars))){
   if (theVarType == "var"){
     
     # Get info
-    filePath <- file.path(tmp, paste0(theVar, ".csv"))
+    filePath <- file.path(tmp, paste0(theVar, "_", paste(paste0("it_",theIter), 
+                                                         paste0("ts_",theTs), sep = "_"), 
+                                      ".csv"))
     
     # Write tmp file
     write.csv(object, filePath)
@@ -131,7 +133,9 @@ for (rowVar in seq_len(length.out = nrow(allVars))){
   } else if (theVarType == "raster") {
     
     # Get info
-    filePath <- file.path(tmp, paste0(theVar, ".tif"))
+    filePath <- file.path(tmp, paste0(theVar, "_", paste(paste0("it_",theIter), 
+                                                         paste0("ts_",theTs), sep = "_"), 
+                                      ".tif"))
     
     # Write tmp file
     writeRaster(object, filePath, overwrite = TRUE)
@@ -146,7 +150,9 @@ for (rowVar in seq_len(length.out = nrow(allVars))){
   } else if (theVarType == "file") {
     
     # TODO fix this case, how to get the file here?
-    filePath <- file.path(tmp, paste0(theVar, ".ext"))
+    filePath <- file.path(tmp, paste0(theVar, "_", paste(paste0("it_",theIter), 
+                                                         paste0("ts_",theTs), sep = "_"), 
+                                      ".ext"))
     
     # Write tmp file
     writeRaster(object, filePath)
