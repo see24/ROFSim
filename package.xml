@@ -213,7 +213,7 @@
               <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
               <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
               <column name="RasterVariableID" dataType="Integer" validationType="Datasheet" formula1="RasterVariable"/>
-              <column name="File" dataType="String" isExternalFile="True" isRaster="True" allowDbNull="True" externalFileFilter="Rasters files (*.tif)|*.tif"/>
+              <column name="File" dataType="String" isExternalFile="True" isRaster="True" allowDbNull="True" externalFileFilter="Rasters files (*.tif)|*.tif" bandColumn="Band" bandFilterColumn="RasterVariableID"/>
               <column name="Source" dataType="String" isOptional="True"/>
               <column name="Band" dataType="Integer" isOptional="True"/>
             </columns>
