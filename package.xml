@@ -391,7 +391,8 @@
 
     <!--Maps Layout-->
     <layout name="corestimeforms_Maps" configurationSheet="ROFSim_RunControl">
-
+      <!-- TODO add colorMapSource="stsim_TransitionType" -->
+      <item name="InputRastersMap" displayName="Input Rasters Map" dataSheet="RasterVariable" column="File" filter="RasterVariableID"/>
     </layout>
 
   </layouts>
