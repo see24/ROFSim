@@ -299,7 +299,7 @@
       isRunnable="True"
       runContext="LocalOnly"
       programName="Rscript"
-      programArguments="prepare_habitat_model.R">
+      programArguments="makeLccFromCohortData.R">
     </transformer>
 
     <transformer name="RunCaribouHabitatModel"
