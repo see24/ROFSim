@@ -255,7 +255,7 @@
             <datasheet name="RunCaribouRange" displayName="Caribou Range" isSingleRow="True">
               <columns>
                 <column name="RunCaribouRangeID" dataType="Integer" isPrimary="True"/>
-                <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
+                <column name="ScenarioID" dataType="Integer"/>
                 <column name="Range" displayName="Range Name" dataType="Integer" validationType="Datasheet" formula1="CaribouRange" allowDbNull="False"/>
               </columns>
             </datasheet>
