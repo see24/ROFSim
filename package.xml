@@ -296,7 +296,18 @@
       programArguments="load_spades_outputs.R">
 
       <pipeline>
+
         <datafeed name="SpaDESImportSettings" type="Input"/>
+        <datafeed name="SpaDESRuntimeVariables" type="Input"/>
+        <datafeed name="SpaDESRuntimeRasters" type="Input"/>
+        <datafeed name="SpaDESRuntimeFiles" type="Input"/>
+
+        <datafeed name="DataSummary" type="Output"/>
+        <datafeed name="RasterFile" type="Output"/>
+        <datafeed name="ExternalFile" type="Output"/>
+
+        <datafeed name="RunControl" type="Output"/>
+
       </pipeline>
 
     </transformer>
@@ -306,6 +317,17 @@
       runContext="LocalOnly"
       programName="Rscript"
       programArguments="makeLccFromCohortData.R">
+
+      <pipeline>
+
+        <datafeed name="DataSummary" type="Both"/>
+        <datafeed name="RasterFile" type="Both"/>
+        <datafeed name="ExternalFile" type="Both"/>
+
+        <datafeed name="RunControl" type="Input"/>
+
+      </pipeline>
+
     </transformer>
 
     <transformer name="RunCaribouHabitatModel"
@@ -316,6 +338,22 @@
       classAssembly="SyncroSim.StochasticTime"
       configurationSheet="ROFSim_RunControl"
       programArguments="run_caribou_model.R">
+
+      <pipeline>
+
+        <datafeed name="DataSummary" type="Input"/>
+        <datafeed name="RasterFile" type="Input"/>
+        <datafeed name="ExternalFile" type="Input"/>
+
+        <datafeed name="RunControl" type="Input"/>
+
+        <datafeed name="HabitatModelOptions" type="Input"/>
+
+        <datafeed name="OutputSpatialHabitat" type="Output"/>
+        <datafeed name="OutputHabitat" type="Output"/>
+
+      </pipeline>
+
     </transformer>
 
   </transformers>
