@@ -320,6 +320,8 @@
 
       <pipeline>
 
+        <datafeed name="SpaDESImportSettings" type="Input"/>
+
         <datafeed name="DataSummary" type="Both"/>
         <datafeed name="RasterFile" type="Both"/>
         <datafeed name="ExternalFile" type="Both"/>
