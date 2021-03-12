@@ -294,6 +294,11 @@
       runContext="LocalOnly"
       programName="Rscript"
       programArguments="load_spades_outputs.R">
+
+      <pipeline>
+        <datafeed name="SpaDESImportSettings" type="Input"/>
+      </pipeline>
+
     </transformer>
 
     <transformer name="makeLccFromCohortData"
