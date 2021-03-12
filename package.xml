@@ -362,7 +362,7 @@
         <datafeed name="ExternalFile" type="Input"/>
 
         <datafeed name="RunControl" type="Input"/>
-
+        <datafeed name="RunCaribouRange" type="Input"/>
         <datafeed name="HabitatModelOptions" type="Input"/>
 
         <datafeed name="OutputSpatialHabitat" type="Output"/>
@@ -423,6 +423,7 @@
         </group>
 
         <group name="CaribouModel" displayName="Caribou Model">
+          <item name="RunCaribouRange" />
           <item name="DataSummary"/>
           <item name="RasterFile"/>
           <item name="ExternalFile"/>
