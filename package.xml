@@ -231,7 +231,7 @@
               <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
               <column name="FileVariableID" dataType="Integer" validationType="Datasheet" formula1="FileVariable"/>
               <!-- TODO review which types are allowed-->
-              <column name="File" dataType="String" isExternalFile="True" allowDbNull="True" includeExtensions="*.shp|*.shx|*.dbf|*.prj" externalFileFilter="ShapeFiles (*.shp)|*.shp"/>
+              <column name="File" dataType="String" isExternalFile="True" allowDbNull="True" includeExtensions="*.shp|*.shx|*.dbf|*.prj" externalFileFilter="ShapeFiles (*.shp)|*.shp;*.shx;*.dbf;*.prj"/>
               <column name="Source" dataType="String" isOptional="True"/>
             </columns>
           </datasheet>
