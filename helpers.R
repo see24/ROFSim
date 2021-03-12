@@ -162,13 +162,3 @@ selectInputs <- function(rasters, vectors, column){
   }
   return(theFile)
 }
-
-# Assign reduction function
-assignReductionFunction <- function(x) {
-  print(deparse(substitute(x)));
-}
-
-# Assign Object name from var name
-assignObjectName() {
-  NULL
-}
