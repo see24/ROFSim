@@ -18,33 +18,11 @@ mySce <- scenario()
 # Source the helpers
 source(file.path(e$PackageDirectory, "helpers.R"))
 
-# Access all datasheets of importance
+# Get datasheets names
 myDatasheets <- datasheet(mySce)
-# Only select datasheets from the ROF package 
 subFilter <- sapply(X = myDatasheets$name, FUN = grepl, pattern="^(ROF)\\w+")
 myDatasheetsFiltered <- myDatasheets[subFilter,]
 myDatasheetsNames <- myDatasheetsFiltered$name
-# Remove the SpadesObject and outputs datasheet which can be empty
-myDatasheetsNamesFiltered <- 
-  myDatasheetsNames[!(myDatasheetsNames %in% c("ROFSim_InputSpadesObject",
-                                               "ROFSim_OutputHabitatUse"))]
-
-allParams <- lapply(myDatasheetsNamesFiltered, 
-                    FUN = datasheet, 
-                    ssimObject = mySce, 
-                    lookupsAsFactors = FALSE)
-names(allParams) <- myDatasheetsNamesFiltered
-
-# Function to filter inputs based on iterations and timesteps
-
-# params <- data.frame(data = c("NA_NA","2_2", "NA_4","3_10", "3_34", "NA_7", "4_1"), 
-#                      Iteration = c(NA,2,NA,3,3,NA,4), 
-#                      Timestep = c(NA,2,4,10,34,7,10))
-# filterInputs(params, 5, 33)
-# iter <- 5
-# ts <- 33
-
-# Function to select raster or vectors for esker + linfeat
 
 # Set of timesteps to analyse
 timestepSet <- GLOBAL_MinTimestep:GLOBAL_MaxTimestep
@@ -53,8 +31,16 @@ iterationSet <- GLOBAL_MinIteration:GLOBAL_MaxIteration
 #Simulation
 envBeginSimulation(GLOBAL_TotalIterations * GLOBAL_TotalTimesteps)
 
-# Empty list to start
+# Get variables -----------------------------------------------------------
 
+# Datasheets
+dataSummary <- datasheet(mySce, "DataSummary", optional = TRUE)
+rasterFiles <- datasheet(mySce, "RasterFile", optional = TRUE)
+extFiles <- datasheet(mySce, "ExternalFile", optional = TRUE)
+
+# Run model ---------------------------------------------------------------
+
+# Empty list to start
 habitatUseAll <- NULL
 
 for (iteration in iterationSet) {
