@@ -119,9 +119,9 @@
 
       <!-- Spades -->
 
-      <datafeed name="SpaDESImportSettings" displayName="SpaDES Import Settings" dataScope="Scenario">
+      <datafeed name="SpaDESImportSettings" displayName="Import Settings" dataScope="Scenario">
         <datasheets>
-          <datasheet name="SpaDESImportSettings" displayName="SpaDES Import Settings" isSingleRow="True">
+          <datasheet name="SpaDESImportSettings" displayName="Import Settings" isSingleRow="True">
             <columns>
               <column name="ScenarioID" dataType="Integer" isPrimary="True"/>
               <!-- TODO Determine options here -->
@@ -152,37 +152,37 @@
         </datasheets>
       </datafeed>
 
-      <datafeed name="SpaDESRuntimeVariables" displayName="SpaDES Runtime Variables" dataScope="Scenario">
+      <datafeed name="SpaDESRuntimeVariables" displayName="Runtime Variables" dataScope="Scenario">
         <datasheets>
-          <datasheet name="SpaDESRuntimeVariables" displayName="SpaDES Runtime Variables">
+          <datasheet name="SpaDESRuntimeVariables" displayName="Runtime Variables">
             <columns>
               <column name="SpaDESRuntimeVariablesID" dataType="Integer" isPrimary="True"/>
               <column name="ScenarioID" dataType="Integer"/>
-              <column name="VariableID" dataType="Integer" validationType="Datasheet" formula1="Variable" allowDbNull="False"/>
+              <column name="VariableID" displayName="Variable" dataType="Integer" validationType="Datasheet" formula1="Variable" allowDbNull="False"/>
             </columns>
           </datasheet>
         </datasheets>
       </datafeed>
 
-      <datafeed name="SpaDESRuntimeRasters" displayName="SpaDES Runtime Rasters" dataScope="Scenario">
+      <datafeed name="SpaDESRuntimeRasters" displayName="Runtime Rasters" dataScope="Scenario">
         <datasheets>
-          <datasheet name="SpaDESRuntimeRasters" displayName="SpaDES Runtime Rasters">
+          <datasheet name="SpaDESRuntimeRasters" displayName="Runtime Rasters">
             <columns>
               <column name="SpaDESRuntimeRastersID" dataType="Integer" isPrimary="True"/>
               <column name="ScenarioID" dataType="Integer"/>
-              <column name="RasterVariableID" dataType="Integer" validationType="Datasheet" formula1="RasterVariable" allowDbNull="False"/>
+              <column name="RasterVariableID" displayName="Raster Variable" dataType="Integer" validationType="Datasheet" formula1="RasterVariable" allowDbNull="False"/>
             </columns>
           </datasheet>
         </datasheets>
       </datafeed>
 
-      <datafeed name="SpaDESRuntimeFiles" displayName="SpaDES Runtime Files" dataScope="Scenario">
+      <datafeed name="SpaDESRuntimeFiles" displayName="Runtime Files" dataScope="Scenario">
         <datasheets>
-          <datasheet name="SpaDESRuntimeFiles" displayName="SpaDES Runtime Files">
+          <datasheet name="SpaDESRuntimeFiles" displayName="Runtime Files">
             <columns>
               <column name="SpaDESRuntimeFilesID" dataType="Integer" isPrimary="True"/>
               <column name="ScenarioID" dataType="Integer"/>
-              <column name="FileVariableID" dataType="Integer" validationType="Datasheet" formula1="FileVariable" allowDbNull="False"/>
+              <column name="FileVariableID" displayName="File Variable" dataType="Integer" validationType="Datasheet" formula1="FileVariable" allowDbNull="False"/>
             </columns>
           </datasheet>
         </datasheets>
@@ -196,7 +196,7 @@
               <column name="ScenarioID" dataType="Integer" />
               <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
               <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
-              <column name="VariableID" dataType="Integer" validationType="Datasheet" formula1="Variable"/>
+              <column name="VariableID" displayName="Variable" dataType="Integer" validationType="Datasheet" formula1="Variable"/>
               <column name="Value" dataType="Integer"/>
               <column name="Source" dataType="String" isOptional="True"/>
             </columns>
@@ -212,7 +212,7 @@
               <column name="ScenarioID" dataType="Integer"/>
               <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
               <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
-              <column name="RasterVariableID" dataType="Integer" validationType="Datasheet" formula1="RasterVariable"/>
+              <column name="RasterVariableID" displayName="Raster Variable" dataType="Integer" validationType="Datasheet" formula1="RasterVariable"/>
               <column name="File" dataType="String" isExternalFile="True" isRaster="True" allowDbNull="True" externalFileFilter="Rasters files (*.tif)|*.tif" bandColumn="Band" bandFilterColumn="RasterVariableID"/>
               <column name="Source" dataType="String" isOptional="True"/>
               <column name="Band" dataType="Integer" isOptional="True"/>
@@ -229,7 +229,7 @@
               <column name="ScenarioID" dataType="Integer"/>
               <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True"/>
               <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True"/>
-              <column name="FileVariableID" dataType="Integer" validationType="Datasheet" formula1="FileVariable"/>
+              <column name="FileVariableID" displayName="File Variable" dataType="Integer" validationType="Datasheet" formula1="FileVariable"/>
               <!-- TODO review which types are allowed-->
               <column name="File" dataType="String" isExternalFile="True" allowDbNull="True" includeExtensions="shp|shx|dbf|prj" externalFileFilter="ShapeFiles (*.shp)|*.shp"/>
               <column name="Source" dataType="String" isOptional="True"/>
@@ -462,7 +462,7 @@
     <!--Maps Layout-->
     <layout name="corestimeforms_Maps" configurationSheet="ROFSim_RunControl">
       <!-- TODO add colorMapSource="stsim_TransitionType" -->
-      <item name="InputRastersMap" displayName="Input Rasters Map" dataSheet="RasterFile" column="File" filter="RasterVariableID"/>
+      <item name="InputRastersMap" displayName="Rasters Variables" dataSheet="RasterFile" column="File" filter="RasterVariableID"/>
     </layout>
 
   </layouts>
