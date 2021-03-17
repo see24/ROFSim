@@ -39,7 +39,7 @@
         </datasheets>
       </datafeed>
 
-      <datafeed name="RasterVariable" displayName="Raster Variables" dataScope="Project">
+      <datafeed name="RasterVariable" displayName="Rasters" dataScope="Project">
         <datasheets>
           <datasheet name="RasterVariable" displayName="Raster Variables" valueMember="RasterVariableID" displayMember="Name">
             <columns>
@@ -52,7 +52,7 @@
         </datasheets>
       </datafeed>
 
-      <datafeed name="FileVariable" displayName="File Variables" dataScope="Project">
+      <datafeed name="FileVariable" displayName="Files" dataScope="Project">
         <datasheets>
           <datasheet name="FileVariable" displayName="File Variables" valueMember="FileVariableID" displayMember="Name">
             <columns>
@@ -303,6 +303,7 @@
 
     <transformer name="LoadSpadesOutputs"
       isRunnable="True"
+      displayName="Load Spades Outputs"
       runContext="LocalOnly"
       programName="Rscript"
       programArguments="load_spades_outputs.R">
@@ -325,6 +326,7 @@
     </transformer>
 
     <transformer name="makeLccFromCohortData"
+      displayName="Make LCC from Cohort Data"
       isRunnable="True"
       runContext="LocalOnly"
       programName="Rscript"
@@ -334,17 +336,18 @@
 
         <datafeed name="SpaDESImportSettings" type="Input"/>
 
-        <datafeed name="DataSummary" type="Both"/>
-        <datafeed name="RasterFile" type="Both"/>
-        <datafeed name="ExternalFile" type="Both"/>
+        <!--datafeed name="DataSummary" type="Both"/-->
+        <datafeed name="RasterFile" type="Output"/>
+        <!--datafeed name="ExternalFile" type="Both"/-->
 
-        <datafeed name="RunControl" type="Input"/>
+        <datafeed name="RunControl" type="Output"/>
 
       </pipeline>
 
     </transformer>
 
     <transformer name="RunCaribouHabitatModel"
+      displayName="Run Caribou Habitat Model"
       isRunnable="True"
       runContext="AllowRemote"
       programName="Rscript"
@@ -387,13 +390,13 @@
      <!-- Project feeds layouts -->
     <layout name="coreforms_ProjectDatafeeds">
 
-      <group name="Inputs">
+      <group name="SpaDES">
         <item name="Variable"/>
         <item name="RasterVariable"/>
         <item name="FileVariable"/>
       </group>
 
-      <group name="CaribouModel" displayName="Caribou Model">
+      <group name="CaribouModel" displayName="Caribou Metrics">
         <item name="ForestUnit"/>
         <item name="LandCoverClass"/>
         <item name="CaribouRange"/>
@@ -411,35 +414,37 @@
     <!-- Scenario feeds layouts -->
     <layout name="coreforms_ScenarioDatafeeds">
 
-      <item name="RunControl"/>
-
-      <group name="Inputs" >
-
-        <group name="SpaDES" displayName="SpaDES">
+      <group name="RunControl" displayName="Run Control">
+        <item name="core_Pipeline"/>
+        <item name="RunControl"/>  
+      </group>
+      
+      <group name="SpaDESImport" displayName="SpaDES Import">
           <item name="SpaDESImportSettings"/>
           <item name="SpaDESRuntimeVariables"/>
           <item name="SpaDESRuntimeRasters"/>
           <item name="SpaDESRuntimeFiles"/>
-        </group>
-
-        <group name="CaribouModel" displayName="Caribou Model">
-          <item name="RunCaribouRange" />
-          <item name="DataSummary"/>
-          <item name="RasterFile"/>
-          <item name="ExternalFile"/>
-          <group name="Options" >
-            <item name="HabitatModelOptions"/>
-          </group>
-        </group>
-
       </group>
+
+      <group name="Data">
+        <item name="DataSummary"/>
+        <item name="RasterFile"/>
+        <item name="ExternalFile"/>
+      </group>
+        
+        <group name="CaribouModel" displayName="Caribou Metrics">
+          <item name="RunCaribouRange" />
+          <item name="HabitatModelOptions"/>
+        </group>
+
+      
 
       <group name="Outputs" displayName="Outputs">
         <item name="OutputHabitat"/>
         <item name="OutputSpatialHabitat"/>
       </group>
 
-      <item name="core_Pipeline"/>
+      
 
     </layout>
 
