@@ -190,7 +190,7 @@
 
       <datafeed name="DataSummary" displayName="Data Summary" dataScope="Scenario">
         <datasheets>
-          <datasheet name="DataSummary" displayName="Data Summary">
+          <datasheet name="DataSummary" displayName="Data Summary" viewFilterColumn="VariableID">
             <columns>
               <column name="DataSummaryID" dataType="Integer" isPrimary="True"/>
               <column name="ScenarioID" dataType="Integer" />
@@ -450,9 +450,13 @@
 
     <!--Results transformer Layout-->
     <layout name="coreforms_ResultTransformers">
-
+      <item name="corestime_ChartTransformer"/>
       <item name="corestime_MapTransformer"/>
 
+    </layout>
+
+    <layout name="corestimeforms_Charts" configurationSheet="RunControl">
+       <item name="DataSummary" displayName="Data Summary" dataSheet="DataSummary" column="Value" variableSourceColumn="VariableID"/>
     </layout>
 
     <!--Maps Layout-->
@@ -462,5 +466,8 @@
     </layout>
 
   </layouts>
+  <views>
+    <view name="DataSummaryDataFeedView" target="DataSummary" className="SyncroSim.Core.Forms.FilteredDataFeedView" classAssembly="SyncroSim.Core.Forms"/>
+  </views>
 
 </package>
