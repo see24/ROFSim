@@ -456,6 +456,7 @@
     <layout name="corestimeforms_Maps" configurationSheet="ROFSim_RunControl">
       <!-- TODO add colorMapSource="stsim_TransitionType" -->
       <item name="InputRastersMap" displayName="Rasters Variables" dataSheet="RasterFile" column="File" filter="RasterVariableID" />
+      <item name="OutputRastersMap" displayName="Habitat Use (Spatial)" dataSheet="OutputSpatialHabitat" column="FileName" filter="SeasonID" />
     </layout>
 
   </layouts>
