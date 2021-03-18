@@ -259,11 +259,11 @@
           </datasheets>
         </datafeed>
 
-        <datafeed name="CrosswalkRaster" displayName="Crosswalk Raster" dataScope="Scenario">
+        <datafeed name="Crosswalk" displayName="Crosswalk" dataScope="Scenario">
           <datasheets>
-            <datasheet name="CrosswalkRaster" displayName="Crosswalk Raster">
+            <datasheet name="Crosswalk" displayName="Crosswalk">
               <columns>
-                <column name="CrosswalkRasterID" dataType="Integer" isPrimary="True" />
+                <column name="CrosswalkID" dataType="Integer" isPrimary="True" />
                 <column name="ScenarioID" dataType="Integer" />
                 <column name="RasterVariableID" displayName="Raster Variable" dataType="Integer" validationType="Datasheet" formula1="RasterVariable" allowDbNull="False" />
                 <column name="VariableID" displayName="Variable" dataType="Integer" validationType="Datasheet" formula1="Variable" allowDbNull="False" />
@@ -362,6 +362,8 @@
         <datafeed name="RunCaribouRange" type="Input" />
         <datafeed name="HabitatModelOptions" type="Input" />
 
+        <datafeed name="Crosswalk" type="Input"/>
+
         <datafeed name="OutputSpatialHabitat" type="Output" />
         <datafeed name="OutputHabitat" type="Output" />
 
@@ -429,14 +431,13 @@
       <group name="CaribouModel" displayName="Caribou Metrics">
         <item name="RunCaribouRange" />
         <item name="HabitatModelOptions" />
+        <item name="Crosswalk"/>
       </group>
-
 
       <group name="Outputs" displayName="Outputs">
         <item name="OutputHabitat" />
         <item name="OutputSpatialHabitat" />
       </group>
-
 
     </layout>
 
