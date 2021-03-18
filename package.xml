@@ -22,6 +22,18 @@
       <datafeeds>
 
         <!-- Project Datafeeds -->
+        <datafeed name="SpaDESObject" displayName="Objects" dataScope="Project">
+          <datasheets>
+            <datasheet name="SpaDESObject" displayName="Objects" valueMember="ObjectID" displayMember="Name">
+              <columns>
+                <column name="ObjectID" dataType="Integer" isPrimary="True" />
+                <column name="ProjectID" dataType="Integer" />
+                <column name="Name" dataType="String" />
+                <column name="Description" dataType="String" isOptional="True" />
+              </columns>
+            </datasheet>
+          </datasheets>
+        </datafeed>
 
         <datafeed name="Variable" displayName="Variables" dataScope="Project">
           <datasheets>
@@ -36,9 +48,9 @@
           </datasheets>
         </datafeed>
 
-        <datafeed name="RasterVariable" displayName="Rasters" dataScope="Project">
+        <datafeed name="RasterVariable" displayName="Raster Files" dataScope="Project">
           <datasheets>
-            <datasheet name="RasterVariable" displayName="Raster Variables" valueMember="RasterVariableID" displayMember="Name">
+            <datasheet name="RasterVariable" displayName="Raster Files" valueMember="RasterVariableID" displayMember="Name">
               <columns>
                 <column name="RasterVariableID" dataType="Integer" isPrimary="True" />
                 <column name="ProjectID" dataType="Integer" />
@@ -49,9 +61,22 @@
           </datasheets>
         </datafeed>
 
-        <datafeed name="FileVariable" displayName="Files" dataScope="Project">
+        <datafeed name="RasterCrosswalk" displayName="Crosswalk" dataScope="Project">
           <datasheets>
-            <datasheet name="FileVariable" displayName="File Variables" valueMember="FileVariableID" displayMember="Name">
+            <datasheet name="RasterCrosswalk" displayName="Crosswalk">
+              <columns>
+                <column name="RasterCrosswalkID" dataType="Integer" isPrimary="True" />
+                <column name="ProjectID" dataType="Integer" />
+                <column name="RasterVariableID" displayName="Raster" dataType="Integer" validationType="Datasheet" formula1="RasterVariable" allowDbNull="False" />
+                <column name="ObjectID" displayName="Spades Object" dataType="Integer" validationType="Datasheet" formula1="SpaDESObject" allowDbNull="False" />
+              </columns>
+            </datasheet>
+          </datasheets>
+        </datafeed>
+
+        <datafeed name="FileVariable" displayName="Shape Files" dataScope="Project">
+          <datasheets>
+            <datasheet name="FileVariable" displayName="Shape Files" valueMember="FileVariableID" displayMember="Name">
               <columns>
                 <column name="FileVariableID" dataType="Integer" isPrimary="True" />
                 <column name="ProjectID" dataType="Integer" />
@@ -62,7 +87,20 @@
           </datasheets>
         </datafeed>
 
-        <datafeed name="ForestUnit" displayName="Forest Unit" dataScope="Project">
+        <datafeed name="ShapeFileCrosswalk" displayName="Crosswalk" dataScope="Project">
+          <datasheets>
+            <datasheet name="ShapeFileCrosswalk" displayName="Crosswalk">
+              <columns>
+                <column name="ShapeFileCrosswalkID" dataType="Integer" isPrimary="True" />
+                <column name="ProjectID" dataType="Integer" />
+                <column name="FileVariableID" displayName="Shape File" dataType="Integer" validationType="Datasheet" formula1="FileVariable" allowDbNull="False" />
+                <column name="ObjectID" displayName="Spades Object" dataType="Integer" validationType="Datasheet" formula1="SpaDESObject" allowDbNull="False" />
+              </columns>
+            </datasheet>
+          </datasheets>
+        </datafeed>
+
+        <!--datafeed name="ForestUnit" displayName="Forest Unit" dataScope="Project">
           <datasheets>
             <datasheet name="ForestUnit" displayName="Forest Unit">
               <columns>
@@ -73,9 +111,9 @@
               </columns>
             </datasheet>
           </datasheets>
-        </datafeed>
+        </datafeed-->
 
-        <datafeed name="LandCoverClass" displayName="Land Cover Class" dataScope="Project">
+        <!--datafeed name="LandCoverClass" displayName="Land Cover Class" dataScope="Project">
           <datasheets>
             <datasheet name="LandCoverClass" displayName="Land Cover Class">
               <columns>
@@ -86,7 +124,7 @@
               </columns>
             </datasheet>
           </datasheets>
-        </datafeed>
+        </datafeed-->
 
         <datafeed name="CaribouRange" displayName="Caribou Range" dataScope="Project">
           <datasheets>
@@ -112,11 +150,31 @@
           </datasheets>
         </datafeed>
 
+        <datafeed name="CaribouDataSource" displayName="Data Sources" dataScope="Project">
+          <datasheets>
+            <datasheet name="CaribouDataSource" displayName="Data Sources" isSingleRow="True">
+              <columns>
+                <column name="CaribouDataSourceID" dataType="Integer" isPrimary="True" />
+                <column name="ProjectID" dataType="Integer" />
+                <column name="LandCoverRasterID" displayName="Land Cover Raster" dataType="Integer" validationType="Datasheet" formula1="RasterVariable" allowDbNull="False" />
+                <column name="EskerRasterID" displayName="Esker Raster" dataType="Integer" validationType="Datasheet" formula1="RasterVariable" allowDbNull="True" />
+                <column name="FRIRasterID" displayName="FRI Raster" dataType="Integer" validationType="Datasheet" formula1="RasterVariable" allowDbNull="False" />
+                <column name="AgeRasterID" displayName="Age Raster" dataType="Integer" validationType="Datasheet" formula1="RasterVariable" allowDbNull="False" />
+                <column name="NaturalDisturbanceRasterID" displayName="Natural Disturbance Raster" dataType="Integer" validationType="Datasheet" formula1="RasterVariable" allowDbNull="True" />
+                <column name="AnthropogenicRasterID" displayName="Anthropogenic Raster" dataType="Integer" validationType="Datasheet" formula1="RasterVariable" allowDbNull="True" />
+                <column name="HarvestRasterID" displayName="Harvest Raster" dataType="Integer" validationType="Datasheet" formula1="RasterVariable" allowDbNull="True" />
+                <column name="LinearFeatureRasterID" displayName="Linear Feature Raster" dataType="Integer" validationType="Datasheet" formula1="RasterVariable" allowDbNull="True" />
+                <column name="ProjectShapeFileID" displayName="Project Polygon" dataType="Integer" validationType="Datasheet" formula1="FileVariable" allowDbNull="False" />
+              </columns>
+            </datasheet>
+          </datasheets>
+        </datafeed>
+
         <!-- Scenario Datafeeds -->
 
         <!-- Spades -->
 
-        <datafeed name="SpaDESImportSettings" displayName="Import Settings" dataScope="Scenario">
+        <datafeed name="SpaDESImportSettings" displayName="General" dataScope="Scenario">
           <datasheets>
             <datasheet name="SpaDESImportSettings" displayName="Import Settings" isSingleRow="True">
               <columns>
@@ -149,7 +207,7 @@
           </datasheets>
         </datafeed>
 
-        <datafeed name="SpaDESRuntimeVariables" displayName="Runtime Variables" dataScope="Scenario">
+        <!--datafeed name="SpaDESRuntimeVariables" displayName="Runtime Variables" dataScope="Scenario">
           <datasheets>
             <datasheet name="SpaDESRuntimeVariables" displayName="Runtime Variables">
               <columns>
@@ -159,9 +217,9 @@
               </columns>
             </datasheet>
           </datasheets>
-        </datafeed>
+        </datafeed-->
 
-        <datafeed name="SpaDESRuntimeRasters" displayName="Runtime Rasters" dataScope="Scenario">
+        <datafeed name="SpaDESRuntimeRasters" displayName="Rasters" dataScope="Scenario">
           <datasheets>
             <datasheet name="SpaDESRuntimeRasters" displayName="Runtime Rasters">
               <columns>
@@ -173,7 +231,7 @@
           </datasheets>
         </datafeed>
 
-        <datafeed name="SpaDESRuntimeFiles" displayName="Runtime Files" dataScope="Scenario">
+        <datafeed name="SpaDESRuntimeFiles" displayName="Shape Files" dataScope="Scenario">
           <datasheets>
             <datasheet name="SpaDESRuntimeFiles" displayName="Runtime Files">
               <columns>
@@ -218,7 +276,7 @@
           </datasheets>
         </datafeed>
 
-        <datafeed name="ExternalFile" displayName="External Files" dataScope="Scenario">
+        <datafeed name="ExternalFile" displayName="Shape Files" dataScope="Scenario">
           <datasheets>
             <datasheet name="ExternalFile" displayName="External Files">
               <columns>
@@ -313,16 +371,16 @@
 
     </transformer>
 
-    <transformer name="LoadSpadesOutputs" isRunnable="True" displayName="Load Spades Outputs" runContext="LocalOnly" programName="Rscript" programArguments="load_spades_outputs.R">
+    <transformer name="LoadSpadesOutputs" isRunnable="True" displayName="Spades Import" runContext="LocalOnly" programName="Rscript" programArguments="load_spades_outputs.R">
 
       <pipeline>
 
         <datafeed name="SpaDESImportSettings" type="Input" />
-        <datafeed name="SpaDESRuntimeVariables" type="Input" />
+        <!--datafeed name="SpaDESRuntimeVariables" type="Input" /-->
         <datafeed name="SpaDESRuntimeRasters" type="Input" />
         <datafeed name="SpaDESRuntimeFiles" type="Input" />
 
-        <datafeed name="DataSummary" type="Output" />
+        <!--datafeed name="DataSummary" type="Output" /-->
         <datafeed name="RasterFile" type="Output" />
         <datafeed name="ExternalFile" type="Output" />
 
@@ -332,7 +390,7 @@
 
     </transformer>
 
-    <transformer name="makeLccFromCohortData" displayName="Make LCC from Cohort Data" isRunnable="True" runContext="LocalOnly" programName="Rscript" programArguments="makeLccFromCohortData.R">
+    <transformer name="makeLccFromCohortData" displayName="Generate LCC from Cohort Data" isRunnable="True" runContext="LocalOnly" programName="Rscript" programArguments="makeLccFromCohortData.R">
 
       <pipeline>
 
@@ -348,13 +406,13 @@
 
     </transformer>
 
-    <transformer name="RunCaribouHabitatModel" displayName="Run Caribou Habitat Model" isRunnable="True" runContext="AllowRemote" programName="Rscript" className="SyncroSim.StochasticTime.StochasticTimeTransformer" classAssembly="SyncroSim.StochasticTime" configurationSheet="ROFSim_RunControl" programArguments="run_caribou_model.R">
+    <transformer name="RunCaribouHabitatModel" displayName="Caribou Habitat" isRunnable="True" runContext="AllowRemote" programName="Rscript" className="SyncroSim.StochasticTime.StochasticTimeTransformer" classAssembly="SyncroSim.StochasticTime" configurationSheet="ROFSim_RunControl" programArguments="run_caribou_model.R">
 
       <pipeline>
 
         <datafeed name="SpaDESImportSettings" type="Input" />
 
-        <datafeed name="DataSummary" type="Input" />
+        <!--datafeed name="DataSummary" type="Input" /-->
         <datafeed name="RasterFile" type="Input" />
         <datafeed name="ExternalFile" type="Input" />
 
@@ -391,16 +449,24 @@
     <layout name="coreforms_ProjectDatafeeds">
 
       <group name="SpaDES">
-        <item name="Variable" />
-        <item name="RasterVariable" />
-        <item name="FileVariable" />
+        <!-- item name="Variable"/ -->
+        <item name="SpaDESObject" />
+        <group name="Raster">
+          <item name="RasterVariable" />
+          <item name="RasterCrosswalk" />
+        </group>
+        <group name="Shape">
+          <item name="FileVariable" />
+          <item name="ShapeFileCrosswalk" />
+        </group>
       </group>
 
       <group name="CaribouModel" displayName="Caribou Metrics">
-        <item name="ForestUnit" />
-        <item name="LandCoverClass" />
+        <!--item name="ForestUnit" /-->
+        <!--item name="LandCoverClass" /-->
         <item name="CaribouRange" />
         <item name="Season" />
+        <item name="CaribouDataSource" />
       </group>
 
       <group name="Pipeline">
@@ -421,13 +487,13 @@
 
       <group name="SpaDESImport" displayName="SpaDES Import">
         <item name="SpaDESImportSettings" />
-        <item name="SpaDESRuntimeVariables" />
+        <!--item name="SpaDESRuntimeVariables" /-->
         <item name="SpaDESRuntimeRasters" />
         <item name="SpaDESRuntimeFiles" />
       </group>
 
       <group name="Data">
-        <item name="DataSummary" />
+        <!--item name="DataSummary" /-->
         <item name="RasterFile" />
         <item name="ExternalFile" />
       </group>
@@ -435,7 +501,7 @@
       <group name="CaribouModel" displayName="Caribou Metrics">
         <item name="RunCaribouRange" />
         <item name="HabitatModelOptions" />
-        <item name="Crosswalk"/>
+        <!--item name="Crosswalk"/-->
       </group>
 
       <group name="Outputs" displayName="Outputs">
@@ -447,14 +513,14 @@
 
     <!--Results transformer Layout-->
     <layout name="coreforms_ResultTransformers">
-      <item name="corestime_ChartTransformer" />
+      <!--item name="corestime_ChartTransformer" /-->
       <item name="corestime_MapTransformer" />
 
     </layout>
 
-    <layout name="corestimeforms_Charts" configurationSheet="RunControl">
-      <item name="DataSummary" displayName="Data Summary" dataSheet="DataSummary" column="Value" variableSourceColumn="VariableID" />
-    </layout>
+    <!--layout name="corestimeforms_Charts" configurationSheet="RunControl">
+    <item name="DataSummary" displayName="Data Summary" dataSheet="DataSummary" column="Value" variableSourceColumn="VariableID" />
+    </layout -->
 
     <!--Maps Layout-->
     <layout name="corestimeforms_Maps" configurationSheet="ROFSim_RunControl">
@@ -464,8 +530,8 @@
     </layout>
 
   </layouts>
-  <views>
+  <!--views>
     <view name="DataSummaryDataFeedView" target="DataSummary" className="SyncroSim.Core.Forms.FilteredDataFeedView" classAssembly="SyncroSim.Core.Forms" />
-  </views>
+  </views-->
 
 </package>
