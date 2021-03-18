@@ -268,7 +268,7 @@
                 <column name="RasterVariableID" displayName="Raster Variable" dataType="Integer" validationType="Datasheet" formula1="RasterVariable" allowDbNull="True" />
                 <column name="VariableID" displayName="Variable" dataType="Integer" validationType="Datasheet" formula1="Variable" allowDbNull="True" />
                 <column name="FileVariableID" displayName="File Variable" dataType="Integer" validationType="Datasheet" formula1="FileVariable" allowDbNull="True" />
-                <column name="CaribouVariableID" displayName="Caribou Raster Variable" dataType="String" allowDbNull="False" />
+                <column name="CaribouVariableID" displayName="Caribou Model Variable" dataType="String" allowDbNull="False" />
               </columns>
             </datasheet>
           </datasheets>
