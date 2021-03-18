@@ -286,7 +286,7 @@
                 <column name="ScenarioID" dataType="Integer" />
                 <column name="RangeID" dataType="Integer" validationType="Datasheet" formula1="CaribouRange" allowDbNull="False" />
                 <column name="SeasonID" dataType="Integer" validationType="Datasheet" formula1="Season" allowDbNull="False" />
-                <column name="FileName" dataType="String" isExternalFile="True" isRaster="True" bandColumn="Band" bandFilterColumn="Season" allowDbNull="False" filenameCode="habuse" />
+                <column name="FileName" dataType="String" isExternalFile="True" isRaster="True" bandColumn="Band" bandFilterColumn="SeasonID" allowDbNull="False" filenameCode="habuse" />
                 <column name="Band" dataType="Integer" isOptional="True" />
               </columns>
             </datasheet>
