@@ -379,6 +379,10 @@
     <!-- Ciore feeds layouts -->
     <layout name="coreforms_LibraryDatafeeds">
 
+      <item name="core_SysFolder"/>
+      <item name="core_Backup"/>
+      <item name="core_Multiprocessing"/>
+      <item name="core_Options"/>
       <item name="core_Rconfig" />
 
     </layout>
