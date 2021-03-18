@@ -53,7 +53,8 @@ if (nrow(allParams$RasterFile > 0)){
                                      RasterVariableID, CaribouVariableID)) %>% 
     select(-c(CaribouVariableID, VariableID, FileVariableID)) %>% 
     group_by(Iteration, Timestep, RasterVariableID) %>% 
-    group_modify(~ if(nrow(.x)>1){ .x[!is.na(.x$Source), ]} else { .x})
+    group_modify(~ if(nrow(.x)>1){ .x[is.na(.x$Source), ]} else { .x}) %>% 
+    ungroup %>% as.data.frame()
 }
 
 if (nrow(allParams$DataSummary > 0)){
@@ -62,7 +63,8 @@ if (nrow(allParams$DataSummary > 0)){
                                VariableID, CaribouVariableID)) %>% 
     select(-c(CaribouVariableID, RasterVariableID, FileVariableID)) %>%  
     group_by(Iteration, Timestep, VariableID) %>% 
-    group_modify(~ if(nrow(.x)>1){ .x[!is.na(.x$Source), ]} else { .x})
+    group_modify(~ if(nrow(.x)>1){ .x[is.na(.x$Source), ]} else { .x}) %>% 
+    ungroup %>% as.data.frame()
 }
 
 if (nrow(allParams$ExternalFile > 0)){
@@ -71,7 +73,8 @@ if (nrow(allParams$ExternalFile > 0)){
                                    FileVariableID, CaribouVariableID)) %>% 
     select(-c(CaribouVariableID, VariableID, RasterVariableID)) %>% 
     group_by(Iteration, Timestep, FileVariableID) %>% 
-    group_modify(~ if(nrow(.x)>1){ .x[!is.na(.x$Source), ]} else { .x})
+    group_modify(~ if(nrow(.x)>1){ .x[!is.na(.x$Source), ]} else { .x}) %>% 
+    ungroup %>% as.data.frame()
 }
 
 # Filter Timesteps --------------------------------------------------------
@@ -102,6 +105,9 @@ envBeginSimulation(length(iterationSet) * length(timestepSet))
 # Empty list to start
 habitatUseAll <- NULL
 
+# iteration <- iterationSet[1]
+# timestep <- timestepSet[1]
+
 for (iteration in iterationSet) {
   
   for (timestep in timestepSet) {
@@ -111,9 +117,9 @@ for (iteration in iterationSet) {
     # Filter inputs based on iteration and timestep
     # rasters
     InputRasters <- filterInputs(allParams$RasterFile, 
-                                 iteration, timestep)
+                                 iteration, timestep, min(timestepSet))
     InputVectors <- filterInputs(allParams$ExternalFile,
-                                 iteration, timestep)
+                                 iteration, timestep, min(timestepSet))
     
     # Call the main function with all arguments extracted from datasheets
     res <- caribouHabitat(# Rasters
@@ -127,19 +133,51 @@ for (iteration in iterationSet) {
       # Vectors
       projectPoly = st_read(InputVectors$ProjectPolyFileName), 
       
-      # String
-      caribouRange = allParams$ROFSim_CaribouRange$Range, 
-      
       # Rasters or vectors
       esker = selectInputs(InputRasters, InputVectors, "EskerFileName"),
       linFeat = selectInputs(InputRasters, InputVectors, "LinFeatFileName"),
+    )
+    
+    plcD <- filter(InputRasters, RasterVariableID == "landCover")$File %>% 
+      reclassPLC()
+    eskerDras = raster(paste0(pthBase, "eskerTif", ".tif"))
+    
+    friD = filter(InputRasters, RasterVariableID == "fri")$File %>%
+      reclassFRI(friLU = read.csv(paste0(pthBase, "friLU", ".csv"),
+                                  stringsAsFactors = FALSE) %>%
+                   mutate(RFU = toupper(RFU) %>% stringr::str_replace("HRDMW", "HRDMX")))
+    
+    ageD = raster(paste0(pthBase, "age", ".tif"))
+    
+    natDistD = raster(paste0(pthBase, "natDist", ".tif"))
+    
+    anthroDistD = raster(paste0(pthBase, "anthroDist", ".tif"))
+    
+    harvD = raster(paste0(pthBase, "harv", ".tif"))
+    
+    linFeatDras = raster(paste0(pthBase, "linFeatTif", ".tif"))
+    
+    projectPolyD = st_read(paste0(pthBase, "projectPoly", ".shp"), quiet = TRUE)
+    
+    res <- caribouHabitat(
       
-      # Look up table
-      friLU = allParams$ROFSim_FriLookUpTable[,c(2,1)], # Necessary as expecting this order
+      landCover = plcD , 
+      esker = eskerDras, 
+      updatedLC = friD , 
+      age = ageD, 
+      natDist = natDistD, 
+      anthroDist = anthroDistD, 
+      harv = harvD,
       
-      # Model options
-      padProjPoly = optArg(allParams$ROFSim_ModelOptions$PadProjPoly),
-      padFocal = optArg(allParams$ROFSim_ModelOptions$PadFocal),
+      linFeat = linFeatDras, 
+      projectPoly = projectPolyD,
+      
+      # Caribou Range
+      caribouRange = allParams$RunCaribouRange$Range, 
+      
+      # Options
+      padProjPoly = optArg(allParams$HabitatModelOptions$PadProjPoly),
+      padFocal = optArg(allParams$HabitatModelOptions$PadFocal),
       
       # outputs are saved afterwards
       eskerSave = NULL,
@@ -147,7 +185,8 @@ for (iteration in iterationSet) {
       saveOutput = NULL,
       
       # TEMPORARY, for test purposes only
-      winArea = 500)
+      winArea = 500
+    )
     
     ## Save to DATA folder
     writeRaster(res@habitatUse, bylayer = TRUE, format = "GTiff",
