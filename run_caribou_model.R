@@ -122,54 +122,38 @@ for (iteration in iterationSet) {
                                  iteration, timestep, min(timestepSet))
     
     # Call the main function with all arguments extracted from datasheets
-    res <- caribouHabitat(# Rasters
-      plc = raster(InputRasters$PlcFileName),
-      fri = raster(InputRasters$FriFileName), 
-      age = raster(InputRasters$AgeFileName), 
-      natDist = raster(InputRasters$NatDistFileName), 
-      anthroDist = raster(InputRasters$AnthroDistFileName), 
-      harv = raster(InputRasters$HarvFileName), 
-      
-      # Vectors
-      projectPoly = st_read(InputVectors$ProjectPolyFileName), 
-      
-      # Rasters or vectors
-      esker = selectInputs(InputRasters, InputVectors, "EskerFileName"),
-      linFeat = selectInputs(InputRasters, InputVectors, "LinFeatFileName"),
-    )
-    
-    plcD <- filter(InputRasters, RasterVariableID == "landCover")$File %>% 
+    plcD <- raster(filter(InputRasters, RasterVariableID == "landCover")$File) %>% 
       reclassPLC()
-    eskerDras = raster(paste0(pthBase, "eskerTif", ".tif"))
+    eskerDras = raster(filter(InputRasters, RasterVariableID == "esker")$File)
     
-    friD = filter(InputRasters, RasterVariableID == "fri")$File %>%
-      reclassFRI(friLU = read.csv(paste0(pthBase, "friLU", ".csv"),
+    friD = raster(filter(InputRasters, RasterVariableID == "fri")$File) %>%
+      reclassFRI(friLU = read.csv("D://ROFSim/data/FRI_LU_processed.csv",
                                   stringsAsFactors = FALSE) %>%
                    mutate(RFU = toupper(RFU) %>% stringr::str_replace("HRDMW", "HRDMX")))
     
-    ageD = raster(paste0(pthBase, "age", ".tif"))
+    ageD = raster(filter(InputRasters, RasterVariableID == "age")$File)
     
-    natDistD = raster(paste0(pthBase, "natDist", ".tif"))
+    natDistD = raster(filter(InputRasters, RasterVariableID == "natDist")$File)
     
-    anthroDistD = raster(paste0(pthBase, "anthroDist", ".tif"))
+    anthroDistD = raster(filter(InputRasters, RasterVariableID == "anthroDist")$File)
     
-    harvD = raster(paste0(pthBase, "harv", ".tif"))
+    harvD = raster(filter(InputRasters, RasterVariableID == "harv")$File)
     
-    linFeatDras = raster(paste0(pthBase, "linFeatTif", ".tif"))
+    linFeatDras = raster(filter(InputRasters, RasterVariableID == "linFeat")$File)
     
-    projectPolyD = st_read(paste0(pthBase, "projectPoly", ".shp"), quiet = TRUE)
+    projectPolyD = st_read(filter(InputVectors, FileVariableID == "projectPoly")$File, 
+                           quiet = TRUE)
     
     res <- caribouHabitat(
       
       landCover = plcD , 
-      esker = eskerDras, 
+      esker = st_read("D://ROF/inputs/esker.shp"), 
       updatedLC = friD , 
       age = ageD, 
       natDist = natDistD, 
       anthroDist = anthroDistD, 
       harv = harvD,
-      
-      linFeat = linFeatDras, 
+      linFeat = st_read("D://ROF/inputs/linFeat.shp"), 
       projectPoly = projectPolyD,
       
       # Caribou Range
@@ -197,16 +181,16 @@ for (iteration in iterationSet) {
                 overwrite = TRUE)
     
     # Build df and save the datasheet
-    habitatUseDf <- data.frame(Season = names(res@habitatUse), 
+    habitatUseDf <- data.frame(SeasonID = names(res@habitatUse), 
                                Iteration = iteration,
                                Timestep = timestep,
-                               Range = allParams$ROFSim_CaribouRange$Range)
-    habitatUseDf$HabitatUse <- file.path(e$TransferDirectory, 
-                                         paste0(paste("OutputHabitatUse",
-                                                      habitatUseDf$Season,
-                                                      "it", habitatUseDf$Iteration, 
-                                                      "ts", habitatUseDf$Timestep,
-                                                      sep= "_"), ".tif"))
+                               RangeID = allParams$RunCaribouRange$Range)
+    habitatUseDf$FileName <- file.path(e$TransferDirectory, 
+                                       paste0(paste("OutputHabitatUse",
+                                                    habitatUseDf$Season,
+                                                    "it", habitatUseDf$Iteration, 
+                                                    "ts", habitatUseDf$Timestep,
+                                                    sep= "_"), ".tif"))
     
     habitatUseAll[[paste0("it_",iteration)]][[paste0("ts_",timestep)]] <- habitatUseDf
     
@@ -218,4 +202,4 @@ if (length(habitatUseAll) > 1) {
 } else{
   habitatUseMerged <- unlist(habitatUseAll, recursive = F)[[1]]
 }
-saveDatasheet(ssimObject = mySce, name = "ROFSim_OutputHabitatUse", data = habitatUseMerged)
+saveDatasheet(ssimObject = mySce, name = "OutputSpatialHabitat", data = habitatUseMerged)
