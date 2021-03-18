@@ -54,7 +54,7 @@ filterInputs <- function(params, iter, ts, min_ts = 1){
       print("No Timestep column either")
       if(nrow(params) > 1){
         stop("No timestep nor iteration specified, yet multiple inputs are provided")
-      } else{
+      } else {
         return(params)
       }
     } else{

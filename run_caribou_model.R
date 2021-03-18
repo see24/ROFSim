@@ -9,6 +9,7 @@ library(rsyncrosim)
 library(caribouMetrics)
 library(raster)
 library(sf)
+library(dplyr)
 
 # Load environment
 e <- ssimEnvironment()
@@ -18,25 +19,83 @@ mySce <- scenario()
 # Source the helpers
 source(file.path(e$PackageDirectory, "helpers.R"))
 
-# Get datasheets names
-myDatasheets <- datasheet(mySce)
-subFilter <- sapply(X = myDatasheets$name, FUN = grepl, pattern="^(ROF)\\w+")
-myDatasheetsFiltered <- myDatasheets[subFilter,]
-myDatasheetsNames <- myDatasheetsFiltered$name
+# Get datasheets
+myDatasheetsNames <- c("DataSummary", 
+                       "RasterFile", 
+                       "ExternalFile", 
+                       "RunCaribouRange", 
+                       "HabitatModelOptions",
+                       "Crosswalk")
 
-# Set of timesteps to analyse
-timestepSet <- GLOBAL_MinTimestep:GLOBAL_MaxTimestep
-iterationSet <- GLOBAL_MinIteration:GLOBAL_MaxIteration
+loadDatasheet <- function(name){
+  sheet <- tryCatch(
+    {
+      datasheet(mySce, name = name, lookupsAsFactors = FALSE, 
+                optional = TRUE)
+    },
+    error = function(cond){
+      return(NULL)
+    }, 
+    warning = function(cond){
+      return(NULL)
+    }
+  )
+}
 
-#Simulation
-envBeginSimulation(GLOBAL_TotalIterations * GLOBAL_TotalTimesteps)
+allParams <- lapply(myDatasheetsNames, loadDatasheet)
+names(allParams) <- myDatasheetsNames
 
 # Get variables -----------------------------------------------------------
 
-# Datasheets
-dataSummary <- datasheet(mySce, "DataSummary", optional = TRUE)
-rasterFiles <- datasheet(mySce, "RasterFile", optional = TRUE)
-extFiles <- datasheet(mySce, "ExternalFile", optional = TRUE)
+if (nrow(allParams$RasterFile > 0)){
+  allParams$RasterFile <- allParams$RasterFile %>% left_join(allParams$Crosswalk) %>% 
+    mutate(RasterVariableID = ifelse(is.na(CaribouVariableID), 
+                                     RasterVariableID, CaribouVariableID)) %>% 
+    select(-c(CaribouVariableID, VariableID, FileVariableID)) %>% 
+    group_by(Iteration, Timestep, RasterVariableID) %>% 
+    group_modify(~ if(nrow(.x)>1){ .x[!is.na(.x$Source), ]} else { .x})
+}
+
+if (nrow(allParams$DataSummary > 0)){
+  allParams$DataSummary <- allParams$DataSummary %>% left_join(allParams$Crosswalk) %>% 
+    mutate(VariableID = ifelse(is.na(CaribouVariableID), 
+                               VariableID, CaribouVariableID)) %>% 
+    select(-c(CaribouVariableID, RasterVariableID, FileVariableID)) %>%  
+    group_by(Iteration, Timestep, VariableID) %>% 
+    group_modify(~ if(nrow(.x)>1){ .x[!is.na(.x$Source), ]} else { .x})
+}
+
+if (nrow(allParams$ExternalFile > 0)){
+  allParams$ExternalFile <- allParams$ExternalFile %>% left_join(allParams$Crosswalk) %>% 
+    mutate(FileVariableID = ifelse(is.na(CaribouVariableID), 
+                                   FileVariableID, CaribouVariableID)) %>% 
+    select(-c(CaribouVariableID, VariableID, RasterVariableID)) %>% 
+    group_by(Iteration, Timestep, FileVariableID) %>% 
+    group_modify(~ if(nrow(.x)>1){ .x[!is.na(.x$Source), ]} else { .x})
+}
+
+# Filter Timesteps --------------------------------------------------------
+
+uniqueIterFromData <- 
+  unique(c(allParams$ExternalFile$Iteration, 
+           allParams$RasterFile$Iteration, 
+           allParams$DataSummary$Iteration))
+uniqueIterFromData <- uniqueIterFromData[!is.na(uniqueIterFromData)]
+
+uniqueTsFromData <- 
+  unique(c(allParams$ExternalFile$Timestep, 
+           allParams$RasterFile$Timestep, 
+           allParams$DataSummary$Timestep))
+uniqueTsFromData <- uniqueTsFromData[!is.na(uniqueTsFromData)]
+
+iterationSet <- GLOBAL_MinIteration:GLOBAL_MaxIteration
+iterationSet <- iterationSet[iterationSet %in% uniqueIterFromData]
+
+timestepSet <- GLOBAL_MinTimestep:GLOBAL_MaxTimestep
+timestepSet <- timestepSet[timestepSet %in% uniqueTsFromData]
+
+#Simulation
+envBeginSimulation(length(iterationSet) * length(timestepSet))
 
 # Run model ---------------------------------------------------------------
 
@@ -51,9 +110,9 @@ for (iteration in iterationSet) {
     
     # Filter inputs based on iteration and timestep
     # rasters
-    InputRasters <- filterInputs(allParams$ROFSim_SpatialInputsRasters, 
+    InputRasters <- filterInputs(allParams$RasterFile, 
                                  iteration, timestep)
-    InputVectors <- filterInputs(allParams$ROFSim_SpatialInputsVectors,
+    InputVectors <- filterInputs(allParams$ExternalFile,
                                  iteration, timestep)
     
     # Call the main function with all arguments extracted from datasheets
