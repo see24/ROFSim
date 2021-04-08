@@ -259,7 +259,7 @@
             <datasheet name="CaribouDataSource" displayName="Data Sources" isSingleRow="True">
               <columns>
                 <column name="CaribouDataSourceID" dataType="Integer" isPrimary="True" />
-                <column name="ProjectID" dataType="Integer" />
+                <column name="ScenarioID" dataType="Integer" />
                 <column name="LandCoverRasterID" displayName="Land Cover Raster" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="False" />
                 <column name="EskerRasterID" displayName="Esker Raster" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
                 <column name="FRIRasterID" displayName="FRI Raster" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="False" />
