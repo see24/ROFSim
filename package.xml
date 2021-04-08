@@ -22,13 +22,13 @@
       <datafeeds>
 
         <!-- Project Datafeeds -->
-        <datafeed name="SpaDESObject" displayName="Objects" dataScope="Project">
+        <datafeed name="SpadesSimObject" displayName="SpaDES Sim Objects" dataScope="Project">
           <datasheets>
-            <datasheet name="SpaDESObject" displayName="Objects" valueMember="ObjectID" displayMember="Name">
+            <datasheet name="SpadesSimObject" displayName="SpaDES Sim Objects" valueMember="ObjectID" displayMember="Name">
               <columns>
                 <column name="ObjectID" dataType="Integer" isPrimary="True" />
                 <column name="ProjectID" dataType="Integer" />
-                <column name="Name" dataType="String" />
+                <column name="Name" displayName="Sim Object Name" dataType="String" />
                 <column name="Description" dataType="String" isOptional="True" />
               </columns>
             </datasheet>
@@ -126,9 +126,9 @@
           </datasheets>
         </datafeed-->
 
-        <datafeed name="CaribouRange" displayName="Caribou Range" dataScope="Project">
+        <datafeed name="CaribouRange" displayName="Caribou Ranges" dataScope="Project">
           <datasheets>
-            <datasheet name="CaribouRange" displayName="Caribou Range" valueMember="CaribouRangeID" displayMember="Name">
+            <datasheet name="CaribouRange" displayName="Caribou Ranges" valueMember="CaribouRangeID" displayMember="Name">
               <columns>
                 <column name="CaribouRangeID" dataType="Integer" isPrimary="True" />
                 <column name="ProjectID" dataType="Integer" />
@@ -138,9 +138,9 @@
           </datasheets>
         </datafeed>
 
-        <datafeed name="Season" displayName="Season" dataScope="Project">
+        <datafeed name="Season" displayName="Seasons" dataScope="Project">
           <datasheets>
-            <datasheet name="Season" displayName="Season" valueMember="SeasonID" displayMember="Name">
+            <datasheet name="Season" displayName="Seasons" valueMember="SeasonID" displayMember="Name">
               <columns>
                 <column name="SeasonID" dataType="Integer" isPrimary="True" />
                 <column name="ProjectID" dataType="Integer" />
@@ -267,8 +267,8 @@
                 <column name="ScenarioID" dataType="Integer" />
                 <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True" />
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True" />
-                <column name="RasterVariableID" displayName="Raster Variable" dataType="Integer" validationType="Datasheet" formula1="RasterVariable" />
-                <column name="File" dataType="String" isExternalFile="True" isRaster="True" allowDbNull="True" externalFileFilter="Rasters files (*.tif)|*.tif" bandColumn="Band" bandFilterColumn="RasterVariableID" />
+                <column name="RasterVariableID" displayName="Variable Name" dataType="Integer" validationType="Datasheet" formula1="RasterVariable" />
+                <column name="Filename" dataType="String" isExternalFile="True" isRaster="True" allowDbNull="True" externalFileFilter="Rasters files (*.tif)|*.tif" bandColumn="Band" bandFilterColumn="RasterVariableID" />
                 <column name="Source" dataType="String" isOptional="True" />
                 <column name="Band" dataType="Integer" isOptional="True" />
               </columns>
@@ -448,9 +448,9 @@
     <!-- Project feeds layouts -->
     <layout name="coreforms_ProjectDatafeeds">
 
-      <group name="SpaDES">
+      <group name="Variables">
         <!-- item name="Variable"/ -->
-        <item name="SpaDESObject" />
+        <item name="SpadesSimObject" />
         <group name="Raster">
           <item name="RasterVariable" />
           <item name="RasterCrosswalk" />
