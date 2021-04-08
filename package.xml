@@ -267,9 +267,8 @@
                 <column name="NaturalDisturbanceRasterID" displayName="Natural Disturbance Raster" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
                 <column name="AnthropogenicRasterID" displayName="Anthropogenic Raster" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
                 <column name="HarvestRasterID" displayName="Harvest Raster" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
-
                 <column name="LinearFeatureRasterID" displayName="Linear Feature Raster" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
-                <column name="ProjectShapeFileID" displayName="Project Polygon" dataType="Integer" validationType="Datasheet" formula1=" " allowDbNull="False" />
+                <column name="ProjectShapeFileID" displayName="Project Polygon" dataType="Integer" validationType="Datasheet" formula1="Polygons" allowDbNull="False" />
               </columns>
             </datasheet>
           </datasheets>
