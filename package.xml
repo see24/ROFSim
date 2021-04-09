@@ -261,11 +261,12 @@
         
         <datafeed name="RunCaribouRange" displayName="Caribou Range" dataScope="Scenario">
           <datasheets>
-            <datasheet name="RunCaribouRange" displayName="Caribou Range" isSingleRow="True">
+            <datasheet name="RunCaribouRange" displayName="Caribou Range">
               <columns>
                 <column name="RunCaribouRangeID" dataType="Integer" isPrimary="True" />
                 <column name="ScenarioID" dataType="Integer" />
                 <column name="Range" displayName="Range Name" dataType="Integer" validationType="Datasheet" formula1="CaribouRange" allowDbNull="False" />
+                <column name="ProjectShapeFileID" displayName="Project Area (Polygon)" dataType="Integer" validationType="Datasheet" formula1="Polygons" allowDbNull="False" />
               </columns>
             </datasheet>
           </datasheets>
@@ -294,7 +295,6 @@
                 <column name="EskerShapeFileID" displayName="Eskers (Polygon)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
                 <column name="LinearFeatureRasterID" displayName="Linear Feature (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
                 <column name="LinearFeatureShapeFileID" displayName="Linear Feature (Polygon)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
-                <column name="ProjectShapeFileID" displayName="Project Are (Polygon)" dataType="Integer" validationType="Datasheet" formula1="Polygons" allowDbNull="False" />
                 <column name="AgeRasterID" displayName="Age (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="False" />
                 <column name="NaturalDisturbanceRasterID" displayName="Natural Disturbances (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
                 <column name="AnthropogenicRasterID" displayName="Anthropogenic Disturbances (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
