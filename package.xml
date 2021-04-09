@@ -22,14 +22,14 @@
       <datafeeds>
 
         <!-- Project Datafeeds -->
-        
+
         <datafeed name="SpaDESSimObject" displayName="SpaDES Sim Objects" dataScope="Project">
           <datasheets>
             <datasheet name="SpaDESSimObject" displayName="SpaDES Sim Objects" valueMember="SpaDESSimObjectID" displayMember="Name">
               <columns>
                 <column name="SpaDESSimObjectID" dataType="Integer" isPrimary="True" />
                 <column name="ProjectID" dataType="Integer" />
-                <column name="Name" displayName="Sim Object Name" dataType="String"/>
+                <column name="Name" displayName="Sim Object Name" dataType="String" />
                 <column name="Description" dataType="String" isOptional="True" />
               </columns>
             </datasheet>
@@ -110,7 +110,7 @@
             <datasheet name="SpaDESGeneral" displayName="General" isSingleRow="True">
               <columns>
                 <column name="ScenarioID" dataType="Integer" isPrimary="True" />
-                <column name="Filename" displayName="SpaDES File Path" dataType="String" allowDbNull="False" isExternalFile="True" externalFileFilter="SpaDES files |*.qs;*.txt;*.rds;*.rdata" externalFileAbsolute="True"/>
+                <column name="Filename" displayName="SpaDES File Path" dataType="String" allowDbNull="False" isExternalFile="True" externalFileFilter="SpaDES files |*.qs;*.txt;*.rds;*.rdata" externalFileAbsolute="True" />
               </columns>
             </datasheet>
           </datasheets>
@@ -195,6 +195,7 @@
               <columns>
                 <column name="RasterFileID" dataType="Integer" isPrimary="True" />
                 <column name="ScenarioID" dataType="Integer" />
+                <column name="TransformerID" displayName="Transformer" dataType="Integer" validationType="Datasheet" formula1="core_Transformer" isCompositeIndex="True" isOptional="True" />
                 <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True" />
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True" />
                 <column name="RastersID" displayName="Variable Name" dataType="Integer" validationType="Datasheet" formula1="Rasters" />
@@ -212,6 +213,7 @@
               <columns>
                 <column name="ExternalFileID" dataType="Integer" isPrimary="True" />
                 <column name="ScenarioID" dataType="Integer" />
+                <column name="TransformerID" displayName="Transformer" dataType="Integer" validationType="Datasheet" formula1="core_Transformer" isCompositeIndex="True" isOptional="True" />
                 <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True" />
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True" />
                 <column name="PolygonsID" displayName="File Variable" dataType="Integer" validationType="Datasheet" formula1="Polygons" />
@@ -305,12 +307,7 @@
 
     </transformer>
 
-    <transformer name="LoadSpadesOutputs" 
-                 isRunnable="True" 
-                 displayName="Spades Import" 
-                 runContext="LocalOnly" 
-                 programName="Rscript" 
-                 programArguments="load_spades_outputs.R">
+    <transformer name="LoadSpadesOutputs" isRunnable="True" displayName="Spades Import" runContext="LocalOnly" programName="Rscript" programArguments="load_spades_outputs.R">
 
       <pipeline>
 
@@ -323,41 +320,30 @@
         <datafeed name="RasterFile" type="Output" />
         <datafeed name="ExternalFile" type="Output" />
 
-        <datafeed name="RunControl" type="Output" />
+        <datafeed name="RunControl" type="Both" />
 
       </pipeline>
 
     </transformer>
 
-    <transformer name="makeLccFromCohortData" 
-                 displayName="Generate LCC from Cohort Data" 
-                 isRunnable="True" runContext="LocalOnly" 
-                 programName="Rscript" 
-                 programArguments="makeLccFromCohortData.R">
+    <transformer name="makeLccFromCohortData" displayName="Generate LCC from Cohort Data" isRunnable="True" runContext="LocalOnly" programName="Rscript" programArguments="makeLccFromCohortData.R">
 
       <pipeline>
 
         <datafeed name="SpaDESGeneral" type="Input" />
 
         <datafeed name="RasterFile" type="Output" />
-        <datafeed name="RunControl" type="Output" />
+        <datafeed name="ExternalFile" type="Output" />
 
+        <datafeed name="RunControl" type="Both" />
         <!--datafeed name="DataSummary" type="Both"/-->
-        <!--datafeed name="ExternalFile" type="Both"/-->
+
 
       </pipeline>
 
     </transformer>
 
-    <transformer name="RunCaribouHabitatModel" 
-                 displayName="Caribou Habitat" 
-                 isRunnable="True" 
-                 runContext="AllowRemote"
-                 programName="Rscript" 
-                 className="SyncroSim.StochasticTime.StochasticTimeTransformer" 
-                 classAssembly="SyncroSim.StochasticTime" 
-                 configurationSheet="ROFSim_RunControl" 
-                 programArguments="run_caribou_model.R">
+    <transformer name="RunCaribouHabitatModel" displayName="Caribou Habitat" isRunnable="True" runContext="AllowRemote" programName="Rscript" className="SyncroSim.StochasticTime.StochasticTimeTransformer" classAssembly="SyncroSim.StochasticTime" configurationSheet="ROFSim_RunControl" programArguments="run_caribou_model.R">
 
       <pipeline>
 
@@ -366,6 +352,8 @@
         <!--datafeed name="DataSummary" type="Input" /-->
         <datafeed name="RasterFile" type="Input" />
         <datafeed name="ExternalFile" type="Input" />
+
+        <datafeed name="CaribouDataSource" type="Input" />
         <datafeed name="RunControl" type="Input" />
         <datafeed name="RunCaribouRange" type="Input" />
         <datafeed name="HabitatModelOptions" type="Input" />
@@ -385,10 +373,10 @@
     <!-- Core feeds layouts -->
     <layout name="coreforms_LibraryDatafeeds">
 
-      <item name="core_SysFolder"/>
-      <item name="core_Backup"/>
-      <item name="core_Multiprocessing"/>
-      <item name="core_Options"/>
+      <item name="core_SysFolder" />
+      <item name="core_Backup" />
+      <item name="core_Multiprocessing" />
+      <item name="core_Options" />
       <item name="core_Rconfig" />
 
     </layout>
@@ -397,10 +385,10 @@
     <layout name="coreforms_ProjectDatafeeds">
 
       <group name="Variables">
-          <item name="SpaDESSimObject" />
-          <!-- item name="Variable"/ -->
-          <item name="Rasters" />
-          <item name="Polygons" />
+        <item name="SpaDESSimObject" />
+        <!-- item name="Variable"/ -->
+        <item name="Rasters" />
+        <item name="Polygons" />
       </group>
 
       <group name="CaribouModel" displayName="Caribou Metrics">
@@ -426,7 +414,7 @@
 
       <group name="SpaDES" displayName="SpaDES">
         <group name="Inputs">
-          <item name="SpaDESGeneral"  displayName="General"/>
+          <item name="SpaDESGeneral" displayName="General" />
           <!--item name="SpaDESRuntimeVariables" /-->
           <item name="SpaDESRuntimeRasters" />
           <item name="SpaDESRuntimeFiles" />
