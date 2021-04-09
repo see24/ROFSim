@@ -421,7 +421,8 @@
         </group>
         <group name="Outputs">
           <!--item name="DataSummary" /-->
-          <item name="RasterFile" />
+          <!-- TODO: How to filter differently in two different cases? -->
+          <item name="RasterFile" /> <!-- transformerFilter="" showIf="isResult" viewClassName="SyncroSim.Core.Forms.MultiRowDataFeedView" viewClassAssembly="SyncroSim.Core.Forms" -->
           <item name="ExternalFile" />
         </group>
       </group>
