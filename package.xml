@@ -403,7 +403,7 @@
       <group name="Variables">
           <item name="SpaDESSimObject" />
           <!-- item name="Variable"/ -->
-          <item name="Raster" />
+          <item name="Rasters" />
           <item name="Polygons" />
       </group>
 
