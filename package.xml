@@ -200,7 +200,6 @@
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True" />
                 <column name="RastersID" displayName="Variable Name" dataType="Integer" validationType="Datasheet" formula1="Rasters" />
                 <column name="Filename" dataType="String" isExternalFile="True" isRaster="True" allowDbNull="True" externalFileFilter="Rasters files (*.tif)|*.tif" bandColumn="Band" bandFilterColumn="RastersID" />
-                <column name="Source" dataType="String" isOptional="True" />
                 <column name="Band" dataType="Integer" isOptional="True" />
               </columns>
             </datasheet>
@@ -218,7 +217,6 @@
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True" />
                 <column name="PolygonsID" displayName="File Variable" dataType="Integer" validationType="Datasheet" formula1="Polygons" />
                 <column name="File" dataType="String" isExternalFile="True" allowDbNull="True" includeExtensions="shp|shx|dbf|prj" externalFileFilter="ShapeFiles (*.shp)|*.shp" />
-                <column name="Source" dataType="String" isOptional="True" />
               </columns>
             </datasheet>
           </datasheets>
