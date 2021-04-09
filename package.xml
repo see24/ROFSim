@@ -361,7 +361,7 @@
 
       <pipeline>
 
-        <datafeed name="SpaDESImportSettings" type="Input" />
+        <datafeed name="SpaDESGeneral" type="Input" />
 
         <!--datafeed name="DataSummary" type="Input" /-->
         <datafeed name="RasterFile" type="Input" />
