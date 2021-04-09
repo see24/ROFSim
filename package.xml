@@ -173,10 +173,6 @@
           </datasheets>
         </datafeed>
 
-
-
-
-
         <datafeed name="DataSummary" displayName="Data Summary" dataScope="Scenario">
           <datasheets>
             <datasheet name="DataSummary" displayName="Data Summary" viewFilterColumn="VariableID">
@@ -226,9 +222,6 @@
             </datasheet>
           </datasheets>
         </datafeed>
-
-
-
 
         <datafeed name="RunCaribouRange" displayName="Caribou Range" dataScope="Scenario">
           <datasheets>
@@ -408,7 +401,7 @@
     <layout name="coreforms_ProjectDatafeeds">
 
       <group name="Variables">
-          <item name="SpadesSimObject" />
+          <item name="SpaDESSimObject" />
           <!-- item name="Variable"/ -->
           <item name="Raster" />
           <item name="Polygons" />
