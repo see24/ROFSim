@@ -397,17 +397,17 @@
     <layout name="coreforms_ScenarioDatafeeds">
 
       <group name="RunControl" displayName="Run Control">
-        <item name="core_Pipeline" />
-        <item name="RunControl" />
+        <item name="core_Pipeline" showIf="isAny" />
+        <item name="RunControl" showIf="isAny" />
       </group>
 
       <group name="SpaDES" displayName="SpaDES">
 
         <group name="Inputs">
-          <item name="SpaDESGeneral" displayName="General" />
+          <item name="SpaDESGeneral" displayName="General" showIf="isParent" />
           <!--item name="SpaDESRuntimeVariables" /-->
-          <item name="SpaDESRuntimeRasters" />
-          <item name="SpaDESRuntimeFiles" />
+          <item name="SpaDESRuntimeRasters" showIf="isParent" />
+          <item name="SpaDESRuntimeFiles" showIf="isParent" />
         </group>
 
         <group name="Outputs">
