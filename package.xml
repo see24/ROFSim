@@ -173,7 +173,7 @@
           </datasheets>
         </datafeed>
 
-        <datafeed name="DataSummary" displayName="Data Summary" dataScope="Scenario">
+        <!--datafeed name="DataSummary" displayName="Data Summary" dataScope="Scenario">
           <datasheets>
             <datasheet name="DataSummary" displayName="Data Summary" viewFilterColumn="VariableID">
               <columns>
@@ -187,9 +187,9 @@
               </columns>
             </datasheet>
           </datasheets>
-        </datafeed>
+        </datafeed-->
 
-        <datafeed name="RasterFile" displayName="Rasters" dataScope="Scenario">
+        <datafeed name="RasterFile" displayName="Raster Data" dataScope="Scenario">
           <datasheets>
             <datasheet name="RasterFile" displayName="Rasters">
               <columns>
@@ -206,7 +206,7 @@
           </datasheets>
         </datafeed>
 
-        <datafeed name="ExternalFile" displayName="Shape Files" dataScope="Scenario">
+        <datafeed name="ExternalFile" displayName="Polygon Data" dataScope="Scenario">
           <datasheets>
             <datasheet name="ExternalFile" displayName="External Files">
               <columns>
@@ -215,7 +215,6 @@
                 <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True" />
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True" />
                 <column name="PolygonsID" displayName="File Variable" dataType="Integer" validationType="Datasheet" formula1="Polygons" />
-                <!-- TODO review which types are allowed-->
                 <column name="File" dataType="String" isExternalFile="True" allowDbNull="True" includeExtensions="shp|shx|dbf|prj" externalFileFilter="ShapeFiles (*.shp)|*.shp" />
                 <column name="Source" dataType="String" isOptional="True" />
               </columns>
