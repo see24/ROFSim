@@ -20,12 +20,11 @@ mySce <- scenario()
 source(file.path(e$PackageDirectory, "helpers.R"))
 
 # Get datasheets
-myDatasheetsNames <- c("DataSummary", 
-                       "RasterFile", 
+myDatasheetsNames <- c("RasterFile", 
                        "ExternalFile", 
                        "RunCaribouRange", 
                        "HabitatModelOptions",
-                       "Crosswalk")
+                       "CaribouDataSource")
 
 loadDatasheet <- function(name){
   sheet <- tryCatch(
@@ -45,37 +44,51 @@ loadDatasheet <- function(name){
 allParams <- lapply(myDatasheetsNames, loadDatasheet)
 names(allParams) <- myDatasheetsNames
 
+# Modify the source data table
+allParams$CaribouDataSourceWide <- allParams$CaribouDataSource %>% 
+  pivot_longer(values_to = "VarID", names_to = "CaribouVarID", 
+               cols=tidyselect::all_of(names(allParams$CaribouDataSource))) %>% 
+  rowwise() %>% 
+  mutate(type=ifelse(grepl("Raster", CaribouVarID, fixed=TRUE), "raster", "shapefile")) %>% 
+  ungroup() %>% drop_na() %>% as.data.frame()
+
 # Get variables -----------------------------------------------------------
 
 if (nrow(allParams$RasterFile > 0)){
-  allParams$RasterFile <- allParams$RasterFile %>% left_join(allParams$Crosswalk) %>% 
-    mutate(RasterVariableID = ifelse(is.na(CaribouVariableID), 
-                                     RasterVariableID, CaribouVariableID)) %>% 
-    select(-c(CaribouVariableID, VariableID, FileVariableID)) %>% 
-    group_by(Iteration, Timestep, RasterVariableID) %>% 
-    group_modify(~ if(nrow(.x)>1){ .x[is.na(.x$Source), ]} else { .x}) %>% 
-    ungroup %>% as.data.frame()
-}
-
-if (nrow(allParams$DataSummary > 0)){
-  allParams$DataSummary <- allParams$DataSummary %>% left_join(allParams$Crosswalk) %>% 
-    mutate(VariableID = ifelse(is.na(CaribouVariableID), 
-                               VariableID, CaribouVariableID)) %>% 
-    select(-c(CaribouVariableID, RasterVariableID, FileVariableID)) %>%  
-    group_by(Iteration, Timestep, VariableID) %>% 
-    group_modify(~ if(nrow(.x)>1){ .x[is.na(.x$Source), ]} else { .x}) %>% 
-    ungroup %>% as.data.frame()
+  allParams$RasterFile <- allParams$RasterFile %>% 
+    left_join(filter(allParams$CaribouDataSourceWide, type=="raster"), 
+              by = c("RastersID" = "VarID")) %>% 
+    # mutate(RasterVariableID = ifelse(is.na(CaribouVarID), 
+    #                                  RasterVariableID, CaribouVarID)) %>% 
+    # select(-c(CaribouVarID, VariableID, FileVariableID)) %>% 
+    # group_by(Iteration, Timestep, RastersID) %>% 
+    # group_modify(~ if(nrow(.x)>1){ .x[is.na(.x$Source), ]} else { .x}) %>% 
+    # ungroup %>% 
+    as.data.frame()
 }
 
 if (nrow(allParams$ExternalFile > 0)){
-  allParams$ExternalFile <- allParams$ExternalFile %>% left_join(allParams$Crosswalk) %>% 
-    mutate(FileVariableID = ifelse(is.na(CaribouVariableID), 
-                                   FileVariableID, CaribouVariableID)) %>% 
-    select(-c(CaribouVariableID, VariableID, RasterVariableID)) %>% 
-    group_by(Iteration, Timestep, FileVariableID) %>% 
-    group_modify(~ if(nrow(.x)>1){ .x[!is.na(.x$Source), ]} else { .x}) %>% 
-    ungroup %>% as.data.frame()
+  allParams$ExternalFile <- allParams$ExternalFile %>% 
+    left_join(filter(allParams$CaribouDataSourceWide, type == "shapefile"), 
+              by = c("PolygonsID" = "VarID")) %>% 
+    # mutate(FileVariableID = ifelse(is.na(CaribouVariableID), 
+    #                                FileVariableID, CaribouVariableID)) %>% 
+    # select(-c(CaribouVariableID, VariableID, RasterVariableID)) %>% 
+    # group_by(Iteration, Timestep, FileVariableID) %>% 
+    # group_modify(~ if(nrow(.x)>1){ .x[!is.na(.x$Source), ]} else { .x}) %>% 
+    # ungroup %>% 
+    as.data.frame()
 }
+
+# if (nrow(allParams$DataSummary > 0)){
+#   allParams$DataSummary <- allParams$DataSummary %>% left_join(allParams$Crosswalk) %>% 
+#     mutate(VariableID = ifelse(is.na(CaribouVariableID), 
+#                                VariableID, CaribouVariableID)) %>% 
+#     select(-c(CaribouVariableID, RasterVariableID, FileVariableID)) %>%  
+#     group_by(Iteration, Timestep, VariableID) %>% 
+#     group_modify(~ if(nrow(.x)>1){ .x[is.na(.x$Source), ]} else { .x}) %>% 
+#     ungroup %>% as.data.frame()
+# }
 
 # Filter Timesteps --------------------------------------------------------
 
