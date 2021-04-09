@@ -345,7 +345,6 @@
         <!--datafeed name="DataSummary" /-->
         <datafeed name="RasterFile" />
         <datafeed name="ExternalFile" />
-
         <datafeed name="CaribouDataSource" />
         <datafeed name="RunControl" />
         <datafeed name="RunCaribouRange" />
@@ -425,9 +424,11 @@
       <group name="CaribouModel" displayName="Caribou Metrics">
 
         <group name="Inputs">
-          <item name="RunCaribouRange" />
-          <item name="CaribouDataSource" />
-          <item name="HabitatModelOptions" />
+          <item name="RunCaribouRange" showIf="isParent" />
+          <item name="CaribouDataSource" showIf="isParent" />
+          <item name="HabitatModelOptions" showIf="isParent"/>
+          <item name="RasterFile" showIf="isParent" />
+          <item name="ExternalFile" showIf="isParent" />
         </group>
 
         <group name="Outputs">
