@@ -337,13 +337,13 @@
 
       <pipeline>
 
-        <datafeed name="SpaDESImportSettings" type="Input" />
+        <datafeed name="SpaDESGeneral" type="Input" />
+
+        <datafeed name="RasterFile" type="Output" />
+        <datafeed name="RunControl" type="Output" />
 
         <!--datafeed name="DataSummary" type="Both"/-->
-        <datafeed name="RasterFile" type="Output" />
         <!--datafeed name="ExternalFile" type="Both"/-->
-
-        <datafeed name="RunControl" type="Output" />
 
       </pipeline>
 
