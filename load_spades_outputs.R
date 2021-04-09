@@ -29,23 +29,25 @@ subFilter <- sapply(X = myDatasheets$name, FUN = grepl, pattern="^(ROF)\\w+")
 myDatasheetsFiltered <- myDatasheets[subFilter,]
 myDatasheetsNames <- myDatasheetsFiltered$name
 
+# Set transformer name
+transformerName <- "Spades Import"
+
 # Figure out variables to extract from spades -----------------------------
 
 # Get all vars data
 
-spadesVars <- datasheet(mySce, "ROFSim_SpaDESRuntimeVariables", 
-                        lookupsAsFactors = FALSE) 
-if(nrow(spadesVars)>0){
-  spadesVars <- spadesVars %>% 
-    rename(var = VariableID) %>% 
-    mutate(type = "var")
-}
+allRasters <- datasheet(mySce, "ROFSim_Rasters")
+
+allPolygons <- datasheet(mySce, "ROFSim_Polygons")
+
+# Find out which variables to extract
 
 spadesRasterVars <- datasheet(mySce, "ROFSim_SpaDESRuntimeRasters", 
                               lookupsAsFactors = FALSE)
 if(nrow(spadesRasterVars)>0){
   spadesRasterVars <- spadesRasterVars %>% 
-    rename(var = RasterVariableID) %>% 
+    left_join(allRasters, by = c("RastersID" = "Name")) %>% 
+    rename(var = RastersID) %>% 
     mutate(type = "raster")
 }
 
@@ -53,23 +55,29 @@ spadesFileVars <- datasheet(mySce, "ROFSim_SpaDESRuntimeFiles",
                             lookupsAsFactors = FALSE)
 if(nrow(spadesFileVars)>0){
   spadesFileVars <- spadesFileVars %>% 
+    left_join(allPolygons, by = c("PolygonsID" = "Name")) %>% 
     rename(var = FileVariableID) %>% 
     mutate(type = "file")
 }
 
-allVars <- rbind(spadesVars, spadesRasterVars, spadesFileVars)
+allVars <- rbind(spadesRasterVars, spadesFileVars)
+
+# Verify all required vars have a matching sim object
+if(sum(is.na(allVars$SpaDESSimObject))>0){
+  stop("Crosswalk between variable and spades object not provided.")
+}
 
 # Spades processing -------------------------------------------------------
 
 # Get the spades datasheet 
-spadesDatasheet <- datasheet(ssimObject = mySce, name = "ROFSim_SpaDESImportSettings")
+spadesDatasheet <- datasheet(ssimObject = mySce, name = "ROFSim_SpaDESGeneral")
 
-# If datahseet is not empty, get the path
+# If datasheet is not empty, get the path
 if(nrow(spadesDatasheet) == 0){
-  stop("No SpaDES object specified.")
+  stop("No SpaDES file specified.")
 } else {
   if (is.na(spadesDatasheet$Filename)){
-    stop("No SpaDES object specified.")
+    stop("No SpaDES file specified.")
   } else {
     spadesObjectPath <- spadesDatasheet$Filename
   }
@@ -78,6 +86,12 @@ if(nrow(spadesDatasheet) == 0){
 # Load the spades object 
 # TODO adding a warnings about memory could be usefull
 spadesObject <- qs::qread(spadesObjectPath)
+
+# Verify vars required are present in the spades object
+testPresent <- !(allVars$SpaDESSimObject %in% names(spadesObject))
+if(sum(testPresent)>0){
+  stop("Incorrect or missing spades object(s).")
+}
 
 # Extract info ------------------------------------------------------------
 
@@ -101,36 +115,21 @@ tmp <- e$TransferDirectory
 theIter <- 1
 theTs <- runControl$current
 
-# Get empty for all 3 cases
-dataSummary <- datasheet(mySce, "DataSummary", empty = TRUE, optional = TRUE)
-rasterFiles <- datasheet(mySce, "RasterFile", empty = TRUE, optional = TRUE)
-extFiles <- datasheet(mySce, "ExternalFile", empty = TRUE, optional = TRUE)
+# Get empty datasheets
+rasterFiles <- datasheet(mySce, "RasterFile", lookupsAsFactors = FALSE, 
+                         empty = TRUE, optional = TRUE)
+extFiles <- datasheet(mySce, "ExternalFile", lookupsAsFactors = FALSE,
+                      empty = TRUE, optional = TRUE)
 
 for (rowVar in seq_len(length.out = nrow(allVars))){
   
-  theVar <- allVars$var[rowVar]
+  theVar <- as.character(allVars$SpaDESSimObject[rowVar])
+  theVarName <- as.character(allVars$var[rowVar])
   theVarType <- allVars$type[rowVar]
   
   object <- spadesObject[[theVar]]
   
-  if (theVarType == "var"){
-    
-    # Get info
-    filePath <- file.path(tmp, paste0(theVar, "_", paste(paste0("it_",theIter), 
-                                                         paste0("ts_",theTs), sep = "_"), 
-                                      ".csv"))
-    
-    # Write tmp file
-    write.csv(object, filePath)
-    
-    # Populate sheet
-    dataSummary <- addRow(dataSummary, list(Iteration = theIter,
-                                            Timestep = theTs,
-                                            VariableID = theVar, 
-                                            File = filePath,
-                                            Source = "load_spades_outputs"))
-    
-  } else if (theVarType == "raster") {
+  if (theVarType == "raster") {
     
     # Get info
     filePath <- file.path(tmp, paste0(theVar, "_", paste(paste0("it_",theIter), 
@@ -143,9 +142,9 @@ for (rowVar in seq_len(length.out = nrow(allVars))){
     # Populate sheet
     rasterFiles <- addRow(rasterFiles, list(Iteration = theIter,
                                             Timestep = theTs,
-                                            RasterVariableID = theVar, 
-                                            File = filePath,
-                                            Source = "load_spades_outputs"))
+                                            RastersID = theVarName, 
+                                            Filename = filePath,
+                                            TransformerID = transformerName))
     
   } else if (theVarType == "file") {
     
@@ -160,9 +159,9 @@ for (rowVar in seq_len(length.out = nrow(allVars))){
     # Populate sheet
     extFiles <- addRow(extFiles, list(Iteration = theIter,
                                       Timestep = theTs,
-                                      FileVariableID = theVar, 
-                                      File = filePath,
-                                      Source = "load_spades_outputs"))
+                                      PolygonsID = theVarName, 
+                                      Filename = filePath,
+                                      TransformerID = transformerName))
     
   }
   
@@ -175,39 +174,8 @@ saveIfNotEmpty <- function(sheet, name){
   }
 }
 
-mapply(list(dataSummary, rasterFiles, extFiles), 
+mapply(list(rasterFiles, extFiles), 
        FUN = saveIfNotEmpty, 
-       name = list("DataSummary", "RasterFile", "ExternalFile"))
-
-# unlink(tmp, recursive = TRUE)
+       name = list("RasterFile", "ExternalFile"))
 
 # -------------------------------------------------------------------------
-
-# # Get cohort and pixel group
-# # "a cohort is a particular combo of species and ages"
-# cohort_data <- spadesObject$cohortData
-# pixelGroupMap <- spadesObject$pixelGroupMap
-# 
-# # Subset, age and dominant species
-# cohort_data_summary <-
-#   cohort_data[,list(ageMax = max(age),
-#                     biomass = sum(B)),
-#               by = c("speciesCode", "pixelGroup")] ## takes max age within cohort
-# 
-# # THIS WILL ALLOW PROGRAMMAGIC ASSIGNMENT OF REDUCTION METHOD BASED ON VAR NAME
-# cohort_data[ , lapply(.SD, assign_reduction_function), 
-#              by = c("speciesCode", "pixelGroup"), .SD=test]
-# 
-# cohort_data_summary <-
-#   cohort_data[,test,
-#               by = c("speciesCode", "pixelGroup")]
-# head(cohort_data_summary)
-# 
-# tmp <- list()
-# for (species in unique(cohort_data$speciesCode)){
-#   tmp[[species]] <-
-#     rasterizeReduced(reduced = cohort_data_summary[speciesCode == species],
-#                      fullRaster = pixelGroupMap,
-#                      mapcode = "pixelGroup",
-#                      newRasterCols =  c("ageMax", "biomass"))
-# }

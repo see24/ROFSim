@@ -37,7 +37,7 @@ source(file.path(e$PackageDirectory, "makeLccFromCohortData_helper.R"))
 # Spades processing -------------------------------------------------------
 
 # Get the spades datasheet
-spadesDatasheet <- datasheet(ssimObject = mySce, name = "ROFSim_SpaDESImportSettings")
+spadesDatasheet <- datasheet(ssimObject = mySce, name = "ROFSim_SpaDESGeneral")
 
 # If datahseet is not empty, get the path
 if(nrow(spadesDatasheet) == 0){
@@ -69,42 +69,45 @@ lccClassTable = data.table(
 
 # Call the function -------------------------------------------------------
 
-rasterFiles <- datasheet(mySce, "RasterFile", optional = TRUE)
+rasterFiles <- datasheet(mySce, "RasterFile", 
+                         lookupsAsFactors = FALSE, optional = TRUE)
 
-if(nrow(rasterFiles) != 0){
+# if(nrow(rasterFiles) != 0){
+# 
+#   sheetSubset <- subset(rasterFiles, RasterVariableID == "rstLCC")
+#   restofSheet <- subset(rasterFiles, RasterVariableID != "rstLCC")
+#   newVar <- "Updated Land Cover"
+# 
+#   if(nrow(sheetSubset) != 0){
+# 
+#     updated_LCC_list <- vector(mode = "list", length = nrow(sheetSubset))
+# 
+#     for (lccRow in seq_len(length.out = nrow(sheetSubset))){
+# 
+#       theIter <- sheetSubset[lccRow,]$Iteration
+#       theTs <- sheetSubset[lccRow,]$Timestep
 
-  sheetSubset <- subset(rasterFiles, RasterVariableID == "rstLCC")
-  restofSheet <- subset(rasterFiles, RasterVariableID != "rstLCC")
-  newVar <- "landCover"
+# filePath <- file.path(e$TransferDirectory,
+#                       paste0(newVar, "_", paste(paste0("it_",theIter),
+#                                                 paste0("ts_",theTs), sep = "_"),
+#                              ".tif"))
 
-  if(nrow(sheetSubset) != 0){
+filePath <- file.path(e$TransferDirectory, "UpdatedLandCover.tif")
 
-    updated_LCC_list <- vector(mode = "list", length = nrow(sheetSubset))
+updated_LCC_tmp <- makeLCCfromCohortData(cohortData = cohort_data,
+                                         pixelGroupMap = pixelGroupMap,
+                                         rstLCC = rstLCC,
+                                         lccClassTable = lccClassTable)
+writeRaster(updated_LCC_tmp, overwrite = TRUE,
+            filename = filePath)
 
-    for (lccRow in seq_len(length.out = nrow(sheetSubset))){
+sheetSubset[lccRow,]$RastersID <- newVar
+sheetSubset[lccRow,]$File <- filePath
+sheetSubset[lccRow,]$TransformerID <- "Generate LCC from Cohort Data"
 
-      theIter <- sheetSubset[lccRow,]$Iteration
-      theTs <- sheetSubset[lccRow,]$Timestep
-
-      filePath <- file.path(e$TransferDirectory,
-                            paste0(newVar, "_", paste(paste0("it_",theIter),
-                                                      paste0("ts_",theTs), sep = "_"),
-                                   ".tif"))
-
-      updated_LCC_tmp <- makeLCCfromCohortData(cohortData = cohort_data,
-                                               pixelGroupMap = pixelGroupMap,
-                                               rstLCC = rstLCC,
-                                               lccClassTable = lccClassTable)
-      writeRaster(updated_LCC_tmp, overwrite = TRUE,
-                  filename = filePath)
-
-      sheetSubset[lccRow,]$RasterVariableID <- newVar
-      sheetSubset[lccRow,]$File <- filePath
-      sheetSubset[lccRow,]$Source <- "makeLccFromCohortData"
-
-    }
-  }
-}
+#     }
+#   }
+# }
 
 fullSheet <- rbind(sheetSubset, restofSheet)
 saveDatasheet(mySce, fullSheet, "RasterFile")
