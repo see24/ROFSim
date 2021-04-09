@@ -410,7 +410,6 @@
       <group name="CaribouModel" displayName="Caribou Metrics">
         <item name="CaribouRange" />
         <item name="Season" />
-        <item name="CaribouDataSource" />
       </group>
 
       <group name="Pipeline">
@@ -445,6 +444,7 @@
 
       <group name="CaribouModel" displayName="Caribou Metrics">
         <item name="RunCaribouRange" />
+        <item name="CaribouDataSource" />
         <item name="HabitatModelOptions" />
       </group>
 
