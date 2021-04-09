@@ -290,16 +290,16 @@
                 <column name="CaribouDataSourceID" dataType="Integer" isPrimary="True" />
                 <column name="ScenarioID" dataType="Integer" />
                 <column name="LandCoverRasterID" displayName="Land Cover (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="False" />
-                <column name="FRIRasterID" displayName="FRI (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="False" />
-                <column name="AgeRasterID" displayName="Age (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="False" />
-                <column name="NaturalDisturbanceRasterID" displayName="Natural Disturbances (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
-                <column name="AnthropogenicRasterID" displayName="Anthropogenic Disturbances (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
-                <column name="HarvestRasterID" displayName="Harvest (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
                 <column name="EskerRasterID" displayName="Eskers (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
                 <column name="EskerShapeFileID" displayName="Eskers (Polygon)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
                 <column name="LinearFeatureRasterID" displayName="Linear Feature (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
                 <column name="LinearFeatureShapeFileID" displayName="Linear Feature (Polygon)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
                 <column name="ProjectShapeFileID" displayName="Project Are (Polygon)" dataType="Integer" validationType="Datasheet" formula1="Polygons" allowDbNull="False" />
+                <column name="AgeRasterID" displayName="Age (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="False" />
+                <column name="NaturalDisturbanceRasterID" displayName="Natural Disturbances (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
+                <column name="AnthropogenicRasterID" displayName="Anthropogenic Disturbances (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
+                <column name="HarvestRasterID" displayName="Harvest (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
+                <!-- <column name="FRIRasterID" displayName="FRI (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="False" /> -->
               </columns>
             </datasheet>
           </datasheets>
