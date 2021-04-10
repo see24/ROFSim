@@ -401,23 +401,23 @@
     <layout name="coreforms_ScenarioDatafeeds">
 
       <group name="RunControl" displayName="Run Control">
-        <item name="core_Pipeline" showIf="isAny" />
-        <item name="RunControl" showIf="isAny" />
+        <item name="core_Pipeline" showIf="isAny"/>
+        <item name="RunControl" showIf="isAny"/>
       </group>
 
       <group name="SpaDES" displayName="SpaDES">
 
         <group name="Inputs">
-          <item name="SpaDESGeneral" displayName="General" showIf="isParent" />
+          <item name="SpaDESGeneral" displayName="General" showIf="isParent" itemTransformer="LoadSpadesOutputs"/>
           <!--item name="SpaDESRuntimeVariables" /-->
-          <item name="SpaDESRuntimeRasters" showIf="isParent" />
-          <item name="SpaDESRuntimeFiles" showIf="isParent" />
+          <item name="SpaDESRuntimeRasters" showIf="isParent" itemTransformer="LoadSpadesOutputs"/>
+          <item name="SpaDESRuntimeFiles" showIf="isParent" itemTransformer="LoadSpadesOutputs"/>
         </group>
 
         <group name="Outputs">
           <!--item name="DataSummary" /-->
-          <item name="RasterFile" showIf="isResult" />
-          <item name="ExternalFile" showIf="isResult" />
+          <item name="RasterFile" showIf="isResult" itemTransformer="LoadSpadesOutputs"/>
+          <item name="ExternalFile" showIf="isResult" itemTransformer="LoadSpadesOutputs"/>
         </group>
 
       </group>
@@ -428,16 +428,16 @@
       <group name="CaribouModel" displayName="Caribou Metrics">
 
         <group name="Inputs">
-          <item name="RunCaribouRange" showIf="isParent" />
-          <item name="CaribouDataSource" showIf="isParent" />
-          <item name="HabitatModelOptions" showIf="isParent"/>
-          <item name="RasterFile" showIf="isParent" />
-          <item name="ExternalFile" showIf="isParent" />
+          <item name="RunCaribouRange" showIf="isParent" itemTransformer="RunCaribouHabitatModel"/>
+          <item name="CaribouDataSource" showIf="isParent" itemTransformer="RunCaribouHabitatModel"/>
+          <item name="HabitatModelOptions" showIf="isParent" itemTransformer="RunCaribouHabitatModel"/>
+          <item name="RasterFile" showIf="isParent" itemTransformer="RunCaribouHabitatModel"/>
+          <item name="ExternalFile" showIf="isParent" itemTransformer="RunCaribouHabitatModel"/>
         </group>
 
         <group name="Outputs">
-          <item name="OutputHabitat" showIf="isResult" />
-          <item name="OutputSpatialHabitat" showIf="isResult" />
+          <item name="OutputHabitat" showIf="isResult" itemTransformer="RunCaribouHabitatModel"/>
+          <item name="OutputSpatialHabitat" showIf="isResult" itemTransformer="RunCaribouHabitatModel"/>
         </group>
         
       </group>
