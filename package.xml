@@ -6,12 +6,6 @@
 
     <transformer name="Primary" isPrimary="True">
 
-      <runtime>
-        <transformer name="LoadSpadesOutputs" />
-        <!-- <transformer name="makeLccFromCohortData" /> -->
-        <transformer name="RunCaribouHabitatModel" />
-      </runtime>
-
       <include>
         <transformer name="corestime_Runtime" />
         <transformer name="LoadSpadesOutputs" />
@@ -190,7 +184,7 @@
 
     </transformer>
 
-    <transformer name="LoadSpadesOutputs" isRunnable="True" displayName="Spades Import" runContext="LocalOnly" programName="Rscript" programArguments="load_spades_outputs.R">
+    <transformer name="LoadSpadesOutputs" isRunnable="True" displayName="Spades Import" programName="Rscript" programArguments="load_spades_outputs.R">
 
       <datafeeds>
 
@@ -243,7 +237,7 @@
 
     </transformer>
 
-    <!-- <transformer name="makeLccFromCohortData" displayName="Generate LCC from Cohort Data" isRunnable="True" runContext="LocalOnly" programName="Rscript" programArguments="makeLccFromCohortData.R">
+    <!-- <transformer name="makeLccFromCohortData" displayName="Generate LCC from Cohort Data" isRunnable="True" programName="Rscript" programArguments="makeLccFromCohortData.R">
 
       <pipeline>
 
@@ -253,7 +247,7 @@
 
     </transformer> -->
 
-    <transformer name="RunCaribouHabitatModel" displayName="Caribou Habitat" isRunnable="True" runContext="AllowRemote" programName="Rscript" className="SyncroSim.StochasticTime.StochasticTimeTransformer" classAssembly="SyncroSim.StochasticTime" configurationSheet="ROFSim_RunControl" programArguments="run_caribou_model.R">
+    <transformer name="RunCaribouHabitatModel" displayName="Caribou Habitat" isRunnable="True" programName="Rscript" className="SyncroSim.StochasticTime.StochasticTimeTransformer" classAssembly="SyncroSim.StochasticTime" configurationSheet="ROFSim_RunControl" programArguments="run_caribou_model.R">
 
       <datafeeds>
 
@@ -401,23 +395,23 @@
     <layout name="coreforms_ScenarioDatafeeds">
 
       <group name="RunControl" displayName="Run Control">
-        <item name="core_Pipeline" showIf="isAny"/>
-        <item name="RunControl" showIf="isAny"/>
+        <item name="core_Pipeline"/>
+        <item name="RunControl"/>
       </group>
 
       <group name="SpaDES" displayName="SpaDES">
 
         <group name="Inputs">
-          <item name="SpaDESGeneral" displayName="General" showIf="isParent" itemTransformer="LoadSpadesOutputs"/>
+          <item name="SpaDESGeneral" displayName="General" itemTransformer="LoadSpadesOutputs" showIf="isParent" />
           <!--item name="SpaDESRuntimeVariables" /-->
-          <item name="SpaDESRuntimeRasters" showIf="isParent" itemTransformer="LoadSpadesOutputs"/>
-          <item name="SpaDESRuntimeFiles" showIf="isParent" itemTransformer="LoadSpadesOutputs"/>
+          <item name="SpaDESRuntimeRasters" itemTransformer="LoadSpadesOutputs" showIf="isParent" />
+          <item name="SpaDESRuntimeFiles" itemTransformer="LoadSpadesOutputs" showIf="isParent" />
         </group>
 
         <group name="Outputs">
           <!--item name="DataSummary" /-->
-          <item name="RasterFile" showIf="isResult" itemTransformer="LoadSpadesOutputs"/>
-          <item name="ExternalFile" showIf="isResult" itemTransformer="LoadSpadesOutputs"/>
+          <item name="RasterFile" itemTransformer="LoadSpadesOutputs" showIf="isResult" />
+          <item name="ExternalFile" itemTransformer="LoadSpadesOutputs" showIf="isResult" />
         </group>
 
       </group>
@@ -428,16 +422,16 @@
       <group name="CaribouModel" displayName="Caribou Metrics">
 
         <group name="Inputs">
-          <item name="RunCaribouRange" showIf="isParent" itemTransformer="RunCaribouHabitatModel"/>
-          <item name="CaribouDataSource" showIf="isParent" itemTransformer="RunCaribouHabitatModel"/>
-          <item name="HabitatModelOptions" showIf="isParent" itemTransformer="RunCaribouHabitatModel"/>
-          <item name="RasterFile" showIf="isParent" itemTransformer="RunCaribouHabitatModel"/>
-          <item name="ExternalFile" showIf="isParent" itemTransformer="RunCaribouHabitatModel"/>
+          <item name="RunCaribouRange" itemTransformer="RunCaribouHabitatModel" showIf="isParent" />
+          <item name="CaribouDataSource" itemTransformer="RunCaribouHabitatModel" showIf="isParent" />
+          <item name="HabitatModelOptions" itemTransformer="RunCaribouHabitatModel" showIf="isParent"/>
+          <item name="RasterFile" itemTransformer="RunCaribouHabitatModel" showIf="isParent" />
+          <item name="ExternalFile" itemTransformer="RunCaribouHabitatModel" showIf="isParent" />
         </group>
 
         <group name="Outputs">
-          <item name="OutputHabitat" showIf="isResult" itemTransformer="RunCaribouHabitatModel"/>
-          <item name="OutputSpatialHabitat" showIf="isResult" itemTransformer="RunCaribouHabitatModel"/>
+          <item name="OutputHabitat" itemTransformer="RunCaribouHabitatModel" showIf="isResult" />
+          <item name="OutputSpatialHabitat" itemTransformer="RunCaribouHabitatModel" showIf="isResult" />
         </group>
         
       </group>
