@@ -266,7 +266,7 @@
                 <column name="RunCaribouRangeID" dataType="Integer" isPrimary="True" />
                 <column name="ScenarioID" dataType="Integer" />
                 <column name="Range" displayName="Range Name" dataType="Integer" validationType="Datasheet" formula1="CaribouRange" allowDbNull="False" />
-                <column name="ProjectShapeFileID" displayName="Project Area (Polygon)" dataType="Integer" validationType="Datasheet" formula1="Polygons" allowDbNull="False" />
+                <column name="CoeffRange" displayName="Coeff Range Name" dataType="Integer" validationType="Datasheet" formula1="CaribouRange" allowDbNull="False"/>
               </columns>
             </datasheet>
           </datasheets>
@@ -279,6 +279,7 @@
                 <column name="ScenarioID" dataType="Integer" isPrimary="True" />
                 <column name="PadProjPoly" displayName="Project Polygon Padding" dataType="Boolean" />
                 <column name="PadFocal" displayName="Focal Padding" dataType="Boolean" />
+                <column name="doScale" displayName="Scale" dataType="Boolean" />
               </columns>
             </datasheet>
           </datasheets>
@@ -291,6 +292,7 @@
                 <column name="CaribouDataSourceID" dataType="Integer" isPrimary="True" />
                 <column name="ScenarioID" dataType="Integer" />
                 <column name="LandCoverRasterID" displayName="Land Cover (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="False" />
+                <column name="ProjectShapeFileID" displayName="Project Area (Polygon)" dataType="Integer" validationType="Datasheet" formula1="Polygons" allowDbNull="False" />
                 <column name="EskerRasterID" displayName="Eskers (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
                 <column name="EskerShapeFileID" displayName="Eskers (Polygon)" dataType="Integer" validationType="Datasheet" formula1="Polygons" allowDbNull="True" />
                 <column name="LinearFeatureRasterID" displayName="Linear Feature (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
