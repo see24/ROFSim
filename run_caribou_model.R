@@ -59,12 +59,6 @@ if (nrow(allParams$RasterFile > 0)){
   allParams$RasterFile <- allParams$RasterFile %>% 
     left_join(filter(allParams$CaribouDataSourceWide, type=="raster"), 
               by = c("RastersID" = "VarID")) %>% 
-    # mutate(RasterVariableID = ifelse(is.na(CaribouVarID), 
-    #                                  RasterVariableID, CaribouVarID)) %>% 
-    # select(-c(CaribouVarID, VariableID, FileVariableID)) %>% 
-    # group_by(Iteration, Timestep, RastersID) %>% 
-    # group_modify(~ if(nrow(.x)>1){ .x[is.na(.x$Source), ]} else { .x}) %>% 
-    # ungroup %>% 
     as.data.frame()
 }
 
@@ -72,24 +66,8 @@ if (nrow(allParams$ExternalFile > 0)){
   allParams$ExternalFile <- allParams$ExternalFile %>% 
     left_join(filter(allParams$CaribouDataSourceWide, type == "shapefile"), 
               by = c("PolygonsID" = "VarID")) %>% 
-    # mutate(FileVariableID = ifelse(is.na(CaribouVariableID), 
-    #                                FileVariableID, CaribouVariableID)) %>% 
-    # select(-c(CaribouVariableID, VariableID, RasterVariableID)) %>% 
-    # group_by(Iteration, Timestep, FileVariableID) %>% 
-    # group_modify(~ if(nrow(.x)>1){ .x[!is.na(.x$Source), ]} else { .x}) %>% 
-    # ungroup %>% 
     as.data.frame()
 }
-
-# if (nrow(allParams$DataSummary > 0)){
-#   allParams$DataSummary <- allParams$DataSummary %>% left_join(allParams$Crosswalk) %>% 
-#     mutate(VariableID = ifelse(is.na(CaribouVariableID), 
-#                                VariableID, CaribouVariableID)) %>% 
-#     select(-c(CaribouVariableID, RasterVariableID, FileVariableID)) %>%  
-#     group_by(Iteration, Timestep, VariableID) %>% 
-#     group_modify(~ if(nrow(.x)>1){ .x[is.na(.x$Source), ]} else { .x}) %>% 
-#     ungroup %>% as.data.frame()
-# }
 
 # Filter Timesteps --------------------------------------------------------
 
@@ -129,66 +107,121 @@ for (iteration in iterationSet) {
     envReportProgress(iteration, timestep)
     
     # Filter inputs based on iteration and timestep
-    # rasters
     InputRasters <- filterInputs(allParams$RasterFile, 
                                  iteration, timestep, min(timestepSet))
     InputVectors <- filterInputs(allParams$ExternalFile,
                                  iteration, timestep, min(timestepSet))
     
     # Call the main function with all arguments extracted from datasheets
-    plc <- raster(filter(InputRasters, CaribouVarID == "LandCoverRasterID")$File)
+    plcRas <-  tryCatch({
+      raster(filter(InputRasters, CaribouVarID == "LandCoverRasterID")$File)
+    }, error = function(cond) { stop("land cover can't be null") })
     
-    eskerDras <-  tryCatch({
-      raster(filter(InputRasters, CaribouVarID == "esker")$File)
+    # Verify if reclassing PLC is needed
+    if (!(max(values(plcRas), na.rm = TRUE) <= 9)){
+      plcRas <- reclassPLC(plcRas)
+    }
+    
+    # Change resolution if needed
+    if (res(plcRas)[1] != 250){
+      aggFact <- 250/res(plcRas)[1]
+      plcRas <- raster::aggregate(plcRas, aggFact, fun = raster::modal)
+    }
+    
+    eskerRas <- tryCatch({
+      raster(filter(InputRasters, CaribouVarID == "EskerRasterID")$File)
       }, error = function(cond) { NULL })
+    eskerPol <- tryCatch({
+      st_read(filter(InputVectors, CaribouVarID == "EskerShapeFileID")$File)
+    }, error = function(cond) { NULL })
+    
+    if(is.null(eskerPol)){
+      eskerFinal <- eskerRas
+    } else {
+      eskerFinal <- eskerPol
+    }
 
-    ageD = raster(filter(InputRasters, CaribouVarID == "AgeasterID")$File)
+    ageRas <- tryCatch({
+      raster(filter(InputRasters, CaribouVarID == "AgeRasterID")$File)
+    }, error = function(cond) { NULL })
+    
+    ageRas <- raster::aggregate(ageRas, aggFact, fun = raster::modal)
 
-    natDistD = raster(filter(InputRasters, RasterVariableID == "natDist")$File)
+    natDistRas <- tryCatch({
+      raster(filter(InputRasters, CaribouVarID == "NaturalDisturbanceRasterID")$File)
+    }, error = function(cond) { NULL })
 
-    anthroDistD = raster(filter(InputRasters, RasterVariableID == "anthroDist")$File)
+    anthroDistRas <- tryCatch({
+      raster(filter(InputRasters, CaribouVarID == "AnthropogenicRasterID")$File)
+    }, error = function(cond) { NULL })
 
-    harvD = raster(filter(InputRasters, RasterVariableID == "harv")$File)
+    harvRas <- tryCatch({
+      raster(filter(InputRasters, CaribouVarID == "HarvestRasterID")$File)
+    }, error = function(cond) { NULL })
 
-    linFeatDras = raster(filter(InputRasters, RasterVariableID == "linFeat")$File)
+    linFeatRas <- tryCatch({
+      filtered <- filter(InputRasters, CaribouVarID == "LinearFeatureRasterID")$File
+      linFeatListRas <- lapply(filtered, raster)
+      # TODO This is a bold assumption, but the current implementation of 
+      # Caribou metrics is not flexible to unnamed features
+      names(linFeatListRas) <- c("rail", "roads", "utilities")[1:length(linFeatListRas)]
+    }, error = function(cond) { NULL })
+    linFeatPol <- tryCatch({
+      filtered <- filter(InputVectors, CaribouVarID == "LinearFeatureShapeFileID")$File
+      linFeatListPol <- lapply(filtered, st_read)
+      # TODO This is a bold assumption, but the current implementation of 
+      # Caribou metrics is not flexible to unnamed features
+      names(linFeatListPol) <- c("rail", "roads", "utilities")[1:length(linFeatListPol)]
+    }, error = function(cond) { NULL })
+    
+    if(length(linFeatPol) == 0){
+      linFeatFinal <- linFeatListRas
+    } else {
+      linFeatFinal <- linFeatListPol
+    }
 
-    projectPolyD = st_read(filter(InputVectors, FileVariableID == "projectPoly")$File,
-                           quiet = TRUE)
+    projectPol <- tryCatch({
+      st_read(filter(InputVectors, CaribouVarID == "ProjectShapeFileID")$File)
+    }, error = function(cond) { NULL })
+    
+    # Filter project polygons
+    projectPol <- projectPol %>% 
+      filter(RANGE_NAME %in% allParams$RunCaribouRange$Range) %>% 
+      rename(Range = RANGE_NAME)
     
     res <- caribouHabitat(
       
-      landCover = plcD , 
+      landCover = plcRas , 
       
-      esker = st_read("D://ROF/inputs/esker.shp"), 
+      esker = eskerFinal, 
       
-      updatedLC = friD , 
+      # updatedLC = friRas , # TODO Implement this input once link with spades is defined
       
-      age = ageD, 
+      age = NULL, 
       
-      natDist = natDistD, 
+      natDist = natDistRas, 
       
-      anthroDist = anthroDistD, 
+      anthroDist = anthroDistRas, 
       
-      harv = harvD,
+      harv = harvRas,
       
-      linFeat = st_read("D://ROF/inputs/linFeat.shp"), 
+      linFeat = linFeatFinal, 
       
-      projectPoly = projectPolyD,
+      projectPoly = projectPol,
       
       # Caribou Range
-      caribouRange = allParams$RunCaribouRange$Range, 
+      caribouRange = rename(allParams$RunCaribouRange, coefRange = CoeffRange),
       
       # Options
       padProjPoly = optArg(allParams$HabitatModelOptions$PadProjPoly),
       padFocal = optArg(allParams$HabitatModelOptions$PadFocal),
+      doScale = optArg(allParams$HabitatModelOptions$doScale),
       
       # outputs are saved afterwards
       eskerSave = NULL,
       linFeatSave = NULL,
-      saveOutput = NULL,
+      saveOutput = NULL
       
-      # TEMPORARY, for test purposes only
-      winArea = 500
     )
     
     ## Save to DATA folder
