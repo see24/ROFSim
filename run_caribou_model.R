@@ -10,6 +10,7 @@ library(caribouMetrics)
 library(raster)
 library(sf)
 library(dplyr)
+library(tidyr)
 
 # Load environment
 e <- ssimEnvironment()
@@ -135,38 +136,43 @@ for (iteration in iterationSet) {
                                  iteration, timestep, min(timestepSet))
     
     # Call the main function with all arguments extracted from datasheets
-    plcD <- raster(filter(InputRasters, RasterVariableID == "landCover")$File) %>% 
-      reclassPLC()
-    eskerDras = raster(filter(InputRasters, RasterVariableID == "esker")$File)
+    plc <- raster(filter(InputRasters, CaribouVarID == "LandCoverRasterID")$File)
     
-    friD = raster(filter(InputRasters, RasterVariableID == "fri")$File) %>%
-      reclassFRI(friLU = read.csv("D://ROFSim/data/FRI_LU_processed.csv",
-                                  stringsAsFactors = FALSE) %>%
-                   mutate(RFU = toupper(RFU) %>% stringr::str_replace("HRDMW", "HRDMX")))
-    
-    ageD = raster(filter(InputRasters, RasterVariableID == "age")$File)
-    
+    eskerDras <-  tryCatch({
+      raster(filter(InputRasters, CaribouVarID == "esker")$File)
+      }, error = function(cond) { NULL })
+
+    ageD = raster(filter(InputRasters, CaribouVarID == "AgeasterID")$File)
+
     natDistD = raster(filter(InputRasters, RasterVariableID == "natDist")$File)
-    
+
     anthroDistD = raster(filter(InputRasters, RasterVariableID == "anthroDist")$File)
-    
+
     harvD = raster(filter(InputRasters, RasterVariableID == "harv")$File)
-    
+
     linFeatDras = raster(filter(InputRasters, RasterVariableID == "linFeat")$File)
-    
-    projectPolyD = st_read(filter(InputVectors, FileVariableID == "projectPoly")$File, 
+
+    projectPolyD = st_read(filter(InputVectors, FileVariableID == "projectPoly")$File,
                            quiet = TRUE)
     
     res <- caribouHabitat(
       
       landCover = plcD , 
+      
       esker = st_read("D://ROF/inputs/esker.shp"), 
+      
       updatedLC = friD , 
+      
       age = ageD, 
+      
       natDist = natDistD, 
+      
       anthroDist = anthroDistD, 
+      
       harv = harvD,
+      
       linFeat = st_read("D://ROF/inputs/linFeat.shp"), 
+      
       projectPoly = projectPolyD,
       
       # Caribou Range
