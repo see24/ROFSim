@@ -144,8 +144,6 @@ for (iteration in iterationSet) {
     ageRas <- tryCatch({
       raster(filter(InputRasters, CaribouVarID == "AgeRasterID")$File)
     }, error = function(cond) { NULL })
-    
-    ageRas <- raster::aggregate(ageRas, aggFact, fun = raster::modal)
 
     natDistRas <- tryCatch({
       raster(filter(InputRasters, CaribouVarID == "NaturalDisturbanceRasterID")$File)
@@ -197,13 +195,13 @@ for (iteration in iterationSet) {
       
       # updatedLC = friRas , # TODO Implement this input once link with spades is defined
       
-      age = NULL, 
+      # age = ageRas, 
       
-      natDist = natDistRas, 
+      # natDist = natDistRas, 
       
-      anthroDist = anthroDistRas, 
+      # anthroDist = anthroDistRas, 
       
-      harv = harvRas,
+      # harv = harvRas,
       
       linFeat = linFeatFinal, 
       
