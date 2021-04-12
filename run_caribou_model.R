@@ -203,14 +203,14 @@ for (iteration in iterationSet) {
         # TODO Implement this input once link with spades is defined
         # updatedLC = friRas,
         
-        # Commented out due to bug
-        # age = ageRas, 
+        # Commented out due to #33
+        age = ageRas, 
         
-        # natDist = natDistRas, 
+        natDist = natDistRas,
         
-        # anthroDist = anthroDistRas, 
+        anthroDist = anthroDistRas,
         
-        # harv = harvRas,
+        harv = harvRas,
         
         linFeat = linFeatFinal, 
         
