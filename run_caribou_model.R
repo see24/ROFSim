@@ -130,7 +130,7 @@ for (iteration in iterationSet) {
     
     eskerRas <- tryCatch({
       raster(filter(InputRasters, CaribouVarID == "EskerRasterID")$File)
-      }, error = function(cond) { NULL })
+    }, error = function(cond) { NULL })
     eskerPol <- tryCatch({
       st_read(filter(InputVectors, CaribouVarID == "EskerShapeFileID")$File)
     }, error = function(cond) { NULL })
@@ -140,23 +140,23 @@ for (iteration in iterationSet) {
     } else {
       eskerFinal <- eskerPol
     }
-
+    
     ageRas <- tryCatch({
       raster(filter(InputRasters, CaribouVarID == "AgeRasterID")$File)
     }, error = function(cond) { NULL })
-
+    
     natDistRas <- tryCatch({
       raster(filter(InputRasters, CaribouVarID == "NaturalDisturbanceRasterID")$File)
     }, error = function(cond) { NULL })
-
+    
     anthroDistRas <- tryCatch({
       raster(filter(InputRasters, CaribouVarID == "AnthropogenicRasterID")$File)
     }, error = function(cond) { NULL })
-
+    
     harvRas <- tryCatch({
       raster(filter(InputRasters, CaribouVarID == "HarvestRasterID")$File)
     }, error = function(cond) { NULL })
-
+    
     linFeatRas <- tryCatch({
       filtered <- filter(InputRasters, CaribouVarID == "LinearFeatureRasterID")$File
       linFeatListRas <- lapply(filtered, raster)
@@ -177,79 +177,98 @@ for (iteration in iterationSet) {
     } else {
       linFeatFinal <- linFeatListPol
     }
-
+    
     projectPol <- tryCatch({
-      st_read(filter(InputVectors, CaribouVarID == "ProjectShapeFileID")$File)
+      st_read(filter(InputVectors, CaribouVarID == "ProjectShapeFileID")$File) %>% 
+        # TODO implement better checks: verify if Range/RANGE_NAME aare there 
+        rename(Range = RANGE_NAME)
     }, error = function(cond) { NULL })
     
-    # Filter project polygons
-    projectPol <- projectPol %>% 
-      filter(RANGE_NAME %in% allParams$RunCaribouRange$Range) %>% 
-      rename(Range = RANGE_NAME)
+    # Rename range in expected format
+    renamedRange <- rename(allParams$RunCaribouRange, coefRange = CoeffRange)
     
-    res <- caribouHabitat(
+    for(row in seq_len(nrow(renamedRange))) {
       
-      landCover = plcRas , 
+      theRangeDf <- renamedRange[row,]
       
-      esker = eskerFinal, 
+      projectPoltmp <- projectPol %>% 
+        filter(Range %in% theRangeDf$Range) 
       
-      # updatedLC = friRas , # TODO Implement this input once link with spades is defined
+      res <- caribouHabitat(
+        
+        landCover = plcRas , 
+        
+        esker = eskerFinal, 
+        
+        # TODO Implement this input once link with spades is defined
+        # updatedLC = friRas,
+        
+        # Commented out due to bug
+        # age = ageRas, 
+        
+        # natDist = natDistRas, 
+        
+        # anthroDist = anthroDistRas, 
+        
+        # harv = harvRas,
+        
+        linFeat = linFeatFinal, 
+        
+        projectPoly = projectPoltmp,
+        
+        # Caribou Range
+        caribouRange = theRangeDf,
+        
+        # Options
+        padProjPoly = optArg(allParams$HabitatModelOptions$PadProjPoly),
+        padFocal = optArg(allParams$HabitatModelOptions$PadFocal),
+        doScale = optArg(allParams$HabitatModelOptions$doScale),
+        
+        # outputs are saved afterwards
+        eskerSave = NULL,
+        linFeatSave = NULL,
+        saveOutput = NULL
+        
+      )
       
-      # age = ageRas, 
+      ## Save to DATA folder
+      writeRaster(res@habitatUse, bylayer = TRUE, format = "GTiff",
+                  suffix = paste(names(res@habitatUse), 
+                                 theRangeDf$Range,
+                                 paste0("it_",iteration), 
+                                 paste0("ts_",timestep), sep = "_"),
+                  filename = file.path(e$TransferDirectory, "OutputHabitatUse"), 
+                  overwrite = TRUE)
       
-      # natDist = natDistRas, 
+      # Build df and save the datasheet
+      habitatUseDf <- data.frame(SeasonID = names(res@habitatUse), 
+                                 Iteration = iteration,
+                                 Timestep = timestep,
+                                 RangeID = theRangeDf$Range)
+      habitatUseDf$FileName <- file.path(e$TransferDirectory, 
+                                         paste0(paste("OutputHabitatUse",
+                                                      habitatUseDf$Season,
+                                                      theRangeDf$Range,
+                                                      "it", habitatUseDf$Iteration, 
+                                                      "ts", habitatUseDf$Timestep,
+                                                      sep= "_"), ".tif"))
       
-      # anthroDist = anthroDistRas, 
+      habitatUseAll[[paste0("it_",iteration)]][[paste0("ts_",timestep)]][[theRangeDf$Range]] <- 
+        habitatUseDf
       
-      # harv = harvRas,
-      
-      linFeat = linFeatFinal, 
-      
-      projectPoly = projectPol,
-      
-      # Caribou Range
-      caribouRange = rename(allParams$RunCaribouRange, coefRange = CoeffRange),
-      
-      # Options
-      padProjPoly = optArg(allParams$HabitatModelOptions$PadProjPoly),
-      padFocal = optArg(allParams$HabitatModelOptions$PadFocal),
-      doScale = optArg(allParams$HabitatModelOptions$doScale),
-      
-      # outputs are saved afterwards
-      eskerSave = NULL,
-      linFeatSave = NULL,
-      saveOutput = NULL
-      
-    )
-    
-    ## Save to DATA folder
-    writeRaster(res@habitatUse, bylayer = TRUE, format = "GTiff",
-                suffix = paste(names(res@habitatUse), 
-                               paste0("it_",iteration), 
-                               paste0("ts_",timestep), sep = "_"),
-                filename = file.path(e$TransferDirectory, "OutputHabitatUse"), 
-                overwrite = TRUE)
-    
-    # Build df and save the datasheet
-    habitatUseDf <- data.frame(SeasonID = names(res@habitatUse), 
-                               Iteration = iteration,
-                               Timestep = timestep,
-                               RangeID = allParams$RunCaribouRange$Range)
-    habitatUseDf$FileName <- file.path(e$TransferDirectory, 
-                                       paste0(paste("OutputHabitatUse",
-                                                    habitatUseDf$Season,
-                                                    "it", habitatUseDf$Iteration, 
-                                                    "ts", habitatUseDf$Timestep,
-                                                    sep= "_"), ".tif"))
-    
-    habitatUseAll[[paste0("it_",iteration)]][[paste0("ts_",timestep)]] <- habitatUseDf
-    
+    }
   }
 }
 
-if (length(habitatUseAll) > 1) {
-  habitatUseMerged <- bind(unlist(habitatUseAll, recursive = F))
-} else{
-  habitatUseMerged <- unlist(habitatUseAll, recursive = F)[[1]]
+while(class(habitatUseAll[[1]]) == "list"){
+  habitatUseAll <- unlist(habitatUseAll, recursive = F)
 }
+
+if (length(habitatUseAll) > 1) {
+  habitatUseMerged <- bind(habitatUseAll)
+} else{
+  habitatUseMerged <- habitatUseAll[[1]]
+}
+
 saveDatasheet(ssimObject = mySce, name = "OutputSpatialHabitat", data = habitatUseMerged)
+envEndSimulation()
