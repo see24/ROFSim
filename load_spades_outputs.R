@@ -197,7 +197,7 @@ for (rowVar in seq_len(length.out = nrow(allVars))){
 
 saveIfNotEmpty <- function(sheet, name){
   if(nrow(sheet) != 0){
-    saveDatasheet(mySce, sheet, name)
+    saveDatasheet(mySce, sheet, name, append = TRUE)
   }
 }
 
