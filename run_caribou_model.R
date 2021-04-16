@@ -238,7 +238,6 @@ for (iteration in iterationSet) {
     habitatUseAll[[paste0("it_",iteration)]][[paste0("ts_",timestep)]] <- 
       habitatUseDf
     
-    
   }
 }
 
