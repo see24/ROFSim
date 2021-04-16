@@ -419,11 +419,11 @@
       <group name="makeLCCFromCohortData" displayName="Cohort to LCC">
 
         <group name="Inputs">
-          <item name="SpaDESGeneral" itemTransformer="" showIf="isParent"/>
+          <item name="SpaDESGeneral" itemTransformer="makeLCCFromCohortData" showIf="isParent"/>
         </group>
 
         <group name="Outputs">
-          <item name="RasterFile" itemTransformer="" showIf="isResult"/>
+          <item name="RasterFile" itemTransformer="makeLCCFromCohortData" showIf="isResult"/>
         </group>
 
       </group>

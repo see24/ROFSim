@@ -225,8 +225,7 @@ for (iteration in iterationSet) {
     # Build df and save the datasheet
     habitatUseDf <- data.frame(SeasonID = names(res@habitatUse), 
                                Iteration = iteration,
-                               Timestep = timestep) %>% 
-      expand_grid(RangeID = renamedRange$Range)
+                               Timestep = timestep)
     habitatUseDf$FileName <- file.path(e$TransferDirectory, 
                                        paste0(paste("OutputHabitatUse",
                                                     habitatUseDf$Season,
@@ -234,6 +233,8 @@ for (iteration in iterationSet) {
                                                     "it", habitatUseDf$Iteration, 
                                                     "ts", habitatUseDf$Timestep,
                                                     sep= "_"), ".tif"))
+    habitatUseDf <- habitatUseDf %>% 
+      expand_grid(RangeID = renamedRange$Range)
     
     habitatUseAll[[paste0("it_",iteration)]][[paste0("ts_",timestep)]] <- 
       habitatUseDf
