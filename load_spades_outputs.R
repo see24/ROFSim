@@ -128,7 +128,7 @@ outputs$file <- file.path(dirname(spadesDatasheet$Filename), basename(outputs$fi
 
 # Extract variables -------------------------------------------------------
 
-# Extract the other vars
+# Transfer dir
 tmp <- e$TransferDirectory
 
 # Get empty datasheets
@@ -156,7 +156,7 @@ for (rowVar in seq_len(length.out = nrow(allVars))){
       
       tmpObj <- raster(outputsFiltered$file[rowOut]) >= 1
       
-      # Get info
+      # Make file name
       filePath <- file.path(tmp, paste0(theVar, "_", paste(paste0("it_",theIter), 
                                                            paste0("ts_",theTs), sep = "_"), 
                                         ".tif"))
