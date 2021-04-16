@@ -143,12 +143,14 @@ for (ts in sort(unique(outputs$Timestep))){
   writeRaster(updated_LCC_tmp, overwrite = TRUE,
               filename = filePath)
   
-  tmpsheet <- data.frame(RastersID = "Provincial Land Cover", 
-                         File = filePath, 
+  tmpsheet <- data.frame(Iteration = theIter, 
+                         Timestep = ts, 
+                         RastersID = "Provincial Land Cover", 
+                         Filename = filePath, 
                          TransformerID = "Generate LCC from Cohort Data")
   
   outputSheet <- bind_rows(outputSheet, tmpsheet)
     
 }
 
-saveDatasheet(mySce, outputSheet, "RasterFile")
+saveDatasheet(mySce, outputSheet, "RasterFile", append = TRUE)
