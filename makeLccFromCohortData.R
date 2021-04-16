@@ -29,32 +29,9 @@ subFilter <- sapply(X = myDatasheets$name, FUN = grepl, pattern="^(ROF)\\w+")
 myDatasheetsFiltered <- myDatasheets[subFilter,]
 myDatasheetsNames <- myDatasheetsFiltered$name
 
-# Source Craig's function
-source(file.path(e$PackageDirectory, "makeLccFromCohortData_helper.R"))
-
-# Spades processing -------------------------------------------------------
-
-# Get the spades datasheet
-spadesDatasheet <- datasheet(ssimObject = mySce, name = "ROFSim_SpaDESGeneral")
-
-# If datahseet is not empty, get the path
-if(nrow(spadesDatasheet) == 0){
-  stop("No SpaDES object specified.")
-} else {
-  if (is.na(spadesDatasheet$Filename)){
-    stop("No SpaDES object specified.")
-  } else {
-    spadesObjectPath <- spadesDatasheet$Filename
-  }
-}
-
-# Load the spades object
-# TODO adding a warnings about memory could be usefull
-spadesObject <- qs::qread(spadesObjectPath)
-
-cohort_data <- spadesObject$cohortData
-pixelGroupMap <- spadesObject$pixelGroupMap
-rstLCC <- spadesObject$rstLCC
+# Source Craig's function + my helpers
+source(file.path(e$PackageDirectory, "makeLCCFromCohortData_helper.R"))
+source(file.path(e$PackageDirectory, "helpers.R"))
 
 lccClassTable = data.table(
   standLeading = c("pureCon_dense", "pureCon_open", "pureCon_sparse",
@@ -65,23 +42,113 @@ lccClassTable = data.table(
                2,11,11, 
                3,13,13)) # HARDCODED TO MATCH INPUTS
 
-# Call the function -------------------------------------------------------
+# SpaDES Info -------------------------------------------------------------
 
-rasterFiles <- datasheet(mySce, "RasterFile", 
-                         lookupsAsFactors = FALSE, optional = TRUE)
+# Get the spades datasheet 
+spadesDatasheet <- datasheet(ssimObject = mySce, name = "ROFSim_SpaDESGeneral")
 
-filePath <- file.path(e$TransferDirectory, "UpdatedLandCover.tif")
+# If datasheet is not empty, get the path
+if(nrow(spadesDatasheet) == 0){
+  stop("No SpaDES file specified.")
+} else {
+  if (is.na(spadesDatasheet$Filename)){
+    stop("No SpaDES file specified.")
+  } else {
+    spadesObjectPath <- spadesDatasheet$Filename
+  }
+}
 
-updated_LCC_tmp <- makeLCCfromCohortData(cohortData = cohort_data,
-                                         pixelGroupMap = pixelGroupMap,
-                                         rstLCC = rstLCC,
-                                         lccClassTable = lccClassTable)
-writeRaster(updated_LCC_tmp, overwrite = TRUE,
-            filename = filePath)
+# Run control -------------------------------------------------------------
 
-sheetSubset[lccRow,]$RastersID <- "Land Cover"
-sheetSubset[lccRow,]$File <- filePath
-sheetSubset[lccRow,]$TransformerID <- "Generate LCC from Cohort Data"
+runControlSheet <- datasheet(mySce, "RunControl")
 
-fullSheet <- rbind(sheetSubset, restofSheet)
-saveDatasheet(mySce, fullSheet, "RasterFile")
+if (nrow(runControlSheet) == 0){
+  # Extract run control information
+  runControl <- list(start = start(spadesObject), 
+                     end = end(spadesObject), 
+                     current = time(spadesObject))
+  
+  runControlSheet <- addRow(runControlSheet, 
+                            list(MinimumIteration = 1, 
+                                 MaximumIteration = 1, 
+                                 MinimumTimestep = runControl$start, 
+                                 MaximumTimestep = runControl$end))
+  saveDatasheet(mySce, runControlSheet, "RunControl")
+}
+
+timestepSet <- runControlSheet$MinimumTimestep:runControlSheet$MaximumTimestep
+# iterationSet <- runControlSheet$MinimumIteration:runControlSheet$MaximumIteration
+# FOR NOW, ITER IS SET
+theIter <- 1
+
+# Filter spades outputs info ----------------------------------------------
+
+# Load the spades object 
+# TODO adding a warnings about memory could be usefull
+spadesObject <- qs::qread(spadesObjectPath)
+
+# Get outputs table
+outputs <- outputs(spadesObject) %>% 
+  make_paths_relative("outputs") %>% 
+  filter(objectName %in% c("cohortData", "pixelGroupMap")) %>% 
+  filter(saveTime %in% timestepSet) %>% 
+  rename(Timestep = saveTime)
+
+# For now, reconstruct the relative paths based on basenames
+outputs$file <- file.path(dirname(spadesDatasheet$Filename), basename(outputs$file))
+
+# Extract variables -------------------------------------------------------
+
+# Transfer dir
+tmp <- e$TransferDirectory
+
+# Get empty datasheets
+rasterFiles <- datasheet(mySce, "RasterFile", lookupsAsFactors = FALSE, 
+                         empty = TRUE, optional = TRUE)
+
+# Get LCC
+rstLCC <- spadesObject$rasterToMatch
+
+outputSheet <- data.frame()
+
+for (ts in sort(unique(outputs$Timestep))){
+  
+  outputsFiltered <- outputs %>% 
+    filter(Timestep == ts)
+  
+  if(nrow(outputsFiltered) != 2){ stop("invalid number of outputs") }
+  
+  cohort_data <- as.data.table(qs::qread(outputsFiltered %>% 
+                                           filter(objectName == "cohortData") %>% 
+                                           pull(file)))
+  pixelGroupMap <- raster(outputsFiltered %>% 
+                            filter(objectName == "pixelGroupMap") %>% 
+                            pull(file))
+  names(pixelGroupMap) <- "pixelGroup"
+  rstLCC <- raster::resample(rstLCC,
+                             pixelGroupMap)
+  
+  # Make file name
+  filePath <- file.path(tmp, paste0("PLC", "_", paste(paste0("it_",theIter), 
+                                                      paste0("ts_",ts), sep = "_"), 
+                                    ".tif"))
+  
+  # Populate sheet
+  updated_LCC_tmp <- makeLCCfromCohortData(cohortData = cohort_data,
+                                           pixelGroupMap = pixelGroupMap,
+                                           rstLCC = rstLCC,
+                                           lccClassTable = lccClassTable)
+  
+  
+  writeRaster(updated_LCC_tmp, overwrite = TRUE,
+              filename = filePath)
+  
+  tmpsheet <- data.frame(RastersID = "Provincial Land Cover", 
+                         File = filePath, 
+                         TransformerID = "Generate LCC from Cohort Data")
+  
+  outputSheet <- bind_rows(outputSheet, tmpsheet)
+    
+}
+
+saveDatasheet(mySce, outputSheet, "RasterFile")
