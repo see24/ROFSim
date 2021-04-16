@@ -1,3 +1,33 @@
+###############################################################################
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+# Description:Function takes the output from landR, primarily the pixel group
+#             map and the cohort biomass, and converts them into the 5 dynamic
+#             land cover types used as covariates in the Ring of Fire RSPF,
+#             note that there are 11 covariates, but the majority are not 
+#             simulated by LandR. The function is made up of three broad steps
+#             1) Defining vegetation type; 2) defining the level of openness;
+#             and 3) updating natural disturbance cells based of burns created
+#             by firesense.
+#
+# Required inputs: 
+#                 - The cohort data accessed from a sim object 
+#                     (`sim$cohortData`)
+#                 - The pixel group map linked to that cohort data again
+#                     accessed through the sim object (`sim$pixelGroupMap`)
+#                 - The initial land cover map (`sim$rstLCC`)
+#                 - A lookup table defining the land cover type as conifer,
+#                     deciduous, or mixed and as dense, sparse, or open and the
+#                     associated land cover ID value
+# Outputs: 
+#         - An updated raster of the study area with all of the covariate 
+#           land cover types represented (both dynamic and static), saved out
+#           as a .tif (geotif) file.
+#
+# Author: C.E. Simpkins (based on code by Tati Micheletti)
+#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+###############################################################################
+
 makeLCCfromCohortData <- function(cohortData,
                                   pixelGroupMap,
                                   rstLCC, 
@@ -9,12 +39,12 @@ makeLCCfromCohortData <- function(cohortData,
   
   ### Step 1: Define vegetation type ###
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-  # A) Assign type for each species based on equivalence table (using KNN)
+  # A) Assign type for each species based on equivalence table (using LandR)
   sppEquivalencies <- LandR::sppEquivalencies_CA
   
   for (x in 1:length(unique(cohortData$speciesCode))) {
     cohortData[speciesCode == unique(cohortData$speciesCode)[x],
-               Type := sppEquivalencies[KNN == unique(cohortData$speciesCode)[x]]$Type]
+               Type := sppEquivalencies[LandR == unique(cohortData$speciesCode)[x]]$Type]
   }
   
   cohortData[Type == "Deciduous"]$Type <- "deciduous"
@@ -65,8 +95,8 @@ makeLCCfromCohortData <- function(cohortData,
   rat$sparseness <- c("dense", "open", "sparse")
   levels(sparsenessMap) <- rat
   names(sparsenessMap) <- "sparsenessMap"
-  sparsenessMapDT <- unique(na.omit(data.table::data.table(getValues(stack(sparsenessMap, 
-                                                                           pixelGroupMap)))))
+  sparsenessMapDT <- raster::unique(na.omit(data.table::data.table(
+    getValues(stack(sparsenessMap, pixelGroupMap)))))
   
   finalDT  <- merge(cohortDataSim, sparsenessMapDT, all.x = TRUE)
   

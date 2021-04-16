@@ -62,10 +62,10 @@ lccClassTable = data.table(
   standLeading = c("pureCon_dense", "pureCon_open", "pureCon_sparse",
                    "pureCon_sparse",
                    "pureDec_dense", "pureDec_open", "pureDec_sparse",
-                   "mixed_dense", "mixed_open", "mixed_sparse"),
+                   "mixed_dense", "mixed_open", "mixed_sparse"), 
   LCCclass = c(1,6,8,32,
-               2,11,11,
-               3,13,13)) # HARDCODED TO MATCH LCC05
+               2,11,11, 
+               3,13,13)) # HARDCODED TO MATCH INPUTS
 
 # Call the function -------------------------------------------------------
 
