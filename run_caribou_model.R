@@ -122,12 +122,6 @@ for (iteration in iterationSet) {
       plcRas <- reclassPLC(plcRas)
     }
     
-    # Change resolution if needed
-    # if (res(plcRas)[1] != 250){
-    #   aggFact <- 250/res(plcRas)[1]
-    #   plcRas <- raster::aggregate(plcRas, aggFact, fun = raster::modal)
-    # }
-    
     eskerRas <- tryCatch({
       raster(filter(InputRasters, CaribouVarID == "EskerRasterID")$File)
     }, error = function(cond) { NULL })
@@ -160,16 +154,10 @@ for (iteration in iterationSet) {
     linFeatRas <- tryCatch({
       filtered <- filter(InputRasters, CaribouVarID == "LinearFeatureRasterID")$File
       linFeatListRas <- lapply(filtered, raster)
-      # TODO This is a bold assumption, but the current implementation of 
-      # Caribou metrics is not flexible to unnamed features
-      # names(linFeatListRas) <- c("rail", "roads", "utilities")[1:length(linFeatListRas)]
     }, error = function(cond) { NULL })
     linFeatPol <- tryCatch({
       filtered <- filter(InputVectors, CaribouVarID == "LinearFeatureShapeFileID")$File
       linFeatListPol <- lapply(filtered, st_read)
-      # TODO This is a bold assumption, but the current implementation of 
-      # Caribou metrics is not flexible to unnamed features
-      # names(linFeatListPol) <- c("rail", "roads", "utilities")[1:length(linFeatListPol)]
     }, error = function(cond) { NULL })
     
     if(length(linFeatPol) == 0){
@@ -198,13 +186,13 @@ for (iteration in iterationSet) {
       
       # updatedLC = friRas,
       
-      #age = ageRas, 
+      # age = ageRas, 
       
-      #natDist = natDistRas,
+      # natDist = natDistRas,
       
-      #anthroDist = anthroDistRas,
+      # anthroDist = anthroDistRas,
       
-      #harv = harvRas,
+      # harv = harvRas,
       
       linFeat = linFeatFinal, 
       
@@ -228,7 +216,7 @@ for (iteration in iterationSet) {
     ## Save to DATA folder
     writeRaster(res@habitatUse, bylayer = TRUE, format = "GTiff",
                 suffix = paste(names(res@habitatUse), 
-                               theRangeDf$Range,
+                               paste(renamedRange$Range, collapse = "_"),
                                paste0("it_",iteration), 
                                paste0("ts_",timestep), sep = "_"),
                 filename = file.path(e$TransferDirectory, "OutputHabitatUse"), 
@@ -237,32 +225,25 @@ for (iteration in iterationSet) {
     # Build df and save the datasheet
     habitatUseDf <- data.frame(SeasonID = names(res@habitatUse), 
                                Iteration = iteration,
-                               Timestep = timestep,
-                               RangeID = theRangeDf$Range)
+                               Timestep = timestep) %>% 
+      expand_grid(RangeID = renamedRange$Range)
     habitatUseDf$FileName <- file.path(e$TransferDirectory, 
                                        paste0(paste("OutputHabitatUse",
                                                     habitatUseDf$Season,
-                                                    theRangeDf$Range,
+                                                    paste(renamedRange$Range, collapse = "_"),
                                                     "it", habitatUseDf$Iteration, 
                                                     "ts", habitatUseDf$Timestep,
                                                     sep= "_"), ".tif"))
     
-    habitatUseAll[[paste0("it_",iteration)]][[paste0("ts_",timestep)]][[theRangeDf$Range]] <- 
+    habitatUseAll[[paste0("it_",iteration)]][[paste0("ts_",timestep)]] <- 
       habitatUseDf
     
     
   }
 }
 
-while(class(habitatUseAll[[1]]) == "list"){
-  habitatUseAll <- unlist(habitatUseAll, recursive = F)
-}
 
-if (length(habitatUseAll) > 1) {
-  habitatUseMerged <- bind(habitatUseAll)
-} else{
-  habitatUseMerged <- habitatUseAll[[1]]
-}
+habitatUseMerged <- bind_rows(unlist(habitatUseAll, recursive = F))
 
 saveDatasheet(ssimObject = mySce, name = "OutputSpatialHabitat", data = habitatUseMerged)
 envEndSimulation()
