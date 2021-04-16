@@ -1,8 +1,6 @@
 ## ROF SIM Prototype Package
-### Primary Transformer
-## Importing spades outputs
 
-print("Primary Transformer: processing spades outputs")
+## Make land cover from cohort data
 
 # Load Packages
 library(rsyncrosim)
@@ -71,26 +69,6 @@ lccClassTable = data.table(
 
 rasterFiles <- datasheet(mySce, "RasterFile", 
                          lookupsAsFactors = FALSE, optional = TRUE)
-
-# if(nrow(rasterFiles) != 0){
-# 
-#   sheetSubset <- subset(rasterFiles, RasterVariableID == "rstLCC")
-#   restofSheet <- subset(rasterFiles, RasterVariableID != "rstLCC")
-#   newVar <- "Updated Land Cover"
-# 
-#   if(nrow(sheetSubset) != 0){
-# 
-#     updated_LCC_list <- vector(mode = "list", length = nrow(sheetSubset))
-# 
-#     for (lccRow in seq_len(length.out = nrow(sheetSubset))){
-# 
-#       theIter <- sheetSubset[lccRow,]$Iteration
-#       theTs <- sheetSubset[lccRow,]$Timestep
-
-# filePath <- file.path(e$TransferDirectory,
-#                       paste0(newVar, "_", paste(paste0("it_",theIter),
-#                                                 paste0("ts_",theTs), sep = "_"),
-#                              ".tif"))
 
 filePath <- file.path(e$TransferDirectory, "UpdatedLandCover.tif")
 

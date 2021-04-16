@@ -1,8 +1,6 @@
 ## ROF SIM Prototype Package
-## Second Transformer
-## Running Caribou RSF Model
 
-print("Secondary Transformer: running caribou model")
+## Running Caribou RSF Model
 
 # Load Packages
 library(rsyncrosim)

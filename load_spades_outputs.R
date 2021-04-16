@@ -1,8 +1,6 @@
 ## ROF SIM Prototype Package
-### Primary Transformer
-## Importing spades outputs
 
-print("Primary Transformer: processing spades outputs")
+## Importing spades outputs
 
 # Load Packages
 library(rsyncrosim)
