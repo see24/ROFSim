@@ -79,13 +79,9 @@ updated_LCC_tmp <- makeLCCfromCohortData(cohortData = cohort_data,
 writeRaster(updated_LCC_tmp, overwrite = TRUE,
             filename = filePath)
 
-sheetSubset[lccRow,]$RastersID <- newVar
+sheetSubset[lccRow,]$RastersID <- "Land Cover"
 sheetSubset[lccRow,]$File <- filePath
 sheetSubset[lccRow,]$TransformerID <- "Generate LCC from Cohort Data"
-
-#     }
-#   }
-# }
 
 fullSheet <- rbind(sheetSubset, restofSheet)
 saveDatasheet(mySce, fullSheet, "RasterFile")
