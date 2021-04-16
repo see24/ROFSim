@@ -9,7 +9,7 @@
       <include>
         <transformer name="corestime_Runtime" />
         <transformer name="LoadSpadesOutputs" />
-        <!-- <transformer name="makeLccFromCohortData" /> -->
+        <transformer name="makeLCCFromCohortData" />
         <transformer name="RunCaribouHabitatModel" />
       </include>
 
@@ -237,7 +237,7 @@
 
     </transformer>
 
-    <!-- <transformer name="makeLccFromCohortData" displayName="Generate LCC from Cohort Data" isRunnable="True" programName="Rscript" programArguments="makeLccFromCohortData.R">
+    <transformer name="makeLCCFromCohortData" displayName="Generate LCC from Cohort Data" isRunnable="True" programName="Rscript" programArguments="makeLCCFromCohortData.R">
 
       <pipeline>
 
@@ -245,7 +245,7 @@
 
       </pipeline>
 
-    </transformer> -->
+    </transformer>
 
     <transformer name="RunCaribouHabitatModel" displayName="Caribou Habitat" isRunnable="True" programName="Rscript" className="SyncroSim.StochasticTime.StochasticTimeTransformer" classAssembly="SyncroSim.StochasticTime" configurationSheet="ROFSim_RunControl" programArguments="run_caribou_model.R">
 
@@ -416,8 +416,17 @@
 
       </group>
 
-      <!-- <group name="MakeLCCFromSpades" displayName="Bridge">
-      </group> -->
+      <group name="makeLCCFromCohortData" displayName="Cohort to LCC">
+
+        <group name="Inputs">
+          <item name="SpaDESGeneral" itemTransformer="" showIf="isParent"/>
+        </group>
+
+        <group name="Outputs">
+          <item name="RasterFile" itemTransformer="" showIf="isResult"/>
+        </group>
+
+      </group>
 
       <group name="CaribouModel" displayName="Caribou Metrics">
 
