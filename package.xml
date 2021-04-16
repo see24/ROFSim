@@ -292,7 +292,7 @@
                 <column name="EskerShapeFileID" displayName="Eskers (Polygon)" dataType="Integer" validationType="Datasheet" formula1="Polygons" allowDbNull="True" />
                 <column name="LinearFeatureRasterID" displayName="Linear Feature (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
                 <column name="LinearFeatureShapeFileID" displayName="Linear Feature (Polygon)" dataType="Integer" validationType="Datasheet" formula1="Polygons" allowDbNull="True" />
-                <column name="AgeRasterID" displayName="Age (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="False" />
+                <column name="AgeRasterID" displayName="Age (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
                 <column name="NaturalDisturbanceRasterID" displayName="Natural Disturbances (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
                 <column name="AnthropogenicRasterID" displayName="Anthropogenic Disturbances (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
                 <column name="HarvestRasterID" displayName="Harvest (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
@@ -463,7 +463,7 @@
     <!--Maps Layout-->
     <layout name="corestimeforms_Maps" configurationSheet="ROFSim_RunControl">
       <!-- TODO add colorMapSource="stsim_TransitionType" -->
-      <item name="InputRastersMap" displayName="Rasters Variables" dataSheet="RasterFile" column="File" filter="RastersID" />
+      <item name="InputRastersMap" displayName="Rasters Variables" dataSheet="RasterFile" column="Filename" filter="RastersID" />
       <item name="OutputRastersMap" displayName="Habitat Use (Spatial)" dataSheet="OutputSpatialHabitat" column="FileName" filter="SeasonID" />
     </layout>
 
