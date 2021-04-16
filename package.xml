@@ -228,8 +228,8 @@
 
       <pipeline>
 
+        <datafeed name="RunControl" />
         <datafeed name="SpaDESGeneral" />
-        <!--datafeed name="SpaDESRuntimeVariables" /-->
         <datafeed name="SpaDESRuntimeRasters" />
         <datafeed name="SpaDESRuntimeFiles" />
 
@@ -241,6 +241,7 @@
 
       <pipeline>
 
+        <datafeed name="RunControl" />
         <datafeed name="SpaDESGeneral" />
 
       </pipeline>
