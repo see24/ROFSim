@@ -69,43 +69,8 @@ filterInputs <- function(params, iter, ts, min_ts = 1){
   # Fill in the NAs for filtering
   params$Iteration <- fillWildcardITER(params$Iteration, iter)
   params$Timestep <- fillWildcardTS(params$Timestep, ts, min_ts)
-  
-  # Now we are reading to select the right inputs
-  # If the iteration or timestep doesnt match, we select the one closest one under
-  # Try a perfect match, otherwise find next best match
+
   theSubset <- subset(params, Iteration == iter & Timestep == ts)
-  
-  # TO REVIEW
-  # if(nrow(theSubset) == 1){
-  #   return(theSubset)
-  # } else {
-  #   # Subset by iter first
-  #   theSubset <- subset(params, Iteration == iter)
-  #   if (nrow(theSubset) == 1){
-  #     # Only return the one row if timestep is coherent
-  #     if(theSubset$Timestep > ts){
-  #       # Otherwise default tp 1:1
-  #       theSubset <- subset(params, Iteration == 1 & Timestep == min_ts)
-  #       return(theSubset)
-  #     } else{
-  #       return(theSubset)
-  #     }
-  #   } else if(nrow(theSubset) > 1) {
-  #     # If more than one, select the timestep that is just under
-  #     nearestval <- suppressWarnings(max(subset(theSubset$Timestep, 
-  #                                               theSubset$Timestep<ts)))
-  #     theSubset <- subset(theSubset, Timestep == nearestval)
-  #     if(nrow(theSubset) == 0){
-  #       # If there are none, then default to 1:1
-  #       theSubset <- subset(params, Iteration == 1 & Timestep == min_ts)
-  #       return(theSubset)
-  #     }
-  #   } else{
-  #     # if anything fails, default to 1:1
-  #     theSubset <- subset(params, Iteration == 1 & Timestep == min_ts)
-  #     return(theSubset)
-  #   }
-  # }
   
   return(theSubset)
 }
@@ -152,4 +117,15 @@ selectInputs <- function(rasters, vectors, column){
     theFile <- raster(rasters[[columnRas]])
   }
   return(theFile)
+}
+
+make_paths_relative <- function(theTable, folder){
+  projDir <- theTable[["file"]][[1]] %>%
+    strsplit(., folder) %>%
+    `[[`(1) %>%
+    `[`(1) %>%
+    paste0(folder)
+  theTable[["file"]] <- theTable[["file"]] %>%
+    gsub(pattern = paste0(projDir, "/"), replacement = "", x = .)
+  return(theTable)
 }
