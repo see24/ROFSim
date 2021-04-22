@@ -1,8 +1,7 @@
-## ROF SIM Prototype Package
+# ROFSim - Transformer 3 - Run Caribou Model
 
-## Running Caribou RSF Model
+# Packages ----------------------------------------------------------------
 
-# Load Packages
 library(rsyncrosim)
 library(caribouMetrics)
 library(raster)
@@ -10,15 +9,18 @@ library(sf)
 library(dplyr)
 library(tidyr)
 
-# Load environment
+# Load Environment --------------------------------------------------------
+
 e <- ssimEnvironment()
 myLib <- ssimLibrary()
 mySce <- scenario()
 
-# Source the helpers
+# Source helper functions -------------------------------------------------
+
 source(file.path(e$PackageDirectory, "helpers.R"))
 
-# Get datasheets
+# Get all datasheets ------------------------------------------------------
+
 myDatasheetsNames <- c("RasterFile", 
                        "ExternalFile", 
                        "RunCaribouRange", 
@@ -71,14 +73,12 @@ if (nrow(allParams$ExternalFile > 0)){
 
 uniqueIterFromData <- 
   unique(c(allParams$ExternalFile$Iteration, 
-           allParams$RasterFile$Iteration, 
-           allParams$DataSummary$Iteration))
+           allParams$RasterFile$Iteration))
 uniqueIterFromData <- uniqueIterFromData[!is.na(uniqueIterFromData)]
 
 uniqueTsFromData <- 
   unique(c(allParams$ExternalFile$Timestep, 
-           allParams$RasterFile$Timestep, 
-           allParams$DataSummary$Timestep))
+           allParams$RasterFile$Timestep))
 uniqueTsFromData <- uniqueTsFromData[!is.na(uniqueTsFromData)]
 
 iterationSet <- GLOBAL_MinIteration:GLOBAL_MaxIteration
@@ -87,10 +87,9 @@ iterationSet <- iterationSet[iterationSet %in% uniqueIterFromData]
 timestepSet <- GLOBAL_MinTimestep:GLOBAL_MaxTimestep
 timestepSet <- timestepSet[timestepSet %in% uniqueTsFromData]
 
-#Simulation
-envBeginSimulation(length(iterationSet) * length(timestepSet))
-
 # Run model ---------------------------------------------------------------
+
+envBeginSimulation(length(iterationSet) * length(timestepSet))
 
 # Empty list to start
 habitatUseAll <- NULL
@@ -130,6 +129,7 @@ for (iteration in iterationSet) {
     }else{
       stop("Landcover classification not recognized. Please specify...")
     }
+    
     eskerRas <- tryCatch({
       raster(filter(InputRasters, CaribouVarID == "EskerRasterID")$File)
     }, error = function(cond) { NULL })
