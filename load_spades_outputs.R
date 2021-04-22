@@ -1,36 +1,37 @@
-## ROF SIM Prototype Package
+# ROFSim - Transformer 1 - Import SpaDES Outputs
 
-## Importing spades outputs
+# Set transformer name
+transformerName <- "Spades Import"
 
-# Load Packages
+# Packages ----------------------------------------------------------------
+
 library(rsyncrosim)
 library(raster)
-
 library(qs)
 library(data.table)
 library(magrittr)
 library(dplyr)
-
 library(SpaDES.core)
 library(SpaDES.tools)
 
-# Load environment
+# Load Environment --------------------------------------------------------
+
 e <- ssimEnvironment()
 myLib <- ssimLibrary()
 mySce <- scenario()
 
+# Source helper functions -------------------------------------------------
+
 source(file.path(e$PackageDirectory, "helpers.R"))
 
-# Access all datasheets of importance
+# Get all datasheets ------------------------------------------------------
+
 myDatasheets <- datasheet(mySce)
 
 # Only select datasheets from the ROF package 
 subFilter <- sapply(X = myDatasheets$name, FUN = grepl, pattern="^(ROF)\\w+")
 myDatasheetsFiltered <- myDatasheets[subFilter,]
 myDatasheetsNames <- myDatasheetsFiltered$name
-
-# Set transformer name
-transformerName <- "Spades Import"
 
 # Figure out variables to extract from spades -----------------------------
 
@@ -74,13 +75,17 @@ spadesDatasheet <- datasheet(ssimObject = mySce, name = "ROFSim_SpaDESGeneral")
 
 # If datasheet is not empty, get the path
 if(nrow(spadesDatasheet) == 0){
-  stop("No SpaDES file specified.")
+  
+  stop("No SpaDES files specified.")
+  
 } else {
-  if (is.na(spadesDatasheet$Filename)){
-    stop("No SpaDES file specified.")
-  } else {
-    spadesObjectPath <- spadesDatasheet$Filename
+  
+  if (sum(is.na(spadesDatasheet$Filename))>0){
+    
+    stop("No SpaDES files specified.")
+    
   }
+  
 }
 
 # Run control -------------------------------------------------------------
@@ -88,45 +93,23 @@ if(nrow(spadesDatasheet) == 0){
 runControlSheet <- datasheet(mySce, "RunControl")
 
 if (nrow(runControlSheet) == 0){
-  # Extract run control information
-  runControl <- list(start = start(spadesObject), 
-                     end = end(spadesObject), 
-                     current = time(spadesObject))
-  
-  runControlSheet <- addRow(runControlSheet, 
-                            list(MinimumIteration = 1, 
-                                 MaximumIteration = 1, 
-                                 MinimumTimestep = runControl$start, 
-                                 MaximumTimestep = runControl$end))
-  saveDatasheet(mySce, runControlSheet, "RunControl")
+  stop("Run Control datasheet is empty.")
 }
 
-timestepSet <- runControlSheet$MinimumTimestep:runControlSheet$MaximumTimestep
-# iterationSet <- runControlSheet$MinimumIteration:runControlSheet$MaximumIteration
-# FOR NOW, ITER IS SET
-theIter <- 1
+# Iterations
+iterationSet <- runControlSheet$MinimumIteration:runControlSheet$MaximumIteration
 
-# Filter spades outputs info ----------------------------------------------
-
-# Load the spades object 
-# TODO adding a warnings about memory could be usefull
-spadesObject <- qs::qread(spadesObjectPath)
-
-# Verify vars required are present in the spades object
-testPresent <- !(allVars$SpaDESSimObject %in% names(spadesObject))
-if(sum(testPresent)>0){
-  stop("Incorrect or missing spades object(s).")
+if(sum(!(iterationSet %in% unique(spadesDatasheet$Iteration)))>0){
+  stop("Iterations required by run control are not encoded in SpaDES datasheet")
+} else{
+  spadesDatasheet <- spadesDatasheet %>% 
+    filter(Iteration %in% iterationSet)
 }
 
-# Filter them
-outputs <- outputs(spadesObject) %>% 
-  make_paths_relative("outputs") %>% 
-  filter(objectName %in% allVars$SpaDESSimObject) %>% 
-  filter(saveTime %in% timestepSet) %>% 
-  rename(Timestep = saveTime)
-
-# For now, reconstruct the relative paths based on basenames
-outputs$file <- file.path(dirname(spadesDatasheet$Filename), basename(outputs$file))
+# Timesteps
+timestepSet <- seq(from = runControlSheet$MinimumTimestep,
+                   to = runControlSheet$MaximumTimestep, 
+                   by = runControlSheet$OutputFrequency)
 
 # Extract variables -------------------------------------------------------
 
@@ -139,63 +122,88 @@ rasterFiles <- datasheet(mySce, "RasterFile", lookupsAsFactors = FALSE,
 extFiles <- datasheet(mySce, "ExternalFile", lookupsAsFactors = FALSE,
                       empty = TRUE, optional = TRUE)
 
-
-for (rowVar in seq_len(length.out = nrow(allVars))){
-  #rowVar=1
+for (theIter in iterationSet){
   
-  theVar <- as.character(allVars$SpaDESSimObject[rowVar])
-  theVarName <- as.character(allVars$var[rowVar])
-  theVarType <- allVars$type[rowVar]
+  # Load the spades object 
+  spadesObjectPath <- spadesDatasheet %>% 
+    filter(Iteration == theIter) %>% 
+    pull(Filename)
+  spadesObject <- qs::qread(spadesObjectPath)
   
-  # Re-filter based on specific var this time
-  outputsFiltered <- outputs %>% 
-    filter(objectName == theVar)
+  # Filter them
+  outputs <- outputs(spadesObject) %>% 
+    make_paths_relative("outputs") %>% 
+    filter(objectName %in% allVars$SpaDESSimObject) %>% 
+    filter(saveTime %in% timestepSet) %>% 
+    rename(Timestep = saveTime)
   
-  for (rowOut in seq_len(length.out = nrow(outputsFiltered))){
+  if("standAgeMap" %in% allVars$SpaDESSimObject){
+    outputs <- outputs %>% 
+      bind_rows(data.frame(objectName = "standAgeMap", 
+                           Timestep = timestepSet, 
+                           file = file.path(dirname(spadesObjectPath), 
+                                            paste0("standAgeMap_", timestepSet, ".tif"))))
+  }
+  
+  # For now, reconstruct the relative paths based on basenames
+  outputs$file <- file.path(dirname(spadesObjectPath), basename(outputs$file))
+  
+  
+  for (rowVar in seq_len(length.out = nrow(allVars))){
     
-    theTs <- outputsFiltered$Timestep[rowOut]
+    theVar <- as.character(allVars$SpaDESSimObject[rowVar])
+    theVarName <- as.character(allVars$var[rowVar])
+    theVarType <- allVars$type[rowVar]
     
-    if (theVarType == "raster") {
+    # Re-filter based on specific var this time
+    outputsFiltered <- outputs %>% 
+      filter(objectName == theVar)
+    
+    for (rowOut in seq_len(length.out = nrow(outputsFiltered))){
       
-      tmpObj <- raster(outputsFiltered$file[rowOut]) >= 1
+      theTs <- outputsFiltered$Timestep[rowOut]
       
-      # Make file name
-      filePath <- file.path(tmp, paste0(theVar, "_", paste(paste0("it_",theIter), 
-                                                           paste0("ts_",theTs), sep = "_"), 
-                                        ".tif"))
-      
-      # Write tmp file
-      writeRaster(tmpObj, filePath, overwrite = TRUE)
-      
-      # Populate sheet
-      rasterFiles <- addRow(rasterFiles, list(Iteration = theIter,
-                                              Timestep = theTs,
-                                              RastersID = theVarName, 
-                                              Filename = filePath,
-                                              TransformerID = transformerName))
-      
-    } else if (theVarType == "file") {
-      
-      tmpObj <- st_read(outputsFiltered[rowOut])
-      
-      # TODO fix this case, how to get the file here?
-      filePath <- file.path(tmp, paste0(theVar, "_", paste(paste0("it_",theIter), 
-                                                           paste0("ts_",theTs), sep = "_"), 
-                                        ".ext"))
-      
-      # Write tmp file
-      writeRaster(tmpObj, filePath)
-      
-      # Populate sheet
-      extFiles <- addRow(extFiles, list(Iteration = theIter,
-                                        Timestep = theTs,
-                                        PolygonsID = theVarName, 
-                                        Filename = filePath,
-                                        TransformerID = transformerName))
-      
+      if (theVarType == "raster") {
+        
+        tmpObj <- raster(outputsFiltered$file[rowOut])
+        
+        # Make file name
+        filePath <- file.path(tmp, paste0(theVar, "_", paste(paste0("it_",theIter), 
+                                                             paste0("ts_",theTs), sep = "_"), 
+                                          ".tif"))
+        
+        # Write tmp file
+        writeRaster(tmpObj, filePath, overwrite = TRUE)
+        
+        # Populate sheet
+        rasterFiles <- addRow(rasterFiles, list(Iteration = theIter,
+                                                Timestep = theTs,
+                                                RastersID = theVarName, 
+                                                Filename = filePath,
+                                                TransformerID = transformerName))
+        
+      } else if (theVarType == "file") {
+        
+        tmpObj <- st_read(outputsFiltered[rowOut])
+        
+        # TODO fix this case, how to get the file here?
+        filePath <- file.path(tmp, paste0(theVar, "_", paste(paste0("it_",theIter), 
+                                                             paste0("ts_",theTs), sep = "_"), 
+                                          ".ext"))
+        
+        # Write tmp file
+        writeRaster(tmpObj, filePath)
+        
+        # Populate sheet
+        extFiles <- addRow(extFiles, list(Iteration = theIter,
+                                          Timestep = theTs,
+                                          PolygonsID = theVarName, 
+                                          Filename = filePath,
+                                          TransformerID = transformerName))
+        
+      }
     }
   }
-
 }
 
 saveIfNotEmpty <- function(sheet, name){

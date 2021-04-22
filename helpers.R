@@ -2,6 +2,8 @@
 
 library(rsyncrosim)
 
+# RSYNCROSIM helpers ------------------------------------------------------
+
 # Function to process optional arguments
 optArg <- function(arg){
   if(length(arg)==0){
@@ -45,6 +47,8 @@ GLOBAL_MinTimestep = GetSingleValueExpectData(GLOBAL_RunControl, "MinimumTimeste
 GLOBAL_MaxTimestep = GetSingleValueExpectData(GLOBAL_RunControl, "MaximumTimestep")
 GLOBAL_TotalIterations = (GLOBAL_MaxIteration - GLOBAL_MinIteration + 1)
 GLOBAL_TotalTimesteps = (GLOBAL_MaxTimestep - GLOBAL_MinTimestep + 1)
+
+# ROFSIM helpers ----------------------------------------------------------
 
 ## Functions for wildcard
 
@@ -132,3 +136,18 @@ make_paths_relative <- function(theTable, folder){
     gsub(pattern = paste0(projDir, "/"), replacement = "", x = .)
   return(theTable)
 }
+
+# find_spades_files <- function(path){
+# 
+#   model_basename <- basename(path)
+#   files_in_folder <- tools::file_path_sans_ext(list.files(path))
+# 
+#   file_name <- which(model_basename %in% files_in_folder)
+# 
+#   if(length(file_name) == 1){
+#     return(file_name)
+#   } else {
+#     stop("SpaDES file not found")
+#   }
+# 
+# }

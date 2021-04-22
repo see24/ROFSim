@@ -101,10 +101,12 @@
 
         <datafeed name="SpaDESGeneral" displayName="General" dataScope="Scenario">
           <datasheets>
-            <datasheet name="SpaDESGeneral" displayName="General" isSingleRow="True">
+            <datasheet name="SpaDESGeneral" displayName="General">
               <columns>
-                <column name="ScenarioID" dataType="Integer" isPrimary="True" />
-                <column name="Filename" displayName="SpaDES File Path" dataType="String" allowDbNull="False" isExternalFile="True" externalFileFilter="SpaDES files |*.qs;*.txt;*.rds;*.rdata" externalFileAbsolute="True" />
+                <column name="SpaDESGeneralID" dataType="Integer" isPrimary="True" />
+                <column name="ScenarioID" dataType="Integer" />
+                <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" />
+                <column name="Filename" displayName="SpaDES File" dataType="String" allowDbNull="False" isExternalFile="True" externalFileFilter="SpaDES QS file |*.qs" externalFileAbsolute="True" />
               </columns>
             </datasheet>
           </datasheets>
@@ -122,6 +124,7 @@
                 <column name="MaximumIteration" displayName="Total Iterations" dataType="Integer" defaultValue="1" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="1" format="d" />
                 <column name="MinimumTimestep" displayName="Minimum Timestep" dataType="Integer" defaultValue="0" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" format="d" />
                 <column name="MaximumTimestep" displayName="Maximum Timestep" dataType="Integer" defaultValue="0" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" format="d" />
+                <column name="OutputFrequency" displayName="Output Frequency (Timesteps)" dataType="Integer" defaultValue="1" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="1" format="d" />
               </columns>
               <validations>
                 <validation validationType="LessEqual" columns="MinimumIteration|MaximumIteration" />
