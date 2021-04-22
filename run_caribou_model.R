@@ -101,6 +101,7 @@ habitatUseAll <- NULL
 for (iteration in iterationSet) {
   
   for (timestep in timestepSet) {
+    #iteration=1;timestep=2011
     
     envReportProgress(iteration, timestep)
     
@@ -115,11 +116,20 @@ for (iteration in iterationSet) {
       raster(filter(InputRasters, CaribouVarID == "LandCoverRasterID")$File)
     }, error = function(cond) { stop("land cover can't be null") })
     
-    # Verify if reclassing PLC is needed
-    if (!(max(values(plcRas), na.rm = TRUE) <= 9)){
-      plcRas <- reclassPLC(plcRas)
+    # Reclass landcover if needed
+    # TO DO: allow user to input plcLU table (same format at plcToResType in caribouMetrics package). If table is specified, reclass regardless of whether the number of classes is <9.
+    if ((max(values(plcRas), na.rm = TRUE) <= 9)){
+      warning(paste0("Assuming landcover classes are: ",paste(paste(resTypeCode$ResourceType,resTypeCode$code),collapse=",")))
+    }else if((max(values(plcRas), na.rm = TRUE) == 29)){
+      #TO DO: add PLC legend file to caribouMetrics package, and report here.
+      warning(paste0("Assuming Ontario provincial landcover classes: ",paste(paste(plcToResType$ResourceType,plcToResType$PLCCode),collapse=",")))
+      plcRas <- reclassPLC(plcRas,plcToResType)
+    }else if((max(values(plcRas), na.rm = TRUE) == 39)){
+      warning(paste0("Assuming national landcover classes: ",paste(paste(lccToResType$ResourceType,lccToResType$PLCCode),collapse=",")))
+      plcRas <- reclassPLC(plcRas,lccToResType)
+    }else{
+      stop("Landcover classification not recognized. Please specify...")
     }
-    
     eskerRas <- tryCatch({
       raster(filter(InputRasters, CaribouVarID == "EskerRasterID")$File)
     }, error = function(cond) { NULL })
@@ -175,43 +185,51 @@ for (iteration in iterationSet) {
     
     projectPoltmp <- projectPol %>% 
       filter(Range %in% renamedRange$Range) 
-    
+
+    #SOON TO DO: handle missing inputs
+    #TO DO: handle polygon inputs for natural disturbance, anthro disturbance, and harvest
+    #TO DO: think though to improve computational efficiency.
     res <- caribouHabitat(
-      
       landCover = plcRas , 
-      
       esker = eskerFinal, 
-      
-      # updatedLC = friRas,
-      
-      # age = ageRas, 
-      
-      # natDist = natDistRas,
-      
-      # anthroDist = anthroDistRas,
-      
-      # harv = harvRas,
-      
+      natDist = natDistRas,
+      anthroDist = anthroDistRas,
+      harv = harvRas,
       linFeat = linFeatFinal, 
-      
       projectPoly = projectPoltmp,
-      
-      # Caribou Range
-      caribouRange = renamedRange,
-      
+      caribouRange = renamedRange,       # Caribou Range
       # Options
       padProjPoly = optArg(allParams$HabitatModelOptions$PadProjPoly),
       padFocal = optArg(allParams$HabitatModelOptions$PadFocal),
       doScale = optArg(allParams$HabitatModelOptions$doScale),
-      
       # outputs are saved afterwards
       eskerSave = NULL,
       linFeatSave = NULL,
       saveOutput = NULL
-      
     )
     
+    #UI TO DO: add option to calculate and output disturbance metrics
+    #UI TO DO: make habitat use calculation optional
+    #TO DO: check that disturbanceMetrics calculations handle multiple ranges properly
+    #UI TO DO: make buffer width an argument
+    
+    doDistMetrics=F
+    #SOON TO DO: figure out why this is failing - likely not coping well with missing inputs...
+    #TO DO: accept anthropogenic disturbance polygons or rasters, and behave properly when they are missing.
+    if(doDistMetrics){
+      fullDist <- disturbanceMetrics(
+        landCover=!is.na(plcRas),
+        natDist = natDistRas,
+        harv = harvRas,
+        linFeat = linFeatFinal,
+        projectPoly = projectPoltmp,
+        padFocal = optArg(allParams$HabitatModelOptions$PadFocal),
+        bufferWidth =  500 
+      )
+    }
+    
     ## Save to DATA folder
+    #TO DO: add option to save elements of res@processedData
     writeRaster(res@habitatUse, bylayer = TRUE, format = "GTiff",
                 suffix = paste(names(res@habitatUse), 
                                paste(renamedRange$Range, collapse = "_"),

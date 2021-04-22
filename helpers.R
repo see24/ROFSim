@@ -6,11 +6,14 @@ library(rsyncrosim)
 optArg <- function(arg){
   if(length(arg)==0){
     arg <- FALSE
+    #Comment: seems like this should return NULL or NA, not F
+  }else if (is.na(arg)){
+      return(NULL)
   } else if (arg == "Yes"){
     arg <- TRUE
   } else if (arg == "No"){
     arg <- FALSE
-  }
+  } 
   arg
 }
 
