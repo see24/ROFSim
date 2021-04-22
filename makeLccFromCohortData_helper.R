@@ -80,19 +80,21 @@ makeLCCfromCohortData <- function(cohortData,
   sparsenessMap[!sparsenessMap[] %in% lccClassTable[["LCCclass"]]] <- NA
   
   sparse <- lccClassTable[["LCCclass"]][grep(pattern = "sparse", x = lccClassTable[["standLeading"]])]
-  open <- lccClassTable[["LCCclass"]][grep(pattern = "open", x = lccClassTable[["standLeading"]])]
+  #open <- lccClassTable[["LCCclass"]][grep(pattern = "open", x = lccClassTable[["standLeading"]])]
   dense <- lccClassTable[["LCCclass"]][grep(pattern = "dense", x = lccClassTable[["standLeading"]])]
   
   # dense = 1; open = 2; sparse =  3
   sparsenessMap[sparsenessMap[] %in% dense] <- -1
-  sparsenessMap[sparsenessMap[] %in% open] <- -2
+  #sparsenessMap[sparsenessMap[] %in% open] <- -2
   sparsenessMap[sparsenessMap[] %in% sparse] <- -3
   
   sparsenessMap <- -sparsenessMap
   
   sparsenessMap <- ratify(sparsenessMap)
   rat <- raster::levels(sparsenessMap)[[1]]
-  rat$sparseness <- c("dense", "open", "sparse")
+  rat$sparseness <- c("dense", 
+                      #"open", 
+                      "sparse")
   levels(sparsenessMap) <- rat
   names(sparsenessMap) <- "sparsenessMap"
   sparsenessMapDT <- raster::unique(na.omit(data.table::data.table(
@@ -101,7 +103,9 @@ makeLCCfromCohortData <- function(cohortData,
   finalDT  <- merge(cohortDataSim, sparsenessMapDT, all.x = TRUE)
   
   finalDT <- merge(finalDT, data.table(sparsenessMap = c(1,2,3), 
-                                       sparseness = c("dense", "open", "sparse")),
+                                       sparseness = c("dense", 
+                                                      #"open", 
+                                                      "sparse")),
                    by = "sparsenessMap", all.x = TRUE)
   finalDT[, standLeading  := paste(standLeading, sparseness, sep = "_")]
   
@@ -122,6 +126,7 @@ makeLCCfromCohortData <- function(cohortData,
   DT[, updatedLCC := fifelse(!is.na(newLCC), newLCC, LCC)]
   updatedLCCras <- raster::setValues(x = raster(rstLCC), 
                                      values = DT[["updatedLCC"]])
-  
+  updatedLCCras <- floor(updatedLCCras)
+
   return(updatedLCCras)
 }
