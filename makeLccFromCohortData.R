@@ -40,7 +40,7 @@ lccClassTable = data.table(
                    "mixed_dense", "mixed_open", "mixed_sparse"), 
   LCCclass = c(1,1,8,8,
                2,2,2, 
-               7,7,7))) # HARDCODED TO MATCH INPUTS
+               7,7,7)) # HARDCODED TO MATCH INPUTS
 
 # SpaDES Info -------------------------------------------------------------
 
