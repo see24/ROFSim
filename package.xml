@@ -106,7 +106,7 @@
                 <column name="SpaDESGeneralID" dataType="Integer" isPrimary="True" />
                 <column name="ScenarioID" dataType="Integer" />
                 <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" />
-                <column name="Filename" displayName="SpaDES File" dataType="String" allowDbNull="False" isExternalFile="True" externalFileFilter="SpaDES folder" externalFileFilter="SpaDES files |*.qs" externalFileAbsolute="True" />
+                <column name="Filename" displayName="SpaDES File" dataType="String" allowDbNull="False" isExternalFile="True" externalFileFilter="SpaDES QS file |*.qs" externalFileAbsolute="True" />
               </columns>
             </datasheet>
           </datasheets>
