@@ -19,6 +19,8 @@ e <- ssimEnvironment()
 myLib <- ssimLibrary()
 mySce <- scenario()
 
+source(file.path(e$PackageDirectory, "helpers.R"))
+
 # Access all datasheets of importance
 myDatasheets <- datasheet(mySce)
 
@@ -139,6 +141,7 @@ extFiles <- datasheet(mySce, "ExternalFile", lookupsAsFactors = FALSE,
 
 
 for (rowVar in seq_len(length.out = nrow(allVars))){
+  #rowVar=1
   
   theVar <- as.character(allVars$SpaDESSimObject[rowVar])
   theVarName <- as.character(allVars$var[rowVar])
