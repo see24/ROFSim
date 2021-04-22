@@ -138,9 +138,48 @@ for (ts in sort(unique(outputs$Timestep))){
                                            pixelGroupMap = pixelGroupMap,
                                            rstLCC = rstLCC,
                                            lccClassTable = lccClassTable)
+
+  # From the latest update from Craig
+  # Reclassify values to resource types
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   
+  LCC05ToResType <- function(FromList, ToVal, landcover){
+    reclassDT <- data.table("Is" = FromList,
+                            "becomes" = rep(ToVal, length(FromList)))
+    
+    reclassedLCC <- raster::reclassify(landcover, reclassDT)
+    
+    return(reclassedLCC)
+  }
   
-  writeRaster(updated_LCC_tmp, overwrite = TRUE,
+  CON_ls <- c(1,6,7) #1
+  correctLCC <- LCC05ToResType(CON_ls, 1, updated_LCC_tmp)
+  
+  DEC_ls <- c(2,11,12) #2
+  correctLCC <- LCC05ToResType(DEC_ls, 2, correctLCC)
+  
+  DTN_ls <- c(34,35) #3
+  correctLCC <- LCC05ToResType(DTN_ls, 3, correctLCC)
+  
+  LGOP_ls <- c(19,31,32) #4
+  correctLCC <- LCC05ToResType(LGOP_ls, 4, correctLCC)
+  
+  LGTP_ls <- c(8,10) #5
+  correctLCC <- LCC05ToResType(LGTP_ls, 5, correctLCC)
+  
+  LGW_ls <- c(37,38) #6
+  correctLCC <- LCC05ToResType(LGW_ls, 6, correctLCC)
+  
+  MIX_ls <- c(3,4,5,13,14,15) #7
+  correctLCC <- LCC05ToResType(MIX_ls, 7, correctLCC)
+  
+  ST_ls <- c(9,20) #8
+  correctLCC <- LCC05ToResType(ST_ls, 8, correctLCC)
+  
+  OTHER_ls <- c(16,17,18,21,22,23,24,25,26,27,28,29,30,33,36,39) #9
+  correctLCC <- LCC05ToResType(OTHER_ls, 9, correctLCC)
+  
+  writeRaster(correctLCC, overwrite = TRUE,
               filename = filePath)
   
   tmpsheet <- data.frame(Iteration = theIter, 
