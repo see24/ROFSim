@@ -33,19 +33,6 @@ GetSingleValueExpectData <- function(df, name) {
   return(v)
 }
 
-e = ssimEnvironment()
-GLOBAL_Session = session()
-GLOBAL_Library = ssimLibrary(session = GLOBAL_Session)
-GLOBAL_Project = project(GLOBAL_Library, project = as.integer(e$ProjectId))
-GLOBAL_Scenario = scenario(GLOBAL_Library, scenario = as.integer(e$ScenarioId))
-GLOBAL_RunControl = GetDataSheetExpectData("ROFSim_RunControl", GLOBAL_Scenario)
-GLOBAL_MaxIteration = GetSingleValueExpectData(GLOBAL_RunControl, "MaximumIteration")
-GLOBAL_MinIteration = GetSingleValueExpectData(GLOBAL_RunControl, "MinimumIteration")
-GLOBAL_MinTimestep = GetSingleValueExpectData(GLOBAL_RunControl, "MinimumTimestep")
-GLOBAL_MaxTimestep = GetSingleValueExpectData(GLOBAL_RunControl, "MaximumTimestep")
-GLOBAL_TotalIterations = (GLOBAL_MaxIteration - GLOBAL_MinIteration + 1)
-GLOBAL_TotalTimesteps = (GLOBAL_MaxTimestep - GLOBAL_MinTimestep + 1)
-
 ## Functions for wildcard
 
 filterInputs <- function(params, iter, ts, min_ts = 1){
@@ -132,3 +119,17 @@ make_paths_relative <- function(theTable, folder){
     gsub(pattern = paste0(projDir, "/"), replacement = "", x = .)
   return(theTable)
 }
+
+e = ssimEnvironment()
+GLOBAL_Session = session()
+GLOBAL_Library = ssimLibrary(session = GLOBAL_Session)
+GLOBAL_Project = project(GLOBAL_Library, project = as.integer(e$ProjectId))
+GLOBAL_Scenario = scenario(GLOBAL_Library, scenario = as.integer(e$ScenarioId))
+GLOBAL_RunControl = GetDataSheetExpectData("ROFSim_RunControl", GLOBAL_Scenario)
+GLOBAL_MaxIteration = GetSingleValueExpectData(GLOBAL_RunControl, "MaximumIteration")
+GLOBAL_MinIteration = GetSingleValueExpectData(GLOBAL_RunControl, "MinimumIteration")
+GLOBAL_MinTimestep = GetSingleValueExpectData(GLOBAL_RunControl, "MinimumTimestep")
+GLOBAL_MaxTimestep = GetSingleValueExpectData(GLOBAL_RunControl, "MaximumTimestep")
+GLOBAL_TotalIterations = (GLOBAL_MaxIteration - GLOBAL_MinIteration + 1)
+GLOBAL_TotalTimesteps = (GLOBAL_MaxTimestep - GLOBAL_MinTimestep + 1)
+

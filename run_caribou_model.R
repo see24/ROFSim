@@ -10,14 +10,20 @@ library(sf)
 library(dplyr)
 library(tidyr)
 
-# Load environment
-e <- ssimEnvironment()
-myLib <- ssimLibrary()
-mySce <- scenario()
-
-# Source the helpers
-source(file.path(e$PackageDirectory, "helpers.R"))
-
+localDebug = T
+if(localDebug){
+  e=list()
+  e$PackageDirectory = "C:/Users/HughesJo/Documents/SyncroSim/Packages/ROFSim"
+  t = try(source(file.path(e$PackageDirectory, "helpers.R")),silent=T) #this will throw Error in .local(.Object, ...) : A library name is required. Don't worry about it.
+  source("./scripts/loadSSimLocalForDebug.R") #run outside of SSim for debugging caribouMetrics package
+}else{
+  # Load environment
+  e <- ssimEnvironment()
+  myLib <- ssimLibrary()
+  mySce <- scenario()
+  # Source the helpers
+  source(file.path(e$PackageDirectory, "helpers.R"))
+}
 # Get datasheets
 myDatasheetsNames <- c("RasterFile", 
                        "ExternalFile", 
@@ -189,6 +195,14 @@ for (iteration in iterationSet) {
     #SOON TO DO: handle missing inputs
     #TO DO: handle polygon inputs for natural disturbance, anthro disturbance, and harvest
     #TO DO: think though to improve computational efficiency.
+    
+    #d=list(landCover=readAll(plcRas),esker=eskerFinal,natDist=readAll(natDistRas),anthroDist=NULL,
+    #       harv=readAll(harvRas),linFeat=linFeatFinal,projectPoly=projectPoltmp,caribouRange=renamedRange,
+    #       padProjPoly=optArg(allParams$HabitatModelOptions$PadProjPoly),
+    #       padFocal = optArg(allParams$HabitatModelOptions$PadFocal),
+    #       doScale = optArg(allParams$HabitatModelOptions$doScale))
+    #saveRDS(d,paste0("C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFModel/UI/debugData.RDS"))
+    
     res <- caribouHabitat(
       landCover = plcRas , 
       esker = eskerFinal, 
