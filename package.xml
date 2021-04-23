@@ -125,6 +125,7 @@
                 <column name="MinimumTimestep" displayName="Minimum Timestep" dataType="Integer" defaultValue="0" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" format="d" />
                 <column name="MaximumTimestep" displayName="Maximum Timestep" dataType="Integer" defaultValue="0" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" format="d" />
                 <column name="OutputFrequency" displayName="Output Frequency (Timesteps)" dataType="Integer" defaultValue="1" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="1" format="d" />
+                <column name="IncludeTimesteps" displayName="Include Timesteps" dataType="String" isOptional="True"/>
               </columns>
               <validations>
                 <validation validationType="LessEqual" columns="MinimumIteration|MaximumIteration" />
