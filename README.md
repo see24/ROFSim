@@ -6,7 +6,7 @@ SyncroSim prototype package for integrating SpaDES, LandR and FireSense projecti
 ### Step 1: Obtain all required software
 1. Download and install version 2.2.41 of Syncrosim.
 2. Download and install the latest version of R (4.0.5) [here](https://www.r-project.org/) (note that any version above or equal to 4.0.0 should work, so if you already have 4.0.0 you do not need to update your to the latest minor update). 
-3. (*Optional but highly recommended*) Download and install RStudio [here](https://www.rstudio.com/products/rstudio/download/) (not that any version above or equal to 1.3 should work).
+3. (*Optional but highly recommended*) Download and install RStudio [here](https://www.rstudio.com/products/rstudio/download/) (note that any version above or equal to 1.3 should work).
 4. Open R, either with the command line or simply by opening RStudio.
 5. Install the required packages. Note that the `caribouMetrics` package is hosted on a [private GitHub repository](https://github.com/LandSciTech/caribouMetrics) (and not on CRAN like most packages) and therefore cannot be installed with `install.packages()` and requires the package `devtools` and its `install_github` function.
 
