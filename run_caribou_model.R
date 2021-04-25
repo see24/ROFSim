@@ -10,7 +10,7 @@ library(sf)
 library(dplyr)
 library(tidyr)
 
-localDebug = T
+localDebug = F
 if(localDebug){
   e=list()
   e$PackageDirectory = "C:/Users/HughesJo/Documents/SyncroSim/Packages/ROFSim"
@@ -124,11 +124,13 @@ for (iteration in iterationSet) {
     
     # Reclass landcover if needed
     # TO DO: allow user to input plcLU table (same format at plcToResType in caribouMetrics package). If table is specified, reclass regardless of whether the number of classes is <9.
+    # TO DO: need better way of recognizing landcover class types - maybe just require user to specify? # of classes assumptions will potentially cause trouble on reduced landscapes where not all classes are represented.
     if ((max(values(plcRas), na.rm = TRUE) <= 9)){
       warning(paste0("Assuming landcover classes are: ",paste(paste(resTypeCode$ResourceType,resTypeCode$code),collapse=",")))
-    }else if((max(values(plcRas), na.rm = TRUE) == 29)){
+    }else if(is.element((max(values(plcRas), na.rm = TRUE)),c(29,30))){
       #TO DO: add PLC legend file to caribouMetrics package, and report here.
       warning(paste0("Assuming Ontario provincial landcover classes: ",paste(paste(plcToResType$ResourceType,plcToResType$PLCCode),collapse=",")))
+      plcRas[plcRas==30]=29
       plcRas <- reclassPLC(plcRas,plcToResType)
     }else if((max(values(plcRas), na.rm = TRUE) == 39)){
       warning(paste0("Assuming national landcover classes: ",paste(paste(lccToResType$ResourceType,lccToResType$PLCCode),collapse=",")))
@@ -192,10 +194,10 @@ for (iteration in iterationSet) {
     projectPoltmp <- projectPol %>% 
       filter(Range %in% renamedRange$Range) 
 
-    #SOON TO DO: handle missing inputs
+    #TO DO: if natDist input is stand age rather than binary disturbance, convert to binary disturbance appropriately.
     #TO DO: handle polygon inputs for natural disturbance, anthro disturbance, and harvest
-    #TO DO: think though to improve computational efficiency.
-    
+
+    #Note: This code is helpful for building and sharing reproducible examples for debugging. Leave in for now.
     #d=list(landCover=readAll(plcRas),esker=eskerFinal,natDist=readAll(natDistRas),anthroDist=NULL,
     #       harv=readAll(harvRas),linFeat=linFeatFinal,projectPoly=projectPoltmp,caribouRange=renamedRange,
     #       padProjPoly=optArg(allParams$HabitatModelOptions$PadProjPoly),
@@ -222,13 +224,14 @@ for (iteration in iterationSet) {
       saveOutput = NULL
     )
     
+    #QUESTION: faster to crop to projectPoly or landCover?
+    
     #UI TO DO: add option to calculate and output disturbance metrics
     #UI TO DO: make habitat use calculation optional
     #TO DO: check that disturbanceMetrics calculations handle multiple ranges properly
     #UI TO DO: make buffer width an argument
     
     doDistMetrics=F
-    #SOON TO DO: figure out why this is failing - likely not coping well with missing inputs...
     #TO DO: accept anthropogenic disturbance polygons or rasters, and behave properly when they are missing.
     if(doDistMetrics){
       fullDist <- disturbanceMetrics(
