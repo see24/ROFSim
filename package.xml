@@ -94,6 +94,19 @@
             </datasheet>
           </datasheets>
         </datafeed>
+        
+        <datafeed name="MetricType" displayName="Disturbance Metric Types" dataScope="Project">
+          <datasheets>
+            <datasheet name="MetricType" displayName="Disturbance Metric Types" valueMember="MetricTypeID" displayMember="Name">
+              <columns>
+                <column name="MetricTypeID" dataType="Integer" isPrimary="True" />
+                <column name="ProjectID" dataType="Integer" />
+                <column name="Name" dataType="String" allowDbNull="False" />
+              </columns>
+            </datasheet>
+          </datasheets>
+        </datafeed>
+
 
         <!-- Scenario Datafeeds -->
 
@@ -272,9 +285,12 @@
             <datasheet name="HabitatModelOptions" displayName="Habitat Model Options" isSingleRow="True">
               <columns>
                 <column name="ScenarioID" dataType="Integer" isPrimary="True" />
+                <column name="RunDistMetrics" displayName="Run ECCC Disturbance Metrics" dataType="Boolean" />
+                <column name="RunCaribouHabitat" displayName="Run Caribou Habitat Model" dataType="Boolean" />
+                <column name="ECCCBufferWidth" displayName="ECCC Buffer Width" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d"/>
                 <column name="PadProjPoly" displayName="Project Polygon Padding" dataType="Boolean" />
-                <column name="PadFocal" displayName="Focal Padding" dataType="Boolean" />
-                <column name="doScale" displayName="Scale" dataType="Boolean" />
+                <column name="PadFocal" displayName="Focal Padding" dataType="Boolean" isOptional="True" />
+                <column name="doScale" displayName="Scale" dataType="Boolean" isOptional="True" />
               </columns>
             </datasheet>
           </datasheets>
@@ -292,7 +308,6 @@
                 <column name="EskerShapeFileID" displayName="Eskers (Polygon)" dataType="Integer" validationType="Datasheet" formula1="Polygons" allowDbNull="True" />
                 <column name="LinearFeatureRasterID" displayName="Linear Feature (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
                 <column name="LinearFeatureShapeFileID" displayName="Linear Feature (Polygon)" dataType="Integer" validationType="Datasheet" formula1="Polygons" allowDbNull="True" />
-                <column name="AgeRasterID" displayName="Age (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
                 <column name="NaturalDisturbanceRasterID" displayName="Natural Disturbances (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
                 <column name="AnthropogenicRasterID" displayName="Anthropogenic Disturbances (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
                 <column name="HarvestRasterID" displayName="Harvest (Raster)" dataType="Integer" validationType="Datasheet" formula1="Rasters" allowDbNull="True" />
@@ -320,18 +335,35 @@
             </datasheet>
           </datasheets>
         </datafeed>
-        
-        <datafeed name="OutputHabitat" displayName="Output Habitat " dataScope="Scenario" isOutput="True">
+
+        <datafeed name="OutputSpatialDisturbance" displayName="Output Disturbance Spatial" dataScope="Scenario" isOutput="True">
           <datasheets>
-            <datasheet name="OutputHabitat" displayName="Output Habitat">
+            <datasheet name="OutputSpatialDisturbance" displayName="Output Disturbance Spatial">
               <columns>
-                <column name="OutputHabitatID" dataType="Integer" isPrimary="True" />
+                <column name="OutputSpatialDisturbanceID" dataType="Integer" isPrimary="True" />
                 <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True" />
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True" />
                 <column name="ScenarioID" dataType="Integer" />
                 <column name="RangeID" dataType="Integer" validationType="Datasheet" formula1="CaribouRange" allowDbNull="False" />
-                <column name="SeasonID" dataType="Integer" validationType="Datasheet" formula1="Season" allowDbNull="False" />
-                <column name="Amount" dataType="Integer" />
+                <column name="MetricTypeID" dataType="Integer" validationType="Datasheet" formula1="MetricType" allowDbNull="False" />
+                <column name="FileName" dataType="String" isExternalFile="True" isRaster="True" bandColumn="Band" bandFilterColumn="MetricTypeID" allowDbNull="False" filenameCode="mettype" />
+                <column name="Band" dataType="Integer" isOptional="True" />
+              </columns>
+            </datasheet>
+          </datasheets>
+        </datafeed>
+        
+        <datafeed name="OutputDisturbanceMetrics" displayName="Output Disturbance Metrics" dataScope="Scenario" isOutput="True">
+          <datasheets>
+            <datasheet name="OutputDisturbanceMetrics" displayName="Output Disturbance Metrics">
+              <columns>
+                <column name="OutputDisturbanceMetricsID" dataType="Integer" isPrimary="True" />
+                <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True" />
+                <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True" />
+                <column name="ScenarioID" dataType="Integer" />
+                <column name="RangeID" dataType="Integer" validationType="Datasheet" formula1="CaribouRange" allowDbNull="False" />
+                <column name="MetricTypeID" dataType="Integer" validationType="Datasheet" formula1="MetricType" allowDbNull="False" />
+                <column name="Amount" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0"/>
               </columns>
             </datasheet>
           </datasheets>
@@ -382,6 +414,8 @@
       <group name="CaribouModel" displayName="Caribou Metrics">
         <item name="CaribouRange" />
         <item name="Season" />
+        <item name="MetricType" />
+
       </group>
 
       <group name="Pipeline">
@@ -440,8 +474,9 @@
         </group>
 
         <group name="Outputs">
-          <item name="OutputHabitat" itemTransformer="RunCaribouHabitatModel" showIf="isResult" />
+          <item name="OutputDisturbanceMetrics" itemTransformer="RunCaribouHabitatModel" showIf="isResult" />
           <item name="OutputSpatialHabitat" itemTransformer="RunCaribouHabitatModel" showIf="isResult" />
+          <item name="OutputSpatialDisturbance" itemTransformer="RunCaribouHabitatModel" showIf="isResult" />
         </group>
         
       </group>
@@ -465,6 +500,8 @@
       <!-- TODO add colorMapSource="stsim_TransitionType" -->
       <item name="InputRastersMap" displayName="Rasters Variables" dataSheet="RasterFile" column="Filename" filter="RastersID" />
       <item name="OutputRastersMap" displayName="Habitat Use (Spatial)" dataSheet="OutputSpatialHabitat" column="FileName" filter="SeasonID" />
+      <item name="OutputRastersMap2" displayName="Disturbance (Spatial)" dataSheet="OutputSpatialDisturbance" column="FileName" filter="MetricTypeID" />
+
     </layout>
 
   </layouts>

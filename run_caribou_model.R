@@ -80,12 +80,14 @@ uniqueIterFromData <-
            allParams$RasterFile$Iteration, 
            allParams$DataSummary$Iteration))
 uniqueIterFromData <- uniqueIterFromData[!is.na(uniqueIterFromData)]
+if(length(uniqueIterFromData)==0){uniqueIterFromData<-GLOBAL_MinIteration}
 
 uniqueTsFromData <- 
   unique(c(allParams$ExternalFile$Timestep, 
            allParams$RasterFile$Timestep, 
            allParams$DataSummary$Timestep))
 uniqueTsFromData <- uniqueTsFromData[!is.na(uniqueTsFromData)]
+if(length(uniqueTsFromData)==0){uniqueTsFromData<-GLOBAL_MinTimestep}
 
 iterationSet <- GLOBAL_MinIteration:GLOBAL_MaxIteration
 iterationSet <- iterationSet[iterationSet %in% uniqueIterFromData]
@@ -100,6 +102,8 @@ envBeginSimulation(length(iterationSet) * length(timestepSet))
 
 # Empty list to start
 habitatUseAll <- NULL
+distMetricsAll <- NULL
+distMetricsTabAll <- NULL
 
 # iteration <- iterationSet[1]
 # timestep <- timestepSet[1]
@@ -123,7 +127,7 @@ for (iteration in iterationSet) {
     }, error = function(cond) { stop("land cover can't be null") })
     
     # Reclass landcover if needed
-    # TO DO: allow user to input plcLU table (same format at plcToResType in caribouMetrics package). If table is specified, reclass regardless of whether the number of classes is <9.
+    # UI TO DO: allow user to input plcLU table (same format as plcToResType in caribouMetrics package). If table is specified, reclass regardless of whether the number of classes is <9.
     # TO DO: need better way of recognizing landcover class types - maybe just require user to specify? # of classes assumptions will potentially cause trouble on reduced landscapes where not all classes are represented.
     if ((max(values(plcRas), na.rm = TRUE) <= 9)){
       warning(paste0("Assuming landcover classes are: ",paste(paste(resTypeCode$ResourceType,resTypeCode$code),collapse=",")))
@@ -184,7 +188,7 @@ for (iteration in iterationSet) {
     
     projectPol <- tryCatch({
       st_read(filter(InputVectors, CaribouVarID == "ProjectShapeFileID")$File) %>% 
-        # TODO implement better checks: verify if Range/RANGE_NAME are there 
+        # TO DO implement better checks: verify if Range/RANGE_NAME are there 
         rename(Range = RANGE_NAME)
     }, error = function(cond) { NULL })
     
@@ -196,7 +200,12 @@ for (iteration in iterationSet) {
 
     #TO DO: if natDist input is stand age rather than binary disturbance, convert to binary disturbance appropriately.
     #TO DO: handle polygon inputs for natural disturbance, anthro disturbance, and harvest
-
+    #TO DO: check that disturbanceMetrics calculations handle multiple ranges properly
+    #TO DO: accept anthropogenic disturbance polygons or rasters, and behave properly when they are missing.
+    
+    #UI TO DO: add option to save elements of res@processedData
+    #UI TO DO: user really should not be free to specify names like MetricTypeID that are hard coded in the transformer.
+    
     #Note: This code is helpful for building and sharing reproducible examples for debugging. Leave in for now.
     #d=list(landCover=readAll(plcRas),esker=eskerFinal,natDist=readAll(natDistRas),anthroDist=NULL,
     #       harv=readAll(harvRas),linFeat=linFeatFinal,projectPoly=projectPoltmp,caribouRange=renamedRange,
@@ -204,36 +213,59 @@ for (iteration in iterationSet) {
     #       padFocal = optArg(allParams$HabitatModelOptions$PadFocal),
     #       doScale = optArg(allParams$HabitatModelOptions$doScale))
     #saveRDS(d,paste0("C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFModel/UI/debugData.RDS"))
-    
-    res <- caribouHabitat(
-      landCover = plcRas , 
-      esker = eskerFinal, 
-      natDist = natDistRas,
-      anthroDist = anthroDistRas,
-      harv = harvRas,
-      linFeat = linFeatFinal, 
-      projectPoly = projectPoltmp,
-      caribouRange = renamedRange,       # Caribou Range
-      # Options
-      padProjPoly = optArg(allParams$HabitatModelOptions$PadProjPoly),
-      padFocal = optArg(allParams$HabitatModelOptions$PadFocal),
-      doScale = optArg(allParams$HabitatModelOptions$doScale),
-      # outputs are saved afterwards
-      eskerSave = NULL,
-      linFeatSave = NULL,
-      saveOutput = NULL
-    )
+    doCarHab=optArg(allParams$HabitatModelOptions$RunCaribouHabitat)
+    if(is.null(doCarHab)||doCarHab){
+      res <- caribouHabitat(
+        landCover = plcRas , 
+        esker = eskerFinal, 
+        natDist = natDistRas,
+        anthroDist = anthroDistRas,
+        harv = harvRas,
+        linFeat = linFeatFinal, 
+        projectPoly = projectPoltmp,
+        caribouRange = renamedRange,       # Caribou Range
+        # Options
+        padProjPoly = optArg(allParams$HabitatModelOptions$PadProjPoly),
+        padFocal = optArg(allParams$HabitatModelOptions$PadFocal),
+        doScale = optArg(allParams$HabitatModelOptions$doScale),
+        # outputs are saved afterwards
+        eskerSave = NULL,
+        linFeatSave = NULL,
+        saveOutput = NULL
+      )
+      
+      ## Save to DATA folder
+      writeRaster(res@habitatUse, bylayer = TRUE, format = "GTiff",
+                  suffix = paste(names(res@habitatUse), 
+                                 paste(renamedRange$Range, collapse = "_"),
+                                 paste0("it_",iteration), 
+                                 paste0("ts_",timestep), sep = "_"),
+                  filename = file.path(e$TransferDirectory, "OutputHabitatUse"), 
+                  overwrite = TRUE)
+      
+      # Build df and save the datasheet
+      habitatUseDf <- data.frame(SeasonID = names(res@habitatUse), 
+                                 Iteration = iteration,
+                                 Timestep = timestep)
+      habitatUseDf$FileName <- file.path(e$TransferDirectory, 
+                                         paste0(paste("OutputHabitatUse",
+                                                      habitatUseDf$Season,
+                                                      paste(renamedRange$Range, collapse = "_"),
+                                                      "it", habitatUseDf$Iteration, 
+                                                      "ts", habitatUseDf$Timestep,
+                                                      sep= "_"), ".tif"))
+      habitatUseDf <- habitatUseDf %>% 
+        expand_grid(RangeID = renamedRange$Range)
+      
+      habitatUseAll[[paste0("it_",iteration)]][[paste0("ts_",timestep)]] <- 
+        habitatUseDf
+      
+    }
     
     #QUESTION: faster to crop to projectPoly or landCover?
     
-    #UI TO DO: add option to calculate and output disturbance metrics
-    #UI TO DO: make habitat use calculation optional
-    #TO DO: check that disturbanceMetrics calculations handle multiple ranges properly
-    #UI TO DO: make buffer width an argument
-    
-    doDistMetrics=F
-    #TO DO: accept anthropogenic disturbance polygons or rasters, and behave properly when they are missing.
-    if(doDistMetrics){
+    doDistMetrics=optArg(allParams$HabitatModelOptions$RunDistMetrics)
+    if(is.null(doDistMetrics)||doDistMetrics){
       fullDist <- disturbanceMetrics(
         landCover=!is.na(plcRas),
         natDist = natDistRas,
@@ -241,42 +273,63 @@ for (iteration in iterationSet) {
         linFeat = linFeatFinal,
         projectPoly = projectPoltmp,
         padFocal = optArg(allParams$HabitatModelOptions$PadFocal),
-        bufferWidth =  500 
+        bufferWidth =  optArg(allParams$HabitatModelOptions$ECCCBufferWidth) 
       )
+      
+      # Build df and save the datasheet
+      fds <- subset(fullDist@disturbanceMetrics,select=c(Range,anthroBuff,natDist,totalDist))
+      names(fds)[1]="RangeID"
+      fds <- gather(fds, MetricTypeID, Amount, anthroBuff:totalDist, factor_key=FALSE)
+      distMetricsTabDf <- fds
+      distMetricsTabDf$Iteration <- iteration
+      distMetricsTabDf$Timestep <- timestep
+      
+      distMetricsTabAll[[paste0("it_",iteration)]][[paste0("ts_",timestep)]] <- 
+        distMetricsTabDf
+      
+      ## Save to DATA folder
+      writeRaster(fullDist@processedData, bylayer = TRUE, format = "GTiff",
+                  suffix = paste(names(fullDist@processedData), 
+                                 paste(renamedRange$Range, collapse = "_"),
+                                 paste0("it_",iteration), 
+                                 paste0("ts_",timestep), sep = "_"),
+                  filename = file.path(e$TransferDirectory, "OutputDistMetrics"), 
+                  overwrite = TRUE)
+      
+      # Build df and save the datasheet
+      distMetricsDf <- data.frame(MetricTypeID = names(fullDist@processedData), 
+                                 Iteration = iteration,
+                                 Timestep = timestep)
+      distMetricsDf$FileName <- file.path(e$TransferDirectory, 
+                                         paste0(paste("OutputDistMetrics",
+                                                      distMetricsDf$MetricTypeID,
+                                                      paste(renamedRange$Range, collapse = "_"),
+                                                      "it", distMetricsDf$Iteration, 
+                                                      "ts", distMetricsDf$Timestep,
+                                                      sep= "_"), ".tif"))
+      distMetricsDf <- distMetricsDf %>% 
+        expand_grid(RangeID = renamedRange$Range)
+      
+      distMetricsAll[[paste0("it_",iteration)]][[paste0("ts_",timestep)]] <- 
+        distMetricsDf
+      
     }
-    
-    ## Save to DATA folder
-    #TO DO: add option to save elements of res@processedData
-    writeRaster(res@habitatUse, bylayer = TRUE, format = "GTiff",
-                suffix = paste(names(res@habitatUse), 
-                               paste(renamedRange$Range, collapse = "_"),
-                               paste0("it_",iteration), 
-                               paste0("ts_",timestep), sep = "_"),
-                filename = file.path(e$TransferDirectory, "OutputHabitatUse"), 
-                overwrite = TRUE)
-    
-    # Build df and save the datasheet
-    habitatUseDf <- data.frame(SeasonID = names(res@habitatUse), 
-                               Iteration = iteration,
-                               Timestep = timestep)
-    habitatUseDf$FileName <- file.path(e$TransferDirectory, 
-                                       paste0(paste("OutputHabitatUse",
-                                                    habitatUseDf$Season,
-                                                    paste(renamedRange$Range, collapse = "_"),
-                                                    "it", habitatUseDf$Iteration, 
-                                                    "ts", habitatUseDf$Timestep,
-                                                    sep= "_"), ".tif"))
-    habitatUseDf <- habitatUseDf %>% 
-      expand_grid(RangeID = renamedRange$Range)
-    
-    habitatUseAll[[paste0("it_",iteration)]][[paste0("ts_",timestep)]] <- 
-      habitatUseDf
-    
   }
 }
 
+if(is.null(doCarHab)||doCarHab){
+  habitatUseMerged <- bind_rows(unlist(habitatUseAll, recursive = F))
+  saveDatasheet(ssimObject = mySce, name = "OutputSpatialHabitat", data = habitatUseMerged)
+}
 
-habitatUseMerged <- bind_rows(unlist(habitatUseAll, recursive = F))
+if(is.null(doDistMetrics)||doDistMetrics){
+  distMetricsTabMerged <- bind_rows(unlist(distMetricsTabAll, recursive = F))
+  
+  distMetricsMerged <- bind_rows(unlist(distMetricsAll, recursive = F))
+  saveDatasheet(ssimObject = mySce, name = "OutputSpatialDisturbance", data = distMetricsMerged)
+  
+  #NOTE: I have change OutputHabitat table to OutputDisturbanceMetrics table, since we don't produce tabular habitat output, and we do produce tabular disturbance metric output.
+  saveDatasheet(ssimObject = mySce, name = "OutputDisturbanceMetrics", data = distMetricsTabMerged)
+}
 
-saveDatasheet(ssimObject = mySce, name = "OutputSpatialHabitat", data = habitatUseMerged)
 envEndSimulation()

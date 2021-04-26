@@ -5,7 +5,7 @@ library(rsyncrosim)
 # Function to process optional arguments
 optArg <- function(arg){
   if(length(arg)==0){
-    arg <- FALSE
+    arg <- NULL
     #Comment: seems like this should return NULL or NA, not F
   }else if (is.na(arg)){
       return(NULL)
