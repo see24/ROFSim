@@ -5,9 +5,12 @@ cDir = "C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFModel/UI"
 
 sourceData = "C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFData"
 
-delete(paste0(cDir,"/ROFDemo.ssim"),force=T)
+delete(paste0(cDir,"/ROFDemo3.ssim"),force=T)
 
-libName = "ROFDemo"
+#TO DO: 
+#Set subscenarios as in ROFDemo
+
+libName = "ROFDemo3"
 
 cLib = ssimLibrary(paste0(cDir,"/",libName),package="ROFSim")
 
@@ -34,9 +37,10 @@ saveDatasheet(cProj,cc,name=cSheet)
 datasheet(cProj,cSheet)
 
 cSheet="ROFSim_Rasters"
-cc=data.frame(Name=c("Fire Disturbance","Harvest","Land Cover"))
+cc=data.frame(Name=c("Fire Disturbance","Harvest","Provincial Land Cover"))
+cc$SpaDESSimObject[cc$Name=="Fire Disturbance"]="burnMap"
 saveDatasheet(cProj,cc,name=cSheet)
-datasheet(cProj,cSheet)
+datasheet(cProj,cSheet,optional=T)
 
 cSheet="ROFSim_Polygons"
 cc=data.frame(Name=c("Eskers","Linear Features","Ranges"))
@@ -68,7 +72,7 @@ saveDatasheet(cbScn,cc,name=cSheet)
 datasheet(cbScn,cSheet)
 
 cSheet="ROFSim_CaribouDataSource"
-cc=data.frame(LandCoverRasterID="Land Cover",ProjectShapeFileID="Ranges",EskerShapeFileID="Eskers",LinearFeatureShapeFileID="Linear Features",NaturalDisturbanceRasterID="Fire Disturbance",HarvestRasterID="Harvest")
+cc=data.frame(LandCoverRasterID="Provincial Land Cover",ProjectShapeFileID="Ranges",EskerShapeFileID="Eskers",LinearFeatureShapeFileID="Linear Features",NaturalDisturbanceRasterID="Fire Disturbance",HarvestRasterID="Harvest")
 saveDatasheet(cbScn,cc,name=cSheet)
 datasheet(cbScn,cSheet)
 

@@ -202,7 +202,6 @@ for (iteration in iterationSet) {
 
     doDistMetrics=optArg(allParams$HabitatModelOptions$RunDistMetrics)
     
-    
     if(is.null(doDistMetrics)||doDistMetrics){
 
       fullDist <- disturbanceMetrics(
