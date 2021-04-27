@@ -43,12 +43,17 @@ cc=data.frame(Name=c("Eskers","Linear Features","Ranges"))
 saveDatasheet(cProj,cc,name=cSheet)
 datasheet(cProj,cSheet)
 
+############
+#scenarios - run control
 rcScn = scenario(cProj,"Run Control")
 
 cSheet="ROFSim_RunControl"
 cc=data.frame(MinimumIteration=1,MaximumIteration=1,MinimumTimestep=2020,MaximumTimestep=2020)
 saveDatasheet(rcScn,cc,name=cSheet)
 datasheet(rcScn,cSheet)
+
+############
+#scenarios - caribou - current
 
 cbScn = scenario(cProj,"Caribou - current")
 
@@ -75,7 +80,7 @@ datasheet(cbScn,cSheet)
 cSheet="ROFSim_RasterFile"
 cc=data.frame(RastersID="Fire Disturbance",Filename=paste0(sourceData,"/fireAFFES2020_250.tif"))
 cc=rbind(cc,data.frame(RastersID="Harvest",Filename=paste0(sourceData,"/harvMNRF2018_250.tif")))
-cc=rbind(cc,data.frame(RastersID="Land Cover",Filename=paste0(sourceData,"/plc250.tif")))
+cc=rbind(cc,data.frame(RastersID="Provincial Land Cover",Filename=paste0(sourceData,"/plc250.tif")))
 delete(cbScn,datasheet=cSheet,force=T)
 saveDatasheet(cbScn,cc,name=cSheet)
 datasheet(cbScn,cSheet)
@@ -94,3 +99,7 @@ datasheet(cbScn,cSheet)
 dependency(cbScn,rcScn)
 datasheet(cbScn)
 
+############
+#scenarios - SpaDES import
+
+siScn = scenario(cProj,"SpaDES import")

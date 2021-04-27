@@ -11,19 +11,21 @@ library(dplyr)
 library(tidyr)
 
 localDebug = F
-if(localDebug){
-  e=list()
-  e$PackageDirectory = "C:/Users/HughesJo/Documents/SyncroSim/Packages/ROFSim"
-  t = try(source(file.path(e$PackageDirectory, "helpers.R")),silent=T) #this will throw Error in .local(.Object, ...) : A library name is required. Don't worry about it.
-  source("./scripts/loadSSimLocalForDebug.R") #run outside of SSim for debugging caribouMetrics package
-}else{
+if(!localDebug){
   # Load environment
   e <- ssimEnvironment()
   myLib <- ssimLibrary()
   mySce <- scenario()
   # Source the helpers
   source(file.path(e$PackageDirectory, "helpers.R"))
+  
+}else{
+  e=list()
+  e$PackageDirectory = "C:/Users/HughesJo/Documents/SyncroSim/Packages/ROFSim"
+  t = try(source(file.path(e$PackageDirectory, "helpers.R")),silent=T) #this will throw Error in .local(.Object, ...) : A library name is required. Don't worry about it.
+  source("./scripts/loadSSimLocalForDebug.R") #run outside of SSim for debugging caribouMetrics package
 }
+
 # Get datasheets
 myDatasheetsNames <- c("RasterFile", 
                        "ExternalFile", 
@@ -111,7 +113,7 @@ distMetricsTabAll <- NULL
 for (iteration in iterationSet) {
   
   for (timestep in timestepSet) {
-    #iteration=1;timestep=2011
+    #iteration=1;timestep=2020
     
     envReportProgress(iteration, timestep)
     
@@ -198,6 +200,60 @@ for (iteration in iterationSet) {
     projectPoltmp <- projectPol %>% 
       filter(Range %in% renamedRange$Range) 
 
+    doDistMetrics=optArg(allParams$HabitatModelOptions$RunDistMetrics)
+    
+    
+    if(is.null(doDistMetrics)||doDistMetrics){
+
+      fullDist <- disturbanceMetrics(
+        landCover=!is.na(plcRas),
+        natDist = natDistRas,
+        harv = harvRas,
+        linFeat = linFeatFinal,
+        projectPoly = projectPoltmp,
+        padFocal = optArg(allParams$HabitatModelOptions$PadFocal),
+        bufferWidth =  optArg(allParams$HabitatModelOptions$ECCCBufferWidth) 
+      )
+      
+      # Build df and save the datasheet
+      fds <- subset(fullDist@disturbanceMetrics,select=c(Range,anthroBuff,natDist,totalDist))
+      names(fds)[1]="RangeID"
+      fds <- gather(fds, MetricTypeID, Amount, anthroBuff:totalDist, factor_key=FALSE)
+      distMetricsTabDf <- fds
+      distMetricsTabDf$Iteration <- iteration
+      distMetricsTabDf$Timestep <- timestep
+      
+      distMetricsTabAll[[paste0("it_",iteration)]][[paste0("ts_",timestep)]] <- 
+        distMetricsTabDf
+      
+      ## Save to DATA folder
+      writeRaster(fullDist@processedData, bylayer = TRUE, format = "GTiff",
+                  suffix = paste(names(fullDist@processedData), 
+                                 paste(renamedRange$Range, collapse = "_"),
+                                 paste0("it_",iteration), 
+                                 paste0("ts_",timestep), sep = "_"),
+                  filename = file.path(e$TransferDirectory, "OutputDistMetrics"), 
+                  overwrite = TRUE)
+      
+      # Build df and save the datasheet
+      distMetricsDf <- data.frame(MetricTypeID = names(fullDist@processedData), 
+                                  Iteration = iteration,
+                                  Timestep = timestep)
+      distMetricsDf$FileName <- file.path(e$TransferDirectory, 
+                                          paste0(paste("OutputDistMetrics",
+                                                       distMetricsDf$MetricTypeID,
+                                                       paste(renamedRange$Range, collapse = "_"),
+                                                       "it", distMetricsDf$Iteration, 
+                                                       "ts", distMetricsDf$Timestep,
+                                                       sep= "_"), ".tif"))
+      distMetricsDf <- distMetricsDf %>% 
+        expand_grid(RangeID = renamedRange$Range)
+      
+      distMetricsAll[[paste0("it_",iteration)]][[paste0("ts_",timestep)]] <- 
+        distMetricsDf
+      
+    }
+    
     #TO DO: if natDist input is stand age rather than binary disturbance, convert to binary disturbance appropriately.
     #TO DO: handle polygon inputs for natural disturbance, anthro disturbance, and harvest
     #TO DO: check that disturbanceMetrics calculations handle multiple ranges properly
@@ -263,57 +319,6 @@ for (iteration in iterationSet) {
     }
     
     #QUESTION: faster to crop to projectPoly or landCover?
-    
-    doDistMetrics=optArg(allParams$HabitatModelOptions$RunDistMetrics)
-    if(is.null(doDistMetrics)||doDistMetrics){
-      fullDist <- disturbanceMetrics(
-        landCover=!is.na(plcRas),
-        natDist = natDistRas,
-        harv = harvRas,
-        linFeat = linFeatFinal,
-        projectPoly = projectPoltmp,
-        padFocal = optArg(allParams$HabitatModelOptions$PadFocal),
-        bufferWidth =  optArg(allParams$HabitatModelOptions$ECCCBufferWidth) 
-      )
-      
-      # Build df and save the datasheet
-      fds <- subset(fullDist@disturbanceMetrics,select=c(Range,anthroBuff,natDist,totalDist))
-      names(fds)[1]="RangeID"
-      fds <- gather(fds, MetricTypeID, Amount, anthroBuff:totalDist, factor_key=FALSE)
-      distMetricsTabDf <- fds
-      distMetricsTabDf$Iteration <- iteration
-      distMetricsTabDf$Timestep <- timestep
-      
-      distMetricsTabAll[[paste0("it_",iteration)]][[paste0("ts_",timestep)]] <- 
-        distMetricsTabDf
-      
-      ## Save to DATA folder
-      writeRaster(fullDist@processedData, bylayer = TRUE, format = "GTiff",
-                  suffix = paste(names(fullDist@processedData), 
-                                 paste(renamedRange$Range, collapse = "_"),
-                                 paste0("it_",iteration), 
-                                 paste0("ts_",timestep), sep = "_"),
-                  filename = file.path(e$TransferDirectory, "OutputDistMetrics"), 
-                  overwrite = TRUE)
-      
-      # Build df and save the datasheet
-      distMetricsDf <- data.frame(MetricTypeID = names(fullDist@processedData), 
-                                 Iteration = iteration,
-                                 Timestep = timestep)
-      distMetricsDf$FileName <- file.path(e$TransferDirectory, 
-                                         paste0(paste("OutputDistMetrics",
-                                                      distMetricsDf$MetricTypeID,
-                                                      paste(renamedRange$Range, collapse = "_"),
-                                                      "it", distMetricsDf$Iteration, 
-                                                      "ts", distMetricsDf$Timestep,
-                                                      sep= "_"), ".tif"))
-      distMetricsDf <- distMetricsDf %>% 
-        expand_grid(RangeID = renamedRange$Range)
-      
-      distMetricsAll[[paste0("it_",iteration)]][[paste0("ts_",timestep)]] <- 
-        distMetricsDf
-      
-    }
   }
 }
 
