@@ -123,7 +123,7 @@ extFiles <- datasheet(mySce, "ExternalFile", lookupsAsFactors = FALSE,
                       empty = TRUE, optional = TRUE)
 
 for (theIter in iterationSet){
-  
+  #theIter =2
   # Load the spades object 
   spadesObjectPath <- spadesDatasheet %>% 
     filter(Iteration == theIter) %>% 
@@ -150,7 +150,7 @@ for (theIter in iterationSet){
   
   
   for (rowVar in seq_len(length.out = nrow(allVars))){
-    
+    #rowVar=1
     theVar <- as.character(allVars$SpaDESSimObject[rowVar])
     theVarName <- as.character(allVars$var[rowVar])
     theVarType <- allVars$type[rowVar]
@@ -160,7 +160,7 @@ for (theIter in iterationSet){
       filter(objectName == theVar)
     
     for (rowOut in seq_len(length.out = nrow(outputsFiltered))){
-      
+      #rowOut=1
       theTs <- outputsFiltered$Timestep[rowOut]
       
       if (theVarType == "raster") {
@@ -204,6 +204,8 @@ for (theIter in iterationSet){
       }
     }
   }
+  
+  #sort(sapply(ls(), function(x) {object.size(get(x)) }))
 }
 
 saveIfNotEmpty <- function(sheet, name){

@@ -112,7 +112,7 @@ rasterFiles <- datasheet(mySce, "RasterFile", lookupsAsFactors = FALSE,
 outputSheet <- data.frame()
 
 for (theIter in iterationSet){
-  
+  #theIter=1
   # Load the spades object 
   spadesObjectPath <- spadesDatasheet %>% 
     filter(Iteration == theIter) %>% 
@@ -132,6 +132,7 @@ for (theIter in iterationSet){
   rstLCC <- spadesObject$rasterToMatch
   
   for (ts in sort(unique(outputs$Timestep))){
+    #ts=2100
     
     outputsFiltered <- outputs %>% 
       filter(Timestep == ts)
@@ -148,6 +149,8 @@ for (theIter in iterationSet){
     rstLCC <- raster::resample(rstLCC,
                                pixelGroupMap)
     
+    
+    
     # Make file name
     filePath <- file.path(tmp, paste0("PLC", "_", paste(paste0("it_",theIter), 
                                                         paste0("ts_",ts), sep = "_"), 
@@ -159,9 +162,12 @@ for (theIter in iterationSet){
                                              rstLCC = rstLCC,
                                              lccClassTable = lccClassTable)
     
-    
     writeRaster(updated_LCC_tmp, overwrite = TRUE,
                 filename = filePath)
+    
+    rm(cohort_data);rm(pixelGroupMap);rm(updated_LCC_tmp)
+    gc()
+    #sort(sapply(ls(), function(x) {object.size(get(x)) }))
     
     tmpsheet <- data.frame(Iteration = theIter, 
                            Timestep = ts, 
