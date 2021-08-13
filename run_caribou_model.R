@@ -1,8 +1,7 @@
-## ROF SIM Prototype Package
+# ROFSim - Transformer 3 - Run Caribou Model
 
-## Running Caribou RSF Model
+# Packages ----------------------------------------------------------------
 
-# Load Packages
 library(rsyncrosim)
 library(caribouMetrics)
 library(raster)
@@ -26,7 +25,8 @@ if(!localDebug){
   source("./scripts/loadSSimLocalForDebug.R") #run outside of SSim for debugging caribouMetrics package
 }
 
-# Get datasheets
+# Get all datasheets ------------------------------------------------------
+
 myDatasheetsNames <- c("RasterFile", 
                        "ExternalFile", 
                        "RunCaribouRange", 
@@ -79,15 +79,13 @@ if (nrow(allParams$ExternalFile > 0)){
 
 uniqueIterFromData <- 
   unique(c(allParams$ExternalFile$Iteration, 
-           allParams$RasterFile$Iteration, 
-           allParams$DataSummary$Iteration))
+           allParams$RasterFile$Iteration))
 uniqueIterFromData <- uniqueIterFromData[!is.na(uniqueIterFromData)]
 if(length(uniqueIterFromData)==0){uniqueIterFromData<-GLOBAL_MinIteration}
 
 uniqueTsFromData <- 
   unique(c(allParams$ExternalFile$Timestep, 
-           allParams$RasterFile$Timestep, 
-           allParams$DataSummary$Timestep))
+           allParams$RasterFile$Timestep))
 uniqueTsFromData <- uniqueTsFromData[!is.na(uniqueTsFromData)]
 if(length(uniqueTsFromData)==0){uniqueTsFromData<-GLOBAL_MinTimestep}
 
@@ -97,10 +95,9 @@ iterationSet <- iterationSet[iterationSet %in% uniqueIterFromData]
 timestepSet <- GLOBAL_MinTimestep:GLOBAL_MaxTimestep
 timestepSet <- timestepSet[timestepSet %in% uniqueTsFromData]
 
-#Simulation
-envBeginSimulation(length(iterationSet) * length(timestepSet))
-
 # Run model ---------------------------------------------------------------
+
+envBeginSimulation(length(iterationSet) * length(timestepSet))
 
 # Empty list to start
 habitatUseAll <- NULL
@@ -144,6 +141,7 @@ for (iteration in iterationSet) {
     }else{
       stop("Landcover classification not recognized. Please specify...")
     }
+    
     eskerRas <- tryCatch({
       raster(filter(InputRasters, CaribouVarID == "EskerRasterID")$File)
     }, error = function(cond) { NULL })

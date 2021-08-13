@@ -2,6 +2,8 @@
 
 library(rsyncrosim)
 
+# RSYNCROSIM helpers ------------------------------------------------------
+
 # Function to process optional arguments
 optArg <- function(arg){
   if(length(arg)==0){
@@ -32,6 +34,21 @@ GetSingleValueExpectData <- function(df, name) {
   if (is.na(v)) { warning(paste0("Missing data for: ", name)) }
   return(v)
 }
+
+e = ssimEnvironment()
+GLOBAL_Session = session()
+GLOBAL_Library = ssimLibrary(session = GLOBAL_Session)
+GLOBAL_Project = project(GLOBAL_Library, project = as.integer(e$ProjectId))
+GLOBAL_Scenario = scenario(GLOBAL_Library, scenario = as.integer(e$ScenarioId))
+GLOBAL_RunControl = GetDataSheetExpectData("ROFSim_RunControl", GLOBAL_Scenario)
+GLOBAL_MaxIteration = GetSingleValueExpectData(GLOBAL_RunControl, "MaximumIteration")
+GLOBAL_MinIteration = GetSingleValueExpectData(GLOBAL_RunControl, "MinimumIteration")
+GLOBAL_MinTimestep = GetSingleValueExpectData(GLOBAL_RunControl, "MinimumTimestep")
+GLOBAL_MaxTimestep = GetSingleValueExpectData(GLOBAL_RunControl, "MaximumTimestep")
+GLOBAL_TotalIterations = (GLOBAL_MaxIteration - GLOBAL_MinIteration + 1)
+GLOBAL_TotalTimesteps = (GLOBAL_MaxTimestep - GLOBAL_MinTimestep + 1)
+
+# ROFSIM helpers ----------------------------------------------------------
 
 ## Functions for wildcard
 
@@ -120,16 +137,17 @@ make_paths_relative <- function(theTable, folder){
   return(theTable)
 }
 
-e = ssimEnvironment()
-GLOBAL_Session = session()
-GLOBAL_Library = ssimLibrary(session = GLOBAL_Session)
-GLOBAL_Project = project(GLOBAL_Library, project = as.integer(e$ProjectId))
-GLOBAL_Scenario = scenario(GLOBAL_Library, scenario = as.integer(e$ScenarioId))
-GLOBAL_RunControl = GetDataSheetExpectData("ROFSim_RunControl", GLOBAL_Scenario)
-GLOBAL_MaxIteration = GetSingleValueExpectData(GLOBAL_RunControl, "MaximumIteration")
-GLOBAL_MinIteration = GetSingleValueExpectData(GLOBAL_RunControl, "MinimumIteration")
-GLOBAL_MinTimestep = GetSingleValueExpectData(GLOBAL_RunControl, "MinimumTimestep")
-GLOBAL_MaxTimestep = GetSingleValueExpectData(GLOBAL_RunControl, "MaximumTimestep")
-GLOBAL_TotalIterations = (GLOBAL_MaxIteration - GLOBAL_MinIteration + 1)
-GLOBAL_TotalTimesteps = (GLOBAL_MaxTimestep - GLOBAL_MinTimestep + 1)
-
+# find_spades_files <- function(path){
+# 
+#   model_basename <- basename(path)
+#   files_in_folder <- tools::file_path_sans_ext(list.files(path))
+# 
+#   file_name <- which(model_basename %in% files_in_folder)
+# 
+#   if(length(file_name) == 1){
+#     return(file_name)
+#   } else {
+#     stop("SpaDES file not found")
+#   }
+# 
+# }
