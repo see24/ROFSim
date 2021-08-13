@@ -123,11 +123,15 @@ extFiles <- datasheet(mySce, "ExternalFile", lookupsAsFactors = FALSE,
                       empty = TRUE, optional = TRUE)
 
 for (theIter in iterationSet){
+  print(theIter)
   #theIter =2
   # Load the spades object 
   spadesObjectPath <- spadesDatasheet %>% 
     filter(Iteration == theIter) %>% 
     pull(Filename)
+  
+  #sort(sapply(ls(), function(x) {object.size(get(x)) }))
+  
   spadesObject <- qs::qread(spadesObjectPath)
   
   # Filter them
@@ -136,6 +140,8 @@ for (theIter in iterationSet){
     filter(objectName %in% allVars$SpaDESSimObject) %>% 
     filter(saveTime %in% timestepSet) %>% 
     rename(Timestep = saveTime)
+  
+  rm(spadesObject)
   
   if("standAgeMap" %in% allVars$SpaDESSimObject){
     outputs <- outputs %>% 
@@ -150,6 +156,7 @@ for (theIter in iterationSet){
   
   
   for (rowVar in seq_len(length.out = nrow(allVars))){
+    print(rowVar)
     #rowVar=1
     theVar <- as.character(allVars$SpaDESSimObject[rowVar])
     theVarName <- as.character(allVars$var[rowVar])
@@ -205,7 +212,6 @@ for (theIter in iterationSet){
     }
   }
   
-  #sort(sapply(ls(), function(x) {object.size(get(x)) }))
 }
 
 saveIfNotEmpty <- function(sheet, name){

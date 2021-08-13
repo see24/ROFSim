@@ -112,11 +112,13 @@ rasterFiles <- datasheet(mySce, "RasterFile", lookupsAsFactors = FALSE,
 outputSheet <- data.frame()
 
 for (theIter in iterationSet){
-  #theIter=1
+  #theIter=2
   # Load the spades object 
   spadesObjectPath <- spadesDatasheet %>% 
     filter(Iteration == theIter) %>% 
     pull(Filename)
+  #sort( sapply(ls(),function(x){object.size(get(x))})) 
+  rstLCC=NULL;spadesObject=NULL
   spadesObject <- qs::qread(spadesObjectPath)
   
   # Filter them
@@ -166,7 +168,6 @@ for (theIter in iterationSet){
                 filename = filePath)
     
     rm(cohort_data);rm(pixelGroupMap);rm(updated_LCC_tmp)
-    gc()
     #sort(sapply(ls(), function(x) {object.size(get(x)) }))
     
     tmpsheet <- data.frame(Iteration = theIter, 
@@ -178,6 +179,8 @@ for (theIter in iterationSet){
     outputSheet <- bind_rows(outputSheet, tmpsheet)
     
   }
+  rstLCC=NULL
+  #sort( sapply(ls(),function(x){object.size(get(x))})) 
 }
 
 saveDatasheet(mySce, outputSheet, "RasterFile", append = TRUE)
