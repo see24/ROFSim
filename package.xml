@@ -283,17 +283,35 @@
           </datasheets>
         </datafeed>
 
-        <datafeed name="HabitatModelOptions" displayName="Habitat Model Options" dataScope="Scenario">
+        <datafeed name="CaribouModelOptions" displayName="Caribou Model Options" dataScope="Scenario">
           <datasheets>
-            <datasheet name="HabitatModelOptions" displayName="Habitat Model Options" isSingleRow="True">
+            <datasheet name="CaribouModelOptions" displayName="Caribou Model Options" isSingleRow="True">
               <columns>
                 <column name="ScenarioID" dataType="Integer" isPrimary="True" />
                 <column name="RunDistMetrics" displayName="Run ECCC Disturbance Metrics" dataType="Boolean" />
+                <column name="RunDemographicModel" displayName="Run Aspatial Demographic Model" dataType="Boolean" />
                 <column name="RunCaribouHabitat" displayName="Run Caribou Habitat Model" dataType="Boolean" />
-                <column name="ECCCBufferWidth" displayName="ECCC Buffer Width" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d"/>
-                <column name="PadProjPoly" displayName="Project Polygon Padding" dataType="Boolean" />
-                <column name="PadFocal" displayName="Focal Padding" dataType="Boolean" isOptional="True" />
-                <column name="doScale" displayName="Scale" dataType="Boolean" isOptional="True" />
+                <column name="bufferWidth" displayName="ECCC Buffer Width" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d"/>
+                <column name="padProjPoly" displayName="Project Polygon Padding" dataType="Boolean" isOptional="True" />
+                <column name="padFocal" displayName="Focal Padding" dataType="Boolean" isOptional="True" />
+                <column name="NumDemographicTrajectories" displayName="Number of Demographic Trajectories" dataType="Integer" defaultValue="35" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="1" format="d" isOptional="True"/>
+                <column name="modelVersion" displayName="Demographic Model Version" dataType="String" isOptional="True"/>
+                <column name="survivalModelNumber" displayName="Survival Model Number" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="1" format="d" isOptional="True"/>
+                <column name="recruitmentModelNumber" displayName="Recruitment Model Number" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="1" format="d" isOptional="True"/>
+                <column name="InitialPopulation" displayName="Initial Population Size" dataType="Integer" defaultValue="1000" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="1" format="d" isOptional="True"/>
+                <column name="P_0" displayName="P_0" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
+                <column name="P_K" displayName="P_K" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
+                <column name="alpha" displayName="alpha" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
+                <column name="beta" displayName="beta" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
+                <column name="Kmultiplier" displayName="Kmultiplier" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
+                <column name="r_max" displayName="r_max" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
+                <column name="sexRatio" displayName="sexRatio" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
+                <column name="minRec" displayName="minRec" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
+                <column name="maxRec" displayName="maxRec" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
+                <column name="minSadF" displayName="minSadF" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
+                <column name="maxSadF" displayName="maxSadF" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
+                <column name="interannualVar" displayName="Interannual Variation" dataType="String" isOptional="True" />
+                <column name="probOption" displayName="probOption" dataType="String" isOptional="True"/>
               </columns>
             </datasheet>
           </datasheets>
@@ -372,6 +390,23 @@
           </datasheets>
         </datafeed>
 
+        <datafeed name="OutputPopulationMetrics" displayName="Output Population Metrics" dataScope="Scenario" isOutput="True">
+          <datasheets>
+            <datasheet name="OutputPopulationMetrics" displayName="Output Population Metrics">
+              <columns>
+                <column name="OutputPopulationMetricsID" dataType="Integer" isPrimary="True" />
+                <column name="Iteration" dataType="Integer" validationType="WholeNumber" validationCondition="Greater" formula1="0" format="d" isOptional="True" />
+                <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True" />
+                <column name="ScenarioID" dataType="Integer" />
+                <column name="RangeID" dataType="Integer" validationType="Datasheet" formula1="CaribouRange" allowDbNull="False" />
+                <column name="Replicate" dataType="Integer" />
+                <column name="MetricTypeID" dataType="Integer" validationType="Datasheet" formula1="MetricType" allowDbNull="False" />
+                <column name="Amount" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0"/>
+              </columns>
+            </datasheet>
+          </datasheets>
+        </datafeed>
+
       </datafeeds>
 
       <pipeline>
@@ -382,7 +417,7 @@
         <datafeed name="CaribouDataSource" />
         <datafeed name="RunControl" />
         <datafeed name="RunCaribouRange" />
-        <datafeed name="HabitatModelOptions" />
+        <datafeed name="CaribouModelOptions" />
 
       </pipeline>
 
@@ -471,13 +506,14 @@
         <group name="Inputs">
           <item name="RunCaribouRange" itemTransformer="RunCaribouHabitatModel" showIf="isParent" />
           <item name="CaribouDataSource" itemTransformer="RunCaribouHabitatModel" showIf="isParent" />
-          <item name="HabitatModelOptions" itemTransformer="RunCaribouHabitatModel" showIf="isParent"/>
+          <item name="CaribouModelOptions" itemTransformer="RunCaribouHabitatModel" showIf="isParent"/>
           <item name="RasterFile" itemTransformer="RunCaribouHabitatModel" showIf="isParent" />
           <item name="ExternalFile" itemTransformer="RunCaribouHabitatModel" showIf="isParent" />
         </group>
 
         <group name="Outputs">
           <item name="OutputDisturbanceMetrics" itemTransformer="RunCaribouHabitatModel" showIf="isResult" />
+          <item name="OutputPopulationMetrics" itemTransformer="RunCaribouHabitatModel" showIf="isResult" />
           <item name="OutputSpatialHabitat" itemTransformer="RunCaribouHabitatModel" showIf="isResult" />
           <item name="OutputSpatialDisturbance" itemTransformer="RunCaribouHabitatModel" showIf="isResult" />
         </group>

@@ -52,8 +52,8 @@ GLOBAL_TotalTimesteps = (GLOBAL_MaxTimestep - GLOBAL_MinTimestep + 1)
 
 ## Functions for wildcard
 
-filterInputs <- function(params, iter, ts, min_ts = 1){
-  
+filterInputs <- function(params, iter, ts, useMostRecent=F,min_ts = 1){
+  #params=subset(allParams$RasterFile,!is.na(Timestep));iter=1;ts=2050;min_ts=2020;useMostRecent="RasterID"
   # Cases where One or Both columns are missing
   if(!sum(is.element(names(params), "Iteration"))){
     print("No Iteration column")
@@ -77,7 +77,32 @@ filterInputs <- function(params, iter, ts, min_ts = 1){
   params$Iteration <- fillWildcardITER(params$Iteration, iter)
   params$Timestep <- fillWildcardTS(params$Timestep, ts, min_ts)
 
+  prevs <- subset(params, Iteration == iter & Timestep < ts)
   theSubset <- subset(params, Iteration == iter & Timestep == ts)
+  
+  if((useMostRecent!=F)&(nrow(prevs)>0)){
+    if(nrow(theSubset)==0){
+      missingLayers=unique(prevs[[useMostRecent]])
+    }else{
+      missingLayers=setdiff(prevs[[useMostRecent]],theSubset[[useMostRecent]])
+    }  
+    if(length(missingLayers)>0){
+      for(mm in missingLayers){
+        #mm="Linear Features"
+        prevs$match=prevs[[useMostRecent]]
+        useP = subset(prevs,match==mm)
+        useP$match=NULL
+        #For each iteration, select most recent timestep
+        useSet = unique(subset(useP,select=c(Timestep,Iteration)))
+        useSet=useSet%>%
+          group_by(Iteration) %>%
+          summarise(Timestep = max(Timestep))
+        useP=merge(useP,data.frame(useSet))
+        useP$Timestep=ts
+        theSubset=rbind(theSubset,useP)
+      }
+    }
+  }
   
   return(theSubset)
 }
@@ -93,7 +118,8 @@ fillWildcardTS <- function(x, fill, min_ts){
     x[which(is.na(x))] <- fill
   } else {
     # otherwise, assume NAs are timestep minimum
-    x[which(is.na(x))] <- min_ts
+    #TO DO: figure out what I just broke by changing this assumption.
+    x[which(is.na(x))] <- fill#min_ts
   }
   return(x)
 }

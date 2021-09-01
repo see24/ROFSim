@@ -30,7 +30,7 @@ if(!localDebug){
 myDatasheetsNames <- c("RasterFile", 
                        "ExternalFile", 
                        "RunCaribouRange", 
-                       "HabitatModelOptions",
+                       "CaribouModelOptions",
                        "CaribouDataSource")
 
 loadDatasheet <- function(name){
@@ -91,34 +91,94 @@ if(length(uniqueTsFromData)==0){uniqueTsFromData<-GLOBAL_MinTimestep}
 
 iterationSet <- GLOBAL_MinIteration:GLOBAL_MaxIteration
 iterationSet <- iterationSet[iterationSet %in% uniqueIterFromData]
+timestepSet <- seq(GLOBAL_MinTimestep,GLOBAL_MaxTimestep,by=GLOBAL_RunControl$OutputFrequency)
+#timestepSet <- timestepSet[timestepSet %in% uniqueTsFromData]
 
-timestepSet <- GLOBAL_MinTimestep:GLOBAL_MaxTimestep
-timestepSet <- timestepSet[timestepSet %in% uniqueTsFromData]
+# Default parameter values from R package
+
+argList = list(bufferWidth=NA,padProjPoly=NA,padFocal=NA,
+               NumDemographicTrajectories=35,modelVersion=NA,survivalModelNumber=NA,recruitmentModelNumber=NA,
+               InitialPopulation=1000,P_0=NA,P_K=NA,alpha=NA,beta=NA,Kmultiplier=NA,r_max=NA,sexRatio=NA,
+               minRec=NA,maxRec=NA,minSadF=NA,maxSadF=NA,interannualVar="list(Rec_CV = 0.46, S_CV = 0.08696)",probOption=NA)
+#"list(Rec_CV = 0.46, S_CV = 0.08696)"
+defaults= c(formals(demographicCoefficients),formals(disturbanceMetrics),formals(demographicRates),formals(popGrowthJohnson))
+
+for(i in 1:length(argList)){
+  #i=20
+  argName = names(argList)[i]
+  argVal = argList[[argName]]
+  
+  if(is.null(optArg(allParams$CaribouModelOptions[[argName]]))){
+    if(is.na(argVal)){
+      allParams$CaribouModelOptions[[argName]]=defaults[[argName]]
+    }else{
+      allParams$CaribouModelOptions[[argName]] = argVal
+    }
+  }
+}
+
+doDistMetrics=optArg(allParams$CaribouModelOptions$RunDistMetrics)
+doDemography=optArg(allParams$CaribouModelOptions$RunDemographicModel)
+if(grepl("list",allParams$CaribouModelOptions$interannualVar)){
+  allParams$CaribouModelOptions$interannualVar=list(eval(parse(text=allParams$CaribouModelOptions$interannualVar))) 
+}
+if(!grepl("M",allParams$CaribouModelOptions$recruitmentModelNumber)){
+  allParams$CaribouModelOptions$recruitmentModelNumber=paste0("M",allParams$CaribouModelOptions$recruitmentModelNumber)
+}
+if(!grepl("M",allParams$CaribouModelOptions$survivalModelNumber)){
+  allParams$CaribouModelOptions$survivalModelNumber=paste0("M",allParams$CaribouModelOptions$survivalModelNumber)
+}
 
 # Run model ---------------------------------------------------------------
-
 envBeginSimulation(length(iterationSet) * length(timestepSet))
 
 # Empty list to start
 habitatUseAll <- NULL
 distMetricsAll <- NULL
 distMetricsTabAll <- NULL
-
-# iteration <- iterationSet[1]
-# timestep <- timestepSet[1]
+popMetricsTabAll <- NULL
 
 for (iteration in iterationSet) {
-  
-  for (timestep in timestepSet) {
-    #iteration=1;timestep=2020
-    
+  if(is.null(doDemography)||doDemography){
+    #demographic rates from disturbance metrics.
+    #regression model parameter sampling is done once for each population at the beginning of the simulation 
+    popGrowthPars <- demographicCoefficients(allParams$CaribouModelOptions$NumDemographicTrajectories,
+                                             modelVersion = allParams$CaribouModelOptions$modelVersion,
+                                             survivalModelNumber = allParams$CaribouModelOptions$survivalModelNumber,
+                                             recruitmentModelNumber = allParams$CaribouModelOptions$recruitmentModelNumber)
+    N=allParams$CaribouModelOptions$InitialPopulation
+    pars = data.frame(N0=N)
+  }  
+
+  #Note: assuming timestepSet is ordered low to high
+  for (tt in 1:length(timestepSet)) {
+    #iteration=1;tt=4
+    timestep=timestepSet[tt]
+    if(tt==length(timestepSet)){
+      numSteps=0
+    }else{
+      numSteps=timestepSet[tt+1]-timestep
+      if(numSteps<0){
+        stop("Bug: timestepSet should be sorted low to high.")
+      }
+    }
+    print(iteration)
+    print(timestep)
     envReportProgress(iteration, timestep)
     
     # Filter inputs based on iteration and timestep
-    InputRasters <- filterInputs(allParams$RasterFile, 
+    InputRastersNA <- filterInputs(subset(allParams$RasterFile,is.na(Timestep)), 
+                                 iteration, timestep, min(timestepSet),useMostRecent="RastersID")
+    InputRastersT <- filterInputs(subset(allParams$RasterFile,!is.na(Timestep)), 
+                                   iteration, timestep, min(timestepSet),useMostRecent="RastersID")
+    InputRasters=rbind(InputRastersNA,InputRastersT)
+    InputRasters=subset(InputRasters,!is.na(Filename))
+    InputVectorsNA <- filterInputs(subset(allParams$ExternalFile,is.na(Timestep)),
                                  iteration, timestep, min(timestepSet))
-    InputVectors <- filterInputs(allParams$ExternalFile,
-                                 iteration, timestep, min(timestepSet))
+    InputVectorsT <- filterInputs(subset(allParams$ExternalFile,!is.na(Timestep)),
+                                   iteration, timestep, min(timestepSet),useMostRecent="PolygonsID")
+    InputVectors=rbind(InputVectorsNA,InputVectorsT)
+    InputVectors=subset(InputVectors,!is.na(File))
     
     # Call the main function with all arguments extracted from datasheets
     plcRas <-  tryCatch({
@@ -155,13 +215,20 @@ for (iteration in iterationSet) {
       eskerFinal <- eskerPol
     }
     
-    ageRas <- tryCatch({
-      raster(filter(InputRasters, CaribouVarID == "AgeRasterID")$File)
-    }, error = function(cond) { NULL })
+    #ageRas <- tryCatch({
+    #  raster(filter(InputRasters, CaribouVarID == "AgeRasterID")$File)
+    #}, error = function(cond) { NULL })
     
     natDistRas <- tryCatch({
       raster(filter(InputRasters, CaribouVarID == "NaturalDisturbanceRasterID")$File)
     }, error = function(cond) { NULL })
+
+    #If this raster contains something that looks like ages, interpret as time since natural disturbance.
+    if(cellStats(natDistRas,"max")>10){
+      distPersistence=optArg(allParams$CaribouModelOptions$DisturbancePersistence)
+      if(is.null(distPersistence)){distPersistence=40}
+      natDistRas=natDistRas<=distPersistence
+    }
     
     anthroDistRas <- tryCatch({
       raster(filter(InputRasters, CaribouVarID == "AnthropogenicRasterID")$File)
@@ -198,24 +265,32 @@ for (iteration in iterationSet) {
     projectPoltmp <- projectPol %>% 
       filter(Range %in% renamedRange$Range) 
 
-    doDistMetrics=optArg(allParams$HabitatModelOptions$RunDistMetrics)
-    
     if(is.null(doDistMetrics)||doDistMetrics){
 
+      if(is.null(harvRas)){
+        combineAnthro=anthroDistRas
+      }else{
+        if(is.null(anthroDistRas)){
+          combineAnthro=harvRas
+        }else{
+          combineAnthro=harvRas+anthroDistRas
+        }
+      }
+      
       fullDist <- disturbanceMetrics(
         landCover=!is.na(plcRas),
         natDist = natDistRas,
-        harv = harvRas,
+        anthroDist = combineAnthro,
         linFeat = linFeatFinal,
         projectPoly = projectPoltmp,
-        padFocal = optArg(allParams$HabitatModelOptions$PadFocal),
-        bufferWidth =  optArg(allParams$HabitatModelOptions$ECCCBufferWidth) 
+        padFocal = optArg(allParams$CaribouModelOptions$PadFocal),
+        bufferWidth =  optArg(allParams$CaribouModelOptions$ECCCBufferWidth) 
       )
       
       # Build df and save the datasheet
-      fds <- subset(fullDist@disturbanceMetrics,select=c(Range,anthroBuff,natDist,totalDist))
+      fds <- subset(fullDist@disturbanceMetrics,select=c(Range,anthroBuff,natDist,totalDist,fire_excl_anthro))
       names(fds)[1]="RangeID"
-      fds <- gather(fds, MetricTypeID, Amount, anthroBuff:totalDist, factor_key=FALSE)
+      fds <- gather(fds, MetricTypeID, Amount, anthroBuff:fire_excl_anthro, factor_key=FALSE)
       distMetricsTabDf <- fds
       distMetricsTabDf$Iteration <- iteration
       distMetricsTabDf$Timestep <- timestep
@@ -249,9 +324,60 @@ for (iteration in iterationSet) {
       distMetricsAll[[paste0("it_",iteration)]][[paste0("ts_",timestep)]] <- 
         distMetricsDf
       
+
+      if(is.null(doDemography)||doDemography){
+        
+        #TO DO: modify carbiouMetrics package so output of disturbanceMetrics can be fed directly to demographicRates            
+        covTableSim <- subset(fullDist@disturbanceMetrics,select=c(anthroBuff,natDist,totalDist,fire_excl_anthro,Range)) 
+        names(covTableSim)=c("Anthro","Fire","Total_dist","fire_excl_anthro","polygon")
+        covTableSim$area="FarNorth"
+        
+        rateSamples <- demographicRates(
+          covTable = covTableSim,
+          popGrowthPars = popGrowthPars,
+          ignorePrecision = FALSE,
+          returnSample = TRUE,
+          useQuantiles = TRUE,
+          interannualVar = FALSE
+        )     
+        
+        if(is.element("N",names(pars))){
+          pars=subset(pars,select=c(scnID,polygon,area,replicate,N))
+          names(pars)[names(pars)=="N"]="N0"
+        }
+        pars=merge(pars,rateSamples)
+        
+        #allParams$CaribouModelOptions$interannualVar[[1]]=F
+        pars = cbind(pars,popGrowthJohnson(pars$N0,numSteps=numSteps,Rec_bar=pars$R_bar,
+                                            S_bar=pars$S_bar,
+                                            P_0=allParams$CaribouModelOptions$P_0,
+                                            P_K=allParams$CaribouModelOptions$P_K,
+                                            alpha=allParams$CaribouModelOptions$alpha,
+                                            beta=allParams$CaribouModelOptions$beta,
+                                            Kmultiplier=allParams$CaribouModelOptions$Kmultiplier,
+                                            r_max=allParams$CaribouModelOptions$r_max,
+                                            sexRatio=allParams$CaribouModelOptions$sexRatio,
+                                            minRec=allParams$CaribouModelOptions$minRec,
+                                            maxRec=allParams$CaribouModelOptions$maxRec,
+                                            minSadF=allParams$CaribouModelOptions$minSadF,
+                                            maxSadF = allParams$CaribouModelOptions$maxSadF,
+                                            interannualVar=allParams$CaribouModelOptions$interannualVar[[1]],
+                                            probOption=allParams$CaribouModelOptions$probOption))
+        
+        # Build df and save the datasheet
+        fds <- subset(pars,select=c(polygon,replicate,S_bar,R_bar,N,lambda))
+        fds$replicate=as.numeric(gsub("V","",fds$replicate))
+        names(fds)=c("RangeID","Replicate","survival","recruitment","N","lambda")
+        fds <- pivot_longer(fds, !(RangeID|Replicate),names_to="MetricTypeID",values_to="Amount")
+        popMetricsTabDf <- fds
+        popMetricsTabDf$Iteration <- iteration
+        popMetricsTabDf$Timestep <- timestep
+        
+        popMetricsTabAll[[paste0("it_",iteration)]][[paste0("ts_",timestep)]] <- 
+          popMetricsTabDf
+        
+      }
     }
-    
-    #TO DO: if natDist input is stand age rather than binary disturbance, convert to binary disturbance appropriately.
     #TO DO: handle polygon inputs for natural disturbance, anthro disturbance, and harvest
     #TO DO: check that disturbanceMetrics calculations handle multiple ranges properly
     #TO DO: accept anthropogenic disturbance polygons or rasters, and behave properly when they are missing.
@@ -262,11 +388,11 @@ for (iteration in iterationSet) {
     #Note: This code is helpful for building and sharing reproducible examples for debugging. Leave in for now.
     #d=list(landCover=readAll(plcRas),esker=eskerFinal,natDist=readAll(natDistRas),anthroDist=NULL,
     #       harv=readAll(harvRas),linFeat=linFeatFinal,projectPoly=projectPoltmp,caribouRange=renamedRange,
-    #       padProjPoly=optArg(allParams$HabitatModelOptions$PadProjPoly),
-    #       padFocal = optArg(allParams$HabitatModelOptions$PadFocal),
-    #       doScale = optArg(allParams$HabitatModelOptions$doScale))
+    #       padProjPoly=optArg(allParams$CaribouModelOptions$PadProjPoly),
+    #       padFocal = optArg(allParams$CaribouModelOptions$PadFocal),
+    #       doScale = optArg(allParams$CaribouModelOptions$doScale))
     #saveRDS(d,paste0("C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFModel/UI/debugData.RDS"))
-    doCarHab=optArg(allParams$HabitatModelOptions$RunCaribouHabitat)
+    doCarHab=optArg(allParams$CaribouModelOptions$RunCaribouHabitat)
     if(is.null(doCarHab)||doCarHab){
       res <- caribouHabitat(
         landCover = plcRas , 
@@ -278,9 +404,9 @@ for (iteration in iterationSet) {
         projectPoly = projectPoltmp,
         caribouRange = renamedRange,       # Caribou Range
         # Options
-        padProjPoly = optArg(allParams$HabitatModelOptions$PadProjPoly),
-        padFocal = optArg(allParams$HabitatModelOptions$PadFocal),
-        doScale = optArg(allParams$HabitatModelOptions$doScale),
+        padProjPoly = optArg(allParams$CaribouModelOptions$PadProjPoly),
+        padFocal = optArg(allParams$CaribouModelOptions$PadFocal),
+        doScale = optArg(allParams$CaribouModelOptions$doScale),
         # outputs are saved afterwards
         eskerSave = NULL,
         linFeatSave = NULL,
@@ -332,6 +458,12 @@ if(is.null(doDistMetrics)||doDistMetrics){
   
   #NOTE: I have change OutputHabitat table to OutputDisturbanceMetrics table, since we don't produce tabular habitat output, and we do produce tabular disturbance metric output.
   saveDatasheet(ssimObject = mySce, name = "OutputDisturbanceMetrics", data = distMetricsTabMerged)
+  if(is.null(doDemography)||doDemography){
+    popMetricsTabMerged <- bind_rows(unlist(popMetricsTabAll, recursive = F))
+    
+    saveDatasheet(ssimObject = mySce, name = "OutputPopulationMetrics", data = popMetricsTabMerged)
+    #datasheet(mySce,"OutputPopulationMetrics")
+  }
 }
 
 envEndSimulation()
