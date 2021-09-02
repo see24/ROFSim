@@ -330,7 +330,10 @@ for (iteration in iterationSet) {
         #TO DO: modify carbiouMetrics package so output of disturbanceMetrics can be fed directly to demographicRates            
         covTableSim <- subset(fullDist@disturbanceMetrics,select=c(anthroBuff,natDist,totalDist,fire_excl_anthro,Range)) 
         names(covTableSim)=c("Anthro","Fire","Total_dist","fire_excl_anthro","polygon")
+        covTableSim[,1:4]=covTableSim[,1:4]*100
         covTableSim$area="FarNorth"
+        
+        #covTableSim$Anthro=90
         
         rateSamples <- demographicRates(
           covTable = covTableSim,
@@ -345,6 +348,7 @@ for (iteration in iterationSet) {
           pars=subset(pars,select=c(scnID,polygon,area,replicate,N))
           names(pars)[names(pars)=="N"]="N0"
         }
+        
         pars=merge(pars,rateSamples)
         
         #allParams$CaribouModelOptions$interannualVar[[1]]=F
