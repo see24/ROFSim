@@ -7,7 +7,7 @@ sourceData = "C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFData/Us
 
 inPath = "C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFModel/SpaDESOutputs/v1/ROF_CCSM4_RCP45_res125_rep01/outputs/ROF_CCSM4_RCP45_res125_rep01/ROF_CCSM4_RCP45_res125_rep01.qs"
 
-libName = "ROFDemo3"
+libName = "ROFDemo5"
 
 #delete(paste0(cDir,"/",libName,".ssim"),force=T)
 
@@ -23,7 +23,7 @@ saveDatasheet(cProj,cc,name=cSheet)
 datasheet(cProj,cSheet)
 
 cSheet="ROFSim_MetricType"
-cc=data.frame(Name=c("anthroBuff","natDist","totalDist","fire_excl_anthro","survival","recruitment","N","lambda"))
+cc=data.frame(Name=c("Anthro","Fire","Total_dist","fire_excl_anthro","survival","recruitment","N","lambda"))
 saveDatasheet(cProj,cc,name=cSheet)
 datasheet(cProj,cSheet)
 
@@ -132,8 +132,7 @@ cSheet="ROFSim_RasterFile"
 cc=data.frame(RastersID="Natural Disturbances",Filename=paste0(sourceData,"/fireAFFES2020_250.tif"))
 cc=rbind(cc,data.frame(RastersID="Harvest",Filename=paste0(sourceData,"/harvMNRF2018_250.tif")))
 cc=rbind(cc,data.frame(RastersID="Provincial Land Cover",Filename=paste0(sourceData,"/plc250.tif")))
-delete(cbScn,datasheet=cSheet,force=T)
-saveDatasheet(cbScn,cc,name=cSheet)
+saveDatasheet(cbScn,cc,name=cSheet,append=F)
 datasheet(cbScn,cSheet)
 
 cSheet="ROFSim_ExternalFile"
@@ -142,8 +141,7 @@ cc=rbind(cc,data.frame(PolygonsID="Linear Features",File=paste0(sourceData,"/rai
 cc=rbind(cc,data.frame(PolygonsID="Linear Features",File=paste0(sourceData,"/util2020.shp")))
 cc=rbind(cc,data.frame(PolygonsID="Ranges",File=paste0(sourceData,"/project_ranges.shp")))
 cc=rbind(cc,data.frame(PolygonsID="Linear Features",File=paste0(sourceData,"/road_ORNMNRFROF2020.shp")))
-delete(cbScn,datasheet=cSheet,force=T)
-saveDatasheet(cbScn,cc,name=cSheet)
+saveDatasheet(cbScn,cc,name=cSheet,append=F)
 datasheet(cbScn,cSheet)
 
 dependency(cbScn,rcScn)
@@ -161,8 +159,7 @@ cc=rbind(cc,data.frame(RastersID="Harvest",Filename=paste0(sourceData,"/harvMNRF
 cc=rbind(cc,data.frame(RastersID="Provincial Land Cover",Filename=paste0(sourceData,"/plc250.tif")))
 cc$Timestep=NA
 cc=rbind(cc,data.frame(RastersID="Anthropogenic Disturbance",Timestep=2040,Filename=paste0(sourceData,"/mines_ras250.tif")))
-delete(cbcScn,datasheet=cSheet,force=T)
-saveDatasheet(cbcScn,cc,name=cSheet)
+saveDatasheet(cbcScn,cc,name=cSheet,append=F)
 datasheet(cbcScn,cSheet)
 
 cSheet="ROFSim_ExternalFile"
@@ -173,8 +170,7 @@ cc=rbind(cc,data.frame(PolygonsID="Ranges",File=paste0(sourceData,"/project_rang
 cc$Timestep=NA
 cc=rbind(cc,data.frame(PolygonsID="Linear Features",Timestep=2020,File=paste0(sourceData,"/road_ORNMNRFROF2020.shp")))
 cc=rbind(cc,data.frame(PolygonsID="Linear Features",Timestep=2030,File=paste0(sourceData,"/RoF_MNRF_2020.shp")))
-delete(cbcScn,datasheet=cSheet,force=T)
-saveDatasheet(cbcScn,cc,name=cSheet)
+saveDatasheet(cbcScn,cc,name=cSheet,append=F)
 datasheet(cbcScn,cSheet)
 
 
@@ -185,14 +181,12 @@ cSheet="ROFSim_RasterFile"
 cc=data.frame(RastersID="Harvest",Filename=paste0(sourceData,"/harvMNRF2018_250.tif"))
 cc$Timestep=NA
 cc=rbind(cc,data.frame(RastersID="Anthropogenic Disturbance",Timestep=2040,Filename=paste0(sourceData,"/mines_ras250.tif")))
-delete(cbsScn,datasheet=cSheet,force=T)
-saveDatasheet(cbsScn,cc,name=cSheet)
+saveDatasheet(cbsScn,cc,name=cSheet,append=F)
 datasheet(cbsScn,cSheet)
 
 cSheet="ROFSim_CaribouDataSource"
 cc=data.frame(LandCoverRasterID="Provincial Land Cover",ProjectShapeFileID="Ranges",EskerShapeFileID="Eskers",LinearFeatureShapeFileID="Linear Features",NaturalDisturbanceRasterID="Stand Age",HarvestRasterID="Harvest",AnthroDisturbanceRasterID="Anthropogenic Disturbance")
-delete(cbsScn,datasheet=cSheet,force=T)
-saveDatasheet(cbsScn,cc,name=cSheet)
+saveDatasheet(cbsScn,cc,name=cSheet,append=F)
 datasheet(cbsScn,cSheet)
 
 dependency(cbsScn,spRes)

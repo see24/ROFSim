@@ -152,13 +152,13 @@ for (iteration in iterationSet) {
 
   #Note: assuming timestepSet is ordered low to high
   for (tt in 1:length(timestepSet)) {
-    #iteration=1;tt=4
+    #iteration=1;tt=1
     timestep=timestepSet[tt]
     if(tt==length(timestepSet)){
-      numSteps=0
+      numSteps=1
     }else{
       numSteps=timestepSet[tt+1]-timestep
-      if(numSteps<0){
+      if(numSteps<=0){
         stop("Bug: timestepSet should be sorted low to high.")
       }
     }
@@ -288,9 +288,9 @@ for (iteration in iterationSet) {
       )
       
       # Build df and save the datasheet
-      fds <- subset(fullDist@disturbanceMetrics,select=c(Range,anthroBuff,natDist,totalDist,fire_excl_anthro))
+      fds <- subset(fullDist@disturbanceMetrics,select=c(Range,Anthro,Fire,Total_dist,fire_excl_anthro))
       names(fds)[1]="RangeID"
-      fds <- gather(fds, MetricTypeID, Amount, anthroBuff:fire_excl_anthro, factor_key=FALSE)
+      fds <- gather(fds, MetricTypeID, Amount, Anthro:fire_excl_anthro, factor_key=FALSE)
       distMetricsTabDf <- fds
       distMetricsTabDf$Iteration <- iteration
       distMetricsTabDf$Timestep <- timestep
@@ -328,9 +328,8 @@ for (iteration in iterationSet) {
       if(is.null(doDemography)||doDemography){
         
         #TO DO: modify carbiouMetrics package so output of disturbanceMetrics can be fed directly to demographicRates            
-        covTableSim <- subset(fullDist@disturbanceMetrics,select=c(anthroBuff,natDist,totalDist,fire_excl_anthro,Range)) 
-        names(covTableSim)=c("Anthro","Fire","Total_dist","fire_excl_anthro","polygon")
-        covTableSim[,1:4]=covTableSim[,1:4]*100
+        covTableSim <- subset(fullDist@disturbanceMetrics,select=c(Anthro,Fire,Total_dist,fire_excl_anthro,Range)) 
+        names(covTableSim)[names(covTableSim)=="Range"]=c("polygon")
         covTableSim$area="FarNorth"
         
         #covTableSim$Anthro=90
@@ -340,9 +339,7 @@ for (iteration in iterationSet) {
           popGrowthPars = popGrowthPars,
           ignorePrecision = FALSE,
           returnSample = TRUE,
-          useQuantiles = TRUE,
-          interannualVar = FALSE
-        )     
+          useQuantiles = TRUE        )     
         
         if(is.element("N",names(pars))){
           pars=subset(pars,select=c(scnID,polygon,area,replicate,N))
@@ -367,7 +364,8 @@ for (iteration in iterationSet) {
                                             maxSadF = allParams$CaribouModelOptions$maxSadF,
                                             interannualVar=allParams$CaribouModelOptions$interannualVar[[1]],
                                             probOption=allParams$CaribouModelOptions$probOption))
-        
+     
+        str(pars)   
         # Build df and save the datasheet
         fds <- subset(pars,select=c(polygon,replicate,S_bar,R_bar,N,lambda))
         fds$replicate=as.numeric(gsub("V","",fds$replicate))
@@ -457,13 +455,13 @@ if(is.null(doCarHab)||doCarHab){
 if(is.null(doDistMetrics)||doDistMetrics){
   distMetricsTabMerged <- bind_rows(unlist(distMetricsTabAll, recursive = F))
   
-  distMetricsMerged <- bind_rows(unlist(distMetricsAll, recursive = F))
+  distMetricsMerged <- data.frame(bind_rows(unlist(distMetricsAll, recursive = F)))
   saveDatasheet(ssimObject = mySce, name = "OutputSpatialDisturbance", data = distMetricsMerged)
   
   #NOTE: I have change OutputHabitat table to OutputDisturbanceMetrics table, since we don't produce tabular habitat output, and we do produce tabular disturbance metric output.
   saveDatasheet(ssimObject = mySce, name = "OutputDisturbanceMetrics", data = distMetricsTabMerged)
   if(is.null(doDemography)||doDemography){
-    popMetricsTabMerged <- bind_rows(unlist(popMetricsTabAll, recursive = F))
+    popMetricsTabMerged <- data.frame(bind_rows(unlist(popMetricsTabAll, recursive = F)))
     
     saveDatasheet(ssimObject = mySce, name = "OutputPopulationMetrics", data = popMetricsTabMerged)
     #datasheet(mySce,"OutputPopulationMetrics")
