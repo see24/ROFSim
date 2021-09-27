@@ -443,23 +443,20 @@
     <layout name="coreforms_ProjectDatafeeds">
 
       <group name="Variables">
-        <item name="SpaDESSimObject" />
+        <!-- item name="SpaDESSimObject" / -->
         <!-- item name="Variable"/ -->
-        <item name="Rasters" />
-        <item name="Polygons" />
-      </group>
-
-      <group name="CaribouModel" displayName="Caribou Metrics">
+        <!-- item name="Rasters" / -->
+        <!-- item name="Polygons" / -->
         <item name="CaribouRange" />
-        <item name="Season" />
-        <item name="MetricType" />
+        <!-- item name="Season" / -->
+        <!-- item name="MetricType" /-->
 
       </group>
 
       <group name="Pipeline">
         <item name="core_Transformer" />
-        <item name="core_StageName" />
-        <item name="core_StageValue" />
+        <!-- item name="core_StageName" / -->
+        <!-- item name="core_StageValue" / -->
       </group>
 
     </layout>
@@ -477,8 +474,8 @@
         <group name="Inputs">
           <item name="SpaDESGeneral" displayName="General" itemTransformer="LoadSpadesOutputs" showIf="isParent" />
           <!--item name="SpaDESRuntimeVariables" /-->
-          <item name="SpaDESRuntimeRasters" itemTransformer="LoadSpadesOutputs" showIf="isParent" />
-          <item name="SpaDESRuntimeFiles" itemTransformer="LoadSpadesOutputs" showIf="isParent" />
+          <!--item name="SpaDESRuntimeRasters" itemTransformer="LoadSpadesOutputs" showIf="isParent" / -->
+          <!-- item name="SpaDESRuntimeFiles" itemTransformer="LoadSpadesOutputs" showIf="isParent" / -->
         </group>
 
         <group name="Outputs">
@@ -505,7 +502,7 @@
 
         <group name="Inputs">
           <item name="RunCaribouRange" itemTransformer="RunCaribouHabitatModel" showIf="isParent" />
-          <item name="CaribouDataSource" itemTransformer="RunCaribouHabitatModel" showIf="isParent" />
+          <!-- item name="CaribouDataSource" itemTransformer="RunCaribouHabitatModel" showIf="isParent" / -->
           <item name="CaribouModelOptions" itemTransformer="RunCaribouHabitatModel" showIf="isParent"/>
           <item name="RasterFile" itemTransformer="RunCaribouHabitatModel" showIf="isParent" />
           <item name="ExternalFile" itemTransformer="RunCaribouHabitatModel" showIf="isParent" />
