@@ -7,7 +7,7 @@ sourceData = "C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFData/Us
 
 inPath = "C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFModel/SpaDESOutputs/v1/ROF_CCSM4_RCP45_res125_rep01/outputs/ROF_CCSM4_RCP45_res125_rep01/ROF_CCSM4_RCP45_res125_rep01.qs"
 
-libName = "ROFDemo5"
+libName = "ROFDemo3"
 
 #delete(paste0(cDir,"/",libName,".ssim"),force=T)
 
@@ -17,20 +17,21 @@ cProj= project(cLib,"Demo1")
 
 datasheet(cProj)
 
+#TO DO: extract this info from input range map
 cSheet="ROFSim_CaribouRange"
 cc=data.frame(Name=c("James Bay","Missisa","Ozhiski","Nipigon","Pagwachuan"))
 saveDatasheet(cProj,cc,name=cSheet)
 datasheet(cProj,cSheet)
 
-cSheet="ROFSim_MetricType"
-cc=data.frame(Name=c("Anthro","Fire","Total_dist","fire_excl_anthro","survival","recruitment","N","lambda"))
-saveDatasheet(cProj,cc,name=cSheet)
-datasheet(cProj,cSheet)
+#cSheet="ROFSim_MetricType"
+#cc=data.frame(Name=c("Anthro","Fire","Total_dist","fire_excl_anthro","survival","recruitment","N","lambda"))
+#saveDatasheet(cProj,cc,name=cSheet)
+#datasheet(cProj,cSheet)
 
-cSheet="ROFSim_Season"
-cc=data.frame(Name=c("Winter","Spring","Summer","Fall"))
-saveDatasheet(cProj,cc,name=cSheet)
-datasheet(cProj,cSheet)
+#cSheet="ROFSim_Season"
+#cc=data.frame(Name=c("Winter","Spring","Summer","Fall"))
+#saveDatasheet(cProj,cc,name=cSheet)
+#datasheet(cProj,cSheet)
 
 cSheet="ROFSim_SpaDESSimObject"
 cc=data.frame(Name=c("burnMap","biomassMap","rstLCC","standAgeMap"),Description=c("cumulative burn map","total biomass (g/m^2) filtered by cohortData","Map of land cover classes","Map of time since transition"))
@@ -43,10 +44,10 @@ cc$SpaDESSimObject[cc$Name=="Stand Age"]="standAgeMap"
 saveDatasheet(cProj,cc,name=cSheet)
 datasheet(cProj,cSheet,optional=T)
 
-cSheet="ROFSim_Polygons"
-cc=data.frame(Name=c("Eskers","Linear Features","Ranges"))
-saveDatasheet(cProj,cc,name=cSheet)
-datasheet(cProj,cSheet)
+#cSheet="ROFSim_Polygons"
+#cc=data.frame(Name=c("Eskers","Linear Features","Ranges"))
+#saveDatasheet(cProj,cc,name=cSheet)
+#datasheet(cProj,cSheet)
 
 ############
 #scenarios - run control
@@ -63,44 +64,6 @@ cc=data.frame(MinimumIteration=1,MaximumIteration=1,MinimumTimestep=2020,Maximum
 saveDatasheet(rcScn,cc,name=cSheet)
 datasheet(rcScn,cSheet,optional=T)
 
-############
-#scenarios - import SpaDES
-spScn = scenario(cProj,"Import SpaDES")
-
-cSheet="core_Pipeline"
-cc=data.frame(StageNameID="Spades Import",RunOrder=1)
-saveDatasheet(spScn,cc,name=cSheet)
-datasheet(spScn,cSheet)
-
-dependency(spScn,rcScnS)
-
-cSheet="ROFSim_SpaDESGeneral"
-cc=data.frame(Iteration=c(1,2),Filename=c(inPath,gsub("rep01","rep03",inPath,fixed=T)))
-saveDatasheet(spScn,cc,name=cSheet)
-datasheet(spScn,cSheet)
-
-cSheet="ROFSim_SpaDESRuntimeRasters"
-cc=data.frame(RastersID=c("Stand Age"))
-saveDatasheet(spScn,cc,name=cSheet)
-datasheet(spScn,cSheet)
-
-datasheet(spScn,cSheet,optional=T)
-
-spRes = run(spScn)
-#TO DO: figure out how to landcover legend table, stand age colours, etc.
-
-############
-#scenarios - make LCC from SpaDES
-siScn = scenario(cProj,"Make LCC from SpaDES")
-dependency(siScn,spScn)
-mergeDependencies(siScn)=T
-
-cSheet="core_Pipeline"
-cc=data.frame(StageNameID="Generate LCC from Cohort Data",RunOrder=1)
-saveDatasheet(siScn,cc,name=cSheet)
-datasheet(siScn,cSheet)
-
-lccRes = run(siScn)
 
 ############
 #scenarios - caribou - current
@@ -173,6 +136,46 @@ cc=rbind(cc,data.frame(PolygonsID="Linear Features",Timestep=2030,File=paste0(so
 saveDatasheet(cbcScn,cc,name=cSheet,append=F)
 datasheet(cbcScn,cSheet)
 
+cbcRes = run(cbcScn)
+
+############
+#scenarios - import SpaDES
+spScn = scenario(cProj,"Import SpaDES")
+
+cSheet="core_Pipeline"
+cc=data.frame(StageNameID="Spades Import",RunOrder=1)
+saveDatasheet(spScn,cc,name=cSheet)
+datasheet(spScn,cSheet)
+
+dependency(spScn,rcScnS)
+
+cSheet="ROFSim_SpaDESGeneral"
+cc=data.frame(Iteration=c(1,2),Filename=c(inPath,gsub("rep01","rep03",inPath,fixed=T)))
+saveDatasheet(spScn,cc,name=cSheet)
+datasheet(spScn,cSheet)
+
+cSheet="ROFSim_SpaDESRuntimeRasters"
+cc=data.frame(RastersID=c("Stand Age"))
+saveDatasheet(spScn,cc,name=cSheet)
+datasheet(spScn,cSheet)
+
+datasheet(spScn,cSheet,optional=T)
+
+spRes = run(spScn)
+#TO DO: figure out how to landcover legend table, stand age colours, etc.
+
+############
+#scenarios - make LCC from SpaDES
+siScn = scenario(cProj,"Make LCC from SpaDES")
+dependency(siScn,spScn)
+mergeDependencies(siScn)=T
+
+cSheet="core_Pipeline"
+cc=data.frame(StageNameID="Generate LCC from Cohort Data",RunOrder=1)
+saveDatasheet(siScn,cc,name=cSheet)
+datasheet(siScn,cSheet)
+
+lccRes = run(siScn)
 
 ###############
 #Spades caribou scenario

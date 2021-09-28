@@ -67,6 +67,11 @@
                 <column name="Description" dataType="String" isOptional="True" />
                 <column name="SpaDESSimObject " displayName="SpaDES Sim Object" dataType="Integer" validationType="Datasheet" formula1="SpaDESSimObject" isOptional="True" />
               </columns>
+              <defaultRecords>
+                <record columns="Name" values="Eskers"/>
+               <record columns="Name" values="Linear Features"/>
+               <record columns="Name" values="Ranges"/>
+              </defaultRecords>
             </datasheet>
           </datasheets>
         </datafeed>
@@ -91,6 +96,12 @@
                 <column name="ProjectID" dataType="Integer" />
                 <column name="Name" dataType="String" allowDbNull="False" />
               </columns>
+              <defaultRecords>
+                <record columns="Name" values="Spring"/>
+               <record columns="Name" values="Summer"/>
+               <record columns="Name" values="Fall"/>
+               <record columns="Name" values="Winter"/>
+              </defaultRecords>
             </datasheet>
           </datasheets>
         </datafeed>
@@ -103,6 +114,16 @@
                 <column name="ProjectID" dataType="Integer" />
                 <column name="Name" dataType="String" allowDbNull="False" />
               </columns>
+              <defaultRecords>
+               <record columns="Name" values="Anthro"/>
+               <record columns="Name" values="Fire"/>
+               <record columns="Name" values="Total_dist"/>
+               <record columns="Name" values="fire_excl_anthro"/>
+               <record columns="Name" values="survival"/>
+               <record columns="Name" values="recruitment"/>
+               <record columns="Name" values="N"/>
+               <record columns="Name" values="lambda"/>
+              </defaultRecords>
             </datasheet>
           </datasheets>
         </datafeed>
@@ -521,16 +542,16 @@
 
     <!--Results transformer Layout-->
     <layout name="coreforms_ResultTransformers">
-      
-      <!--item name="corestime_ChartTransformer" /-->
+      <item name="corestime_ChartTransformer" />
       <item name="corestime_MapTransformer" />
-
     </layout>
 
-    <!--layout name="corestimeforms_Charts" configurationSheet="RunControl">
-      <item name="DataSummary" displayName="Data Summary" dataSheet="DataSummary" column="Value" variableSourceColumn="VariableID" />
-    </layout -->
-
+    <!--Charts Layout-->
+    <layout name="corestimeforms_Charts" configurationSheet="ROFSim_RunControl">
+      <item name="DisturbanceMetrics" displayName="Disturbance Metrics" dataSheet="OutputDisturbanceMetrics" column="Amount" filter="MetricTypeID" />
+      <item name="DemographicMetrics" displayName="Caribou Demography" dataSheet="OutputDemographicMetrics" column="Amount" filter="MetricTypeID" />
+    </layout>
+    
     <!--Maps Layout-->
     <layout name="corestimeforms_Maps" configurationSheet="ROFSim_RunControl">
       <!-- TODO add colorMapSource="stsim_TransitionType" -->
