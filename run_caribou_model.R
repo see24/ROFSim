@@ -290,7 +290,7 @@ for (iteration in iterationSet) {
       # Build df and save the datasheet
       fds <- subset(fullDist@disturbanceMetrics,select=c(Range,Anthro,Fire,Total_dist,fire_excl_anthro))
       names(fds)[1]="RangeID"
-      fds <- gather(fds, MetricTypeID, Amount, Anthro:fire_excl_anthro, factor_key=FALSE)
+      fds <- gather(fds, MetricTypeDistID, Amount, Anthro:fire_excl_anthro, factor_key=FALSE)
       distMetricsTabDf <- fds
       distMetricsTabDf$Iteration <- iteration
       distMetricsTabDf$Timestep <- timestep
@@ -308,12 +308,12 @@ for (iteration in iterationSet) {
                   overwrite = TRUE)
       
       # Build df and save the datasheet
-      distMetricsDf <- data.frame(MetricTypeID = names(fullDist@processedData), 
+      distMetricsDf <- data.frame(MetricTypeDistID = names(fullDist@processedData), 
                                   Iteration = iteration,
                                   Timestep = timestep)
       distMetricsDf$FileName <- file.path(e$TransferDirectory, 
                                           paste0(paste("OutputDistMetrics",
-                                                       distMetricsDf$MetricTypeID,
+                                                       distMetricsDf$MetricTypeDistID,
                                                        paste(renamedRange$Range, collapse = "_"),
                                                        "it", distMetricsDf$Iteration, 
                                                        "ts", distMetricsDf$Timestep,
@@ -349,28 +349,27 @@ for (iteration in iterationSet) {
         pars=merge(pars,rateSamples)
         
         #allParams$CaribouModelOptions$interannualVar[[1]]=F
-        pars = cbind(pars,popGrowthJohnson(pars$N0,numSteps=numSteps,Rec_bar=pars$R_bar,
+        pars = cbind(pars,popGrowthJohnson(pars$N0,numSteps=numSteps,R_bar=pars$R_bar,
                                             S_bar=pars$S_bar,
                                             P_0=allParams$CaribouModelOptions$P_0,
                                             P_K=allParams$CaribouModelOptions$P_K,
-                                            alpha=allParams$CaribouModelOptions$alpha,
-                                            beta=allParams$CaribouModelOptions$beta,
-                                            Kmultiplier=allParams$CaribouModelOptions$Kmultiplier,
+                                            a=allParams$CaribouModelOptions$alpha,
+                                            b=allParams$CaribouModelOptions$beta,
+                                            K=allParams$CaribouModelOptions$Kmultiplier,
                                             r_max=allParams$CaribouModelOptions$r_max,
-                                            sexRatio=allParams$CaribouModelOptions$sexRatio,
-                                            minRec=allParams$CaribouModelOptions$minRec,
-                                            maxRec=allParams$CaribouModelOptions$maxRec,
-                                            minSadF=allParams$CaribouModelOptions$minSadF,
-                                            maxSadF = allParams$CaribouModelOptions$maxSadF,
+                                            s=allParams$CaribouModelOptions$sexRatio,
+                                            l_R=allParams$CaribouModelOptions$minRec,
+                                            h_R=allParams$CaribouModelOptions$maxRec,
+                                            l_S=allParams$CaribouModelOptions$minSadF,
+                                            h_S = allParams$CaribouModelOptions$maxSadF,
                                             interannualVar=allParams$CaribouModelOptions$interannualVar[[1]],
                                             probOption=allParams$CaribouModelOptions$probOption))
      
-        str(pars)   
         # Build df and save the datasheet
         fds <- subset(pars,select=c(polygon,replicate,S_bar,R_bar,N,lambda))
         fds$replicate=as.numeric(gsub("V","",fds$replicate))
         names(fds)=c("RangeID","Replicate","survival","recruitment","N","lambda")
-        fds <- pivot_longer(fds, !(RangeID|Replicate),names_to="MetricTypeID",values_to="Amount")
+        fds <- pivot_longer(fds, !(RangeID|Replicate),names_to="MetricTypeDemogID",values_to="Amount")
         popMetricsTabDf <- fds
         popMetricsTabDf$Iteration <- iteration
         popMetricsTabDf$Timestep <- timestep
@@ -383,10 +382,8 @@ for (iteration in iterationSet) {
     #TO DO: handle polygon inputs for natural disturbance, anthro disturbance, and harvest
     #TO DO: check that disturbanceMetrics calculations handle multiple ranges properly
     #TO DO: accept anthropogenic disturbance polygons or rasters, and behave properly when they are missing.
-    
     #UI TO DO: add option to save elements of res@processedData
-    #UI TO DO: user really should not be free to specify names like MetricTypeID that are hard coded in the transformer.
-    
+
     #Note: This code is helpful for building and sharing reproducible examples for debugging. Leave in for now.
     #d=list(landCover=readAll(plcRas),esker=eskerFinal,natDist=readAll(natDistRas),anthroDist=NULL,
     #       harv=readAll(harvRas),linFeat=linFeatFinal,projectPoly=projectPoltmp,caribouRange=renamedRange,
@@ -458,13 +455,16 @@ if(is.null(doDistMetrics)||doDistMetrics){
   distMetricsMerged <- data.frame(bind_rows(unlist(distMetricsAll, recursive = F)))
   saveDatasheet(ssimObject = mySce, name = "OutputSpatialDisturbance", data = distMetricsMerged)
   
-  #NOTE: I have change OutputHabitat table to OutputDisturbanceMetrics table, since we don't produce tabular habitat output, and we do produce tabular disturbance metric output.
   saveDatasheet(ssimObject = mySce, name = "OutputDisturbanceMetrics", data = distMetricsTabMerged)
   if(is.null(doDemography)||doDemography){
     popMetricsTabMerged <- data.frame(bind_rows(unlist(popMetricsTabAll, recursive = F)))
-    
+   
+    #Force iteration to enable demographic plotting in case where we only have one landscape iteration.
+    #Need better solution for scenario where there are multiple demographic replicates for more than one landscape iteration.
+    if(length(unique(popMetricsTabMerged$Iteration))==1){
+      popMetricsTabMerged$Iteration=popMetricsTabMerged$Replicate
+    } 
     saveDatasheet(ssimObject = mySce, name = "OutputPopulationMetrics", data = popMetricsTabMerged)
-    #datasheet(mySce,"OutputPopulationMetrics")
   }
 }
 

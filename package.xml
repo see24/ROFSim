@@ -106,11 +106,11 @@
           </datasheets>
         </datafeed>
         
-        <datafeed name="MetricType" displayName="Disturbance Metric Types" dataScope="Project">
+        <datafeed name="MetricTypeDisturbance" displayName="Disturbance Metric Types" dataScope="Project">
           <datasheets>
-            <datasheet name="MetricType" displayName="Disturbance Metric Types" valueMember="MetricTypeID" displayMember="Name">
+            <datasheet name="MetricTypeDisturbance" displayName="Disturbance Metric Types" valueMember="MetricTypeDistID" displayMember="Name">
               <columns>
-                <column name="MetricTypeID" dataType="Integer" isPrimary="True" />
+                <column name="MetricTypeDistID" dataType="Integer" isPrimary="True" />
                 <column name="ProjectID" dataType="Integer" />
                 <column name="Name" dataType="String" allowDbNull="False" />
               </columns>
@@ -119,6 +119,20 @@
                <record columns="Name" values="Fire"/>
                <record columns="Name" values="Total_dist"/>
                <record columns="Name" values="fire_excl_anthro"/>
+              </defaultRecords>
+            </datasheet>
+          </datasheets>
+        </datafeed>
+
+        <datafeed name="MetricTypeDemography" displayName="Demographic Metric Types" dataScope="Project">
+          <datasheets>
+            <datasheet name="MetricTypeDemography" displayName="Demographic Metric Types" valueMember="MetricTypeDemogID" displayMember="Name">
+              <columns>
+                <column name="MetricTypeDemogID" dataType="Integer" isPrimary="True" />
+                <column name="ProjectID" dataType="Integer" />
+                <column name="Name" dataType="String" allowDbNull="False" />
+              </columns>
+              <defaultRecords>
                <record columns="Name" values="survival"/>
                <record columns="Name" values="recruitment"/>
                <record columns="Name" values="N"/>
@@ -127,7 +141,6 @@
             </datasheet>
           </datasheets>
         </datafeed>
-
 
         <!-- Scenario Datafeeds -->
 
@@ -387,8 +400,8 @@
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True" />
                 <column name="ScenarioID" dataType="Integer" />
                 <column name="RangeID" dataType="Integer" validationType="Datasheet" formula1="CaribouRange" allowDbNull="False" />
-                <column name="MetricTypeID" dataType="Integer" validationType="Datasheet" formula1="MetricType" allowDbNull="False" />
-                <column name="FileName" dataType="String" isExternalFile="True" isRaster="True" bandColumn="Band" bandFilterColumn="MetricTypeID" allowDbNull="False" filenameCode="mettype" />
+                <column name="MetricTypeDistID" dataType="Integer" validationType="Datasheet" formula1="MetricTypeDisturbance" allowDbNull="False" />
+                <column name="FileName" dataType="String" isExternalFile="True" isRaster="True" bandColumn="Band" bandFilterColumn="MetricTypeDistID" allowDbNull="False" filenameCode="mettype" />
                 <column name="Band" dataType="Integer" isOptional="True" />
               </columns>
             </datasheet>
@@ -404,7 +417,7 @@
                 <column name="Timestep" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="0" isOptional="True" />
                 <column name="ScenarioID" dataType="Integer" />
                 <column name="RangeID" dataType="Integer" validationType="Datasheet" formula1="CaribouRange" allowDbNull="False" />
-                <column name="MetricTypeID" dataType="Integer" validationType="Datasheet" formula1="MetricType" allowDbNull="False" />
+                <column name="MetricTypeDistID" dataType="Integer" validationType="Datasheet" formula1="MetricTypeDisturbance" allowDbNull="False" />
                 <column name="Amount" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0"/>
               </columns>
             </datasheet>
@@ -421,7 +434,7 @@
                 <column name="ScenarioID" dataType="Integer" />
                 <column name="RangeID" dataType="Integer" validationType="Datasheet" formula1="CaribouRange" allowDbNull="False" />
                 <column name="Replicate" dataType="Integer" />
-                <column name="MetricTypeID" dataType="Integer" validationType="Datasheet" formula1="MetricType" allowDbNull="False" />
+                <column name="MetricTypeDemogID" dataType="Integer" validationType="Datasheet" formula1="MetricTypeDemography" allowDbNull="False" />
                 <column name="Amount" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0"/>
               </columns>
             </datasheet>
@@ -548,8 +561,8 @@
 
     <!--Charts Layout-->
     <layout name="corestimeforms_Charts" configurationSheet="ROFSim_RunControl">
-      <item name="DisturbanceMetrics" displayName="Disturbance Metrics" dataSheet="OutputDisturbanceMetrics" column="Amount" filter="MetricTypeID" />
-      <item name="DemographicMetrics" displayName="Caribou Demography" dataSheet="OutputDemographicMetrics" column="Amount" filter="MetricTypeID" />
+      <item name="DisturbanceMetrics" displayName="Disturbance Metrics" dataSheet="OutputDisturbanceMetrics" column="Amount" filter="MetricTypeDistID" />
+      <item name="DemographicMetrics" displayName="Caribou Demography" dataSheet="OutputPopulationMetrics" column="Amount" filter="MetricTypeDemogID" />
     </layout>
     
     <!--Maps Layout-->
@@ -557,7 +570,7 @@
       <!-- TODO add colorMapSource="stsim_TransitionType" -->
       <item name="InputRastersMap" displayName="Rasters Variables" dataSheet="RasterFile" column="Filename" filter="RastersID" />
       <item name="OutputRastersMap" displayName="Habitat Use (Spatial)" dataSheet="OutputSpatialHabitat" column="FileName" filter="SeasonID" />
-      <item name="OutputRastersMap2" displayName="Disturbance (Spatial)" dataSheet="OutputSpatialDisturbance" column="FileName" filter="MetricTypeID" />
+      <item name="OutputRastersMap2" displayName="Disturbance (Spatial)" dataSheet="OutputSpatialDisturbance" column="FileName" filter="MetricTypeDistID" />
 
     </layout>
 

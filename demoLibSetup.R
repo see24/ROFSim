@@ -7,13 +7,13 @@ sourceData = "C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFData/Us
 
 inPath = "C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFModel/SpaDESOutputs/v1/ROF_CCSM4_RCP45_res125_rep01/outputs/ROF_CCSM4_RCP45_res125_rep01/ROF_CCSM4_RCP45_res125_rep01.qs"
 
-libName = "ROFDemo3"
+libName = "ROFDemo4"
 
 #delete(paste0(cDir,"/",libName,".ssim"),force=T)
 
 cLib = ssimLibrary(paste0(cDir,"/",libName),package="ROFSim")
 
-cProj= project(cLib,"Demo1")
+cProj= project(cLib,"Demo")
 
 datasheet(cProj)
 
@@ -22,16 +22,6 @@ cSheet="ROFSim_CaribouRange"
 cc=data.frame(Name=c("James Bay","Missisa","Ozhiski","Nipigon","Pagwachuan"))
 saveDatasheet(cProj,cc,name=cSheet)
 datasheet(cProj,cSheet)
-
-#cSheet="ROFSim_MetricType"
-#cc=data.frame(Name=c("Anthro","Fire","Total_dist","fire_excl_anthro","survival","recruitment","N","lambda"))
-#saveDatasheet(cProj,cc,name=cSheet)
-#datasheet(cProj,cSheet)
-
-#cSheet="ROFSim_Season"
-#cc=data.frame(Name=c("Winter","Spring","Summer","Fall"))
-#saveDatasheet(cProj,cc,name=cSheet)
-#datasheet(cProj,cSheet)
 
 cSheet="ROFSim_SpaDESSimObject"
 cc=data.frame(Name=c("burnMap","biomassMap","rstLCC","standAgeMap"),Description=c("cumulative burn map","total biomass (g/m^2) filtered by cohortData","Map of land cover classes","Map of time since transition"))
@@ -43,11 +33,6 @@ cc=data.frame(Name=c("Caribou Ranges","Harvest","Anthropogenic Disturbance","Nat
 cc$SpaDESSimObject[cc$Name=="Stand Age"]="standAgeMap"
 saveDatasheet(cProj,cc,name=cSheet)
 datasheet(cProj,cSheet,optional=T)
-
-#cSheet="ROFSim_Polygons"
-#cc=data.frame(Name=c("Eskers","Linear Features","Ranges"))
-#saveDatasheet(cProj,cc,name=cSheet)
-#datasheet(cProj,cSheet)
 
 ############
 #scenarios - run control
