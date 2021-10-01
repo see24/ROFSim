@@ -7,7 +7,7 @@ sourceData = "C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFData/Us
 
 inPath = "C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFModel/SpaDESOutputs/v1/ROF_CCSM4_RCP45_res125_rep01/outputs/ROF_CCSM4_RCP45_res125_rep01/ROF_CCSM4_RCP45_res125_rep01.qs"
 
-libName = "ROFDemo4"
+libName = "ROFDemo6"
 
 #delete(paste0(cDir,"/",libName,".ssim"),force=T)
 
@@ -71,8 +71,7 @@ saveDatasheet(cbScn,cc,name=cSheet)
 datasheet(cbScn,cSheet)
 
 cSheet="ROFSim_CaribouModelOptions"
-cc=data.frame(RunDistMetrics=T,RunCaribouHabitat=F,RunDemographicModel=T)
-#delete(cbScn,datasheet=cSheet,force=T)
+cc=data.frame(RunDistMetrics=T,RunCaribouHabitat=T,RunDemographicModel=T)
 saveDatasheet(cbScn,cc,name=cSheet)
 datasheet(cbScn,cSheet)
 
@@ -94,6 +93,8 @@ datasheet(cbScn,cSheet)
 
 dependency(cbScn,rcScn)
 datasheet(cbScn)
+
+cbRes = run(cbScn)
 
 #############
 #Caribou with change in anthropogenic disturbance
@@ -180,3 +181,5 @@ datasheet(cbsScn,cSheet)
 dependency(cbsScn,spRes)
 dependency(cbsScn,lccRes)
 mergeDependencies(cbsScn)=T
+
+cbsRes = run(cbsScn)

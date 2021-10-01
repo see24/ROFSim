@@ -333,17 +333,17 @@
                 <column name="survivalModelNumber" displayName="Survival Model Number" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="1" format="d" isOptional="True"/>
                 <column name="recruitmentModelNumber" displayName="Recruitment Model Number" dataType="Integer" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="1" format="d" isOptional="True"/>
                 <column name="InitialPopulation" displayName="Initial Population Size" dataType="Integer" defaultValue="1000" validationType="WholeNumber" validationCondition="GreaterEqual" formula1="1" format="d" isOptional="True"/>
-                <column name="P_0" displayName="P_0" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
-                <column name="P_K" displayName="P_K" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
-                <column name="alpha" displayName="alpha" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
-                <column name="beta" displayName="beta" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
-                <column name="Kmultiplier" displayName="Kmultiplier" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
-                <column name="r_max" displayName="r_max" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
-                <column name="sexRatio" displayName="sexRatio" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
-                <column name="minRec" displayName="minRec" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
-                <column name="maxRec" displayName="maxRec" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
-                <column name="minSadF" displayName="minSadF" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
-                <column name="maxSadF" displayName="maxSadF" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
+                <column name="P_0" displayName="P_0: Maximum recruitment multiplier" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
+                <column name="P_K" displayName="P_K: Recruitment multiplier at carrying capacity" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
+                <column name="a" displayName="a: Density dependence shape parameter" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
+                <column name="b" displayName="b: Allee effect parameter" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
+                <column name="K" displayName="K: Carrying capacity multiplier" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
+                <column name="r_max" displayName="r_max: Maximum population growth rate" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
+                <column name="s" displayName="s: Sex ratio." dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
+                <column name="l_R" displayName="l_R: Minimum recruitment" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
+                <column name="h_R" displayName="h_R: Maximum recruitment" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
+                <column name="l_S" displayName="l_S: Minimum survival" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
+                <column name="h_S" displayName="h_S: Maximum survival" dataType="Double" validationType="Decimal" validationCondition="GreaterEqual" formula1="0.0" isOptional="True" />
                 <column name="interannualVar" displayName="Interannual Variation" dataType="String" isOptional="True" />
                 <column name="probOption" displayName="probOption" dataType="String" isOptional="True"/>
               </columns>

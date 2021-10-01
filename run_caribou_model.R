@@ -95,12 +95,10 @@ timestepSet <- seq(GLOBAL_MinTimestep,GLOBAL_MaxTimestep,by=GLOBAL_RunControl$Ou
 #timestepSet <- timestepSet[timestepSet %in% uniqueTsFromData]
 
 # Default parameter values from R package
-
 argList = list(bufferWidth=NA,padProjPoly=NA,padFocal=NA,
                NumDemographicTrajectories=35,modelVersion=NA,survivalModelNumber=NA,recruitmentModelNumber=NA,
-               InitialPopulation=1000,P_0=NA,P_K=NA,alpha=NA,beta=NA,Kmultiplier=NA,r_max=NA,sexRatio=NA,
-               minRec=NA,maxRec=NA,minSadF=NA,maxSadF=NA,interannualVar="list(Rec_CV = 0.46, S_CV = 0.08696)",probOption=NA)
-#"list(Rec_CV = 0.46, S_CV = 0.08696)"
+               InitialPopulation=1000,P_0=NA,P_K=NA,a=NA,b=NA,K=NA,r_max=NA,s=NA,
+               l_R=NA,h_R=NA,l_S=NA,h_S=NA,interannualVar="list(R_CV = 0.46, S_CV = 0.08696)",probOption=NA)
 defaults= c(formals(demographicCoefficients),formals(disturbanceMetrics),formals(demographicRates),formals(popGrowthJohnson))
 
 for(i in 1:length(argList)){
@@ -266,7 +264,6 @@ for (iteration in iterationSet) {
       filter(Range %in% renamedRange$Range) 
 
     if(is.null(doDistMetrics)||doDistMetrics){
-
       if(is.null(harvRas)){
         combineAnthro=anthroDistRas
       }else{
@@ -324,15 +321,10 @@ for (iteration in iterationSet) {
       distMetricsAll[[paste0("it_",iteration)]][[paste0("ts_",timestep)]] <- 
         distMetricsDf
       
-
       if(is.null(doDemography)||doDemography){
-        
-        #TO DO: modify carbiouMetrics package so output of disturbanceMetrics can be fed directly to demographicRates            
         covTableSim <- subset(fullDist@disturbanceMetrics,select=c(Anthro,Fire,Total_dist,fire_excl_anthro,Range)) 
         names(covTableSim)[names(covTableSim)=="Range"]=c("polygon")
         covTableSim$area="FarNorth"
-        
-        #covTableSim$Anthro=90
         
         rateSamples <- demographicRates(
           covTable = covTableSim,
@@ -348,20 +340,19 @@ for (iteration in iterationSet) {
         
         pars=merge(pars,rateSamples)
         
-        #allParams$CaribouModelOptions$interannualVar[[1]]=F
         pars = cbind(pars,popGrowthJohnson(pars$N0,numSteps=numSteps,R_bar=pars$R_bar,
                                             S_bar=pars$S_bar,
                                             P_0=allParams$CaribouModelOptions$P_0,
                                             P_K=allParams$CaribouModelOptions$P_K,
-                                            a=allParams$CaribouModelOptions$alpha,
-                                            b=allParams$CaribouModelOptions$beta,
-                                            K=allParams$CaribouModelOptions$Kmultiplier,
+                                            a=allParams$CaribouModelOptions$a,
+                                            b=allParams$CaribouModelOptions$b,
+                                            K=allParams$CaribouModelOptions$K,
                                             r_max=allParams$CaribouModelOptions$r_max,
-                                            s=allParams$CaribouModelOptions$sexRatio,
-                                            l_R=allParams$CaribouModelOptions$minRec,
-                                            h_R=allParams$CaribouModelOptions$maxRec,
-                                            l_S=allParams$CaribouModelOptions$minSadF,
-                                            h_S = allParams$CaribouModelOptions$maxSadF,
+                                            s=allParams$CaribouModelOptions$s,
+                                            l_R=allParams$CaribouModelOptions$l_R,
+                                            h_R=allParams$CaribouModelOptions$h_R,
+                                            l_S=allParams$CaribouModelOptions$l_S,
+                                            h_S = allParams$CaribouModelOptions$h_S,
                                             interannualVar=allParams$CaribouModelOptions$interannualVar[[1]],
                                             probOption=allParams$CaribouModelOptions$probOption))
      
@@ -383,7 +374,9 @@ for (iteration in iterationSet) {
     #TO DO: check that disturbanceMetrics calculations handle multiple ranges properly
     #TO DO: accept anthropogenic disturbance polygons or rasters, and behave properly when they are missing.
     #UI TO DO: add option to save elements of res@processedData
-
+    #TO DO: speed up by using updateCaribou and implementing/using updateDisturbance to avoid repeat geospatial processing. 
+    #       Would need to id which layers change over time.
+    
     #Note: This code is helpful for building and sharing reproducible examples for debugging. Leave in for now.
     #d=list(landCover=readAll(plcRas),esker=eskerFinal,natDist=readAll(natDistRas),anthroDist=NULL,
     #       harv=readAll(harvRas),linFeat=linFeatFinal,projectPoly=projectPoltmp,caribouRange=renamedRange,
