@@ -561,8 +561,8 @@
 
     <!--Charts Layout-->
     <layout name="corestimeforms_Charts" configurationSheet="ROFSim_RunControl">
-      <item name="DisturbanceMetrics" displayName="Disturbance Metrics" dataSheet="OutputDisturbanceMetrics" column="Amount" filter="MetricTypeDistID" />
-      <item name="DemographicMetrics" displayName="Caribou Demography" dataSheet="OutputPopulationMetrics" column="Amount" filter="MetricTypeDemogID" />
+      <item name="DisturbanceMetrics" displayName="Disturbance Metrics" dataSheet="OutputDisturbanceMetrics" column="Amount" filter="MetricTypeDistID|RangeID" />
+      <item name="DemographicMetrics" displayName="Caribou Demography" dataSheet="OutputPopulationMetrics" column="Amount" filter="MetricTypeDemogID|RangeID" />
     </layout>
     
     <!--Maps Layout-->
