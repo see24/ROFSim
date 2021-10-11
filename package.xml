@@ -321,7 +321,8 @@
           <datasheets>
             <datasheet name="CaribouModelOptions" displayName="Caribou Model Options" isSingleRow="True">
               <columns>
-                <column name="ScenarioID" dataType="Integer" isPrimary="True" />
+                <column name="CaribouModelOptionsID" dataType="Integer" isPrimary="True" />
+                <column name="ScenarioID" dataType="Integer" />
                 <column name="RunDistMetrics" displayName="Run ECCC Disturbance Metrics" dataType="Boolean" />
                 <column name="RunDemographicModel" displayName="Run Aspatial Demographic Model" dataType="Boolean" />
                 <column name="RunCaribouHabitat" displayName="Run Caribou Habitat Model" dataType="Boolean" />

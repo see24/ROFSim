@@ -7,7 +7,7 @@ sourceData = "C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFData/Us
 
 inPath = "C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFModel/SpaDESOutputs/v1/ROF_CCSM4_RCP45_res125_rep01/outputs/ROF_CCSM4_RCP45_res125_rep01/ROF_CCSM4_RCP45_res125_rep01.qs"
 
-libName = "ROFDemo6"
+libName = "ROFDemo1"
 
 #delete(paste0(cDir,"/",libName,".ssim"),force=T)
 
@@ -183,3 +183,167 @@ dependency(cbsScn,lccRes)
 mergeDependencies(cbsScn)=T
 
 cbsRes = run(cbsScn)
+
+##########
+#add legend to landcover - after map is created in UI
+
+#lccRes = scenario(cProj,10)
+#install.packages("RColorBrewer")
+library(RColorBrewer)
+library(dplyr)
+library(readr)
+library(raster)
+
+# name of the map that needs a legend
+mapName <- "_Map1"
+
+# Setting path to custom legend
+legendPath <- "."
+fileName <- "colormap_mapID_ROFSim_InputRastersMap-IDtemplate.txt"
+fileNameMod <- "colormap_mapID_ROFSim_InputRastersMap-ID.txt"
+
+# get the list of charts to identify which one needs a legend
+myCharts <- datasheet(cProj, 
+                      name = "corestime_Maps", 
+                      includeKey = T)
+myCharts
+
+# ID value for map that needs legend is
+myChart <- filter(myCharts, Name == mapName)
+mapId <- myChart$MapID[1]
+mapId <- paste0("map", as.character(mapId))
+rasterId <- myChart$Criteria[1]
+rasterId <- abs(parse_number(rasterId))
+
+newFileName <- gsub("mapID", mapId, fileName)
+newFileName <- gsub("ID", as.character(rasterId), newFileName)
+
+# get the legend directory for the library
+libProperties <- ssimLibrary(cLib, summary = T)
+legendDir <- filter(libProperties, property == "External input files:")
+legendDir <- as.character(legendDir$value)
+legendDir <- paste0(legendDir,"\\Project-",as.character(projectId(cProj)))
+
+#example map
+filepath(cLib)
+scenarioId(lccRes)
+mapPath = paste0(filepath(cLib),".input/Scenario-",scenarioId(lccRes),"/ROFSim_RasterFile/PLC_it_1_ts_2020.tif")
+iMap = raster(mapPath)
+str(iMap@data)
+plot(iMap)
+fTab = freq(iMap)
+
+#edit legend file
+lTab = read.csv(paste(legendPath, fileName, sep="/"))
+names(lTab)=c("ID","RGB1","RGB2","RGB3","C","Label")
+lTab$ID = as.numeric(lTab$ID)
+lTab=subset(lTab,!is.na(RGB1))
+
+
+omitRare = subset(data.frame(fTab),count<1000)
+names(omitRare)=c("ID","frequency")
+merge(lTab,omitRare)
+
+#evergreens - 
+evergreens = subset(lTab,(grepl("evergreen",lTab$Label)|grepl("Evergreen",lTab$Label))&!grepl("Mixed",lTab$Label))
+evergreens = evergreens[order(-evergreens$ID),]
+evergreenCols = brewer.pal(nrow(evergreens),name="Greens")
+evergreenCols = col2rgb(evergreenCols)
+#evergreenCols= evergreenCols[,-1]
+evergreens$RGB1=evergreenCols[1,]
+evergreens$RGB2=evergreenCols[2,]
+evergreens$RGB3=evergreenCols[3,]
+evergreens$RGB1[grepl("Sparse NL",evergreens$Label,fixed=T)]=255
+evergreens$RGB2[grepl("Sparse NL",evergreens$Label,fixed=T)]=255
+evergreens$RGB3[grepl("Sparse NL",evergreens$Label,fixed=T)]=255
+
+
+lTab
+#mixed
+mix = subset(lTab,grepl("Mixed",lTab$Label))
+mix = mix[order(-mix$ID),]
+mixCols = brewer.pal(nrow(mix)+1,name="Oranges")
+mixCols = col2rgb(mixCols)
+mixCols=mixCols[,-1]
+mix$RGB1=mixCols[1,]
+mix$RGB2=mixCols[2,]
+mix$RGB3=mixCols[3,]
+
+#decid
+decid = subset(lTab,grepl("deciduous",lTab$Label)&!(grepl("mixed",lTab$Label)|grepl("Mixed",lTab$Label)))
+decid = decid[order(decid$ID),]
+decidCols = brewer.pal(nrow(decid)+1,name="Purples")
+decidCols = col2rgb(decidCols)
+decidCols=decidCols[,-1]
+decid$RGB1=decidCols[1,]
+decid$RGB2=decidCols[2,]
+decid$RGB3=decidCols[3,]
+
+#rare
+rare = subset(lTab,is.element(ID,omitRare$ID))
+rare$RGB1 = 35
+rare$RGB2 = 35
+rare$RGB3 = 35
+
+#wet
+wet = subset(lTab,grepl("Water",lTab$Label)|grepl("wet",lTab$Label)|grepl("Wet",lTab$Label)|grepl("bog",lTab$Label))
+wet = wet[order(wet$ID),]
+wetCols = brewer.pal(nrow(wet)+1,name="Blues")
+wetCols = col2rgb(wetCols)
+wetCols=wetCols[,-1]
+wet$RGB1=wetCols[1,]
+wet$RGB2=wetCols[2,]
+wet$RGB3=wetCols[3,]
+
+
+combo = rbind(evergreens,mix,decid,rare,wet)
+
+remainder = subset(lTab,!is.element(ID,combo$ID))
+remainder
+
+dryLow = subset(remainder,!grepl("young",remainder$Label,fixed=T)&!grepl("burns",remainder$Label,fixed=T)&!grepl("No Data",remainder$Label,fixed=T))
+dryLow = dryLow[order(dryLow$ID),]
+dryCols = brewer.pal(nrow(dryLow)+2,name="Greys")
+dryCols = col2rgb(dryCols)
+dryCols=dryCols[,-1]
+dryCols=dryCols[,-1]
+dryLow$RGB1=dryCols[1,]
+dryLow$RGB2=dryCols[2,]
+dryLow$RGB3=dryCols[3,]
+
+combo = rbind(evergreens,mix,decid,rare,wet,dryLow)
+
+remainder = subset(lTab,!is.element(ID,combo$ID))
+remainder
+remainder$RGB1[grepl("burns",remainder$Label)] = 197
+remainder$RGB2[grepl("burns",remainder$Label)] = 27
+remainder$RGB3[grepl("burns",remainder$Label)] = 138
+
+remainder$RGB1[grepl("young",remainder$Label)] = 250
+remainder$RGB2[grepl("young",remainder$Label)] = 159
+remainder$RGB3[grepl("young",remainder$Label)] = 181
+
+
+combo = rbind(remainder,evergreens,mix,decid,wet,dryLow,rare)
+
+lines = c("# Syncrosim Generated Provincial Land Cover Color Map (QGIS-compatible),,,,,",
+  "INTERPOLATION:DISCRETE")
+
+lines = c(lines,paste(combo$ID,combo$RGB1,combo$RGB2,combo$RGB3,combo$C,combo$Label,sep=","))
+
+fileConn<-file(paste(legendPath, fileNameMod, sep="/"))
+writeLines(lines, fileConn)
+close(fileConn)
+
+
+
+# copy the custom legend to the legend directory
+sourceFile <- paste(legendPath, fileNameMod, sep="/")
+destFile <- paste(legendDir, newFileName, sep = "/")
+file.copy(sourceFile, destFile, overwrite = T)
+
+# delete the temp folder to get rid of any cached bitmaps
+tempDir <- filter(libProperties, property == "Temporary files:")
+tempDir <- as.character(tempDir$value)
+unlink(tempDir, recursive = T, force = T)
+

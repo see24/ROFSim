@@ -1,0 +1,41 @@
+# Syncrosim Generated Provincial Land Cover Color Map (QGIS-compatible),,,,,
+INTERPOLATION:DISCRETE
+0,192,192,192,255,No Data
+1,0,145,84,255,Temperate/subpolar NL evergreen closed tree canopy
+10,193,246,16,255,Temperate/subpolar NL evergreen low density poorly drained
+11,83,161,117,255,Cold deciduous broad-leaved low to medium density
+12,66,172,0,255,Cold deciduous broad-leaved medium density young regenerating
+13,105,230,67,255,Mixed needle-leaved evergreen – cold deciduous low to medium density
+14,177,214,66,255, Mixed cold deciduous - needle-leaved evergreen low to medium density
+15,152,255,27,255, Low regenerating young mixed cover
+16,236,130,0,255, High-low shrub dominated
+17,215,169,29,255, Grassland
+18,209,205,67,255, Herb-shrub-bare cover
+19,167,47,111,255, Wetlands
+20,81,134,90,255, Sparse NL  Evergreen herb cover
+21,249,255,157,255, Polar grassland herb-shrub
+22,198,236,115,255, Shrub-herb-lichen-bare
+23,230,192,103,255, Herb-shrub poorly drained
+24,182,128,80,255, Lichen-shrub-herb-bare soil
+25,162,94,0,255, Low vegetation cover
+26,173,224,42,255, Cropland-woodland
+27,255,217,1,255, High biomass cropland
+28,255,243,1,255, Medium biomass cropland
+29,255,251,1,255, Low biomass cropland
+3,11,134,0,255,Mixed NL evergreen – cold deciduous closed tree canop
+30,75,120,255,255, Lichen barren
+31,37,171,237,255, Lichen-sedge-moss-low shrub wetland
+32,63,214,255,255, Lichen-spruce bog
+33,93,93,93,255, Rock outcrops
+34,216,128,111,255, Recent burns
+35,153,42,34,255, Old burns
+36,35,35,35,255, Urban and Built-up
+37,8,0,252,255, Water bodies
+38,75,72,183,255, Mixes of water and land
+39,229,229,229,255, Snow/ice
+4,153,247,36,255,Mixed NL evergreen – cold deciduous closed young tree canopy
+5,83,178,0,255,Mixed cold deciduous – NL evergreen closed tree canopy
+6,1,88,0,255,Temperate/subpolar NL evergreen medium densit moss-shrub  understory
+7,17,142,49,255,Temperate/subpolar NL evergreen medium density lichen-shrub understory
+8,35,178,0,255,Temperate/subpolar NL evergreen low density shrub-moss understory
+9,31,211,31,255,Temperate/subpolar NL evergreen low density lichen (rock) understory
