@@ -39,12 +39,11 @@ source(file.path(e$PackageDirectory, "helpers.R"))
 # Hardcoded reclass table
 lccClassTable = data.table(
   standLeading = c("pureCon_dense", "pureCon_open", "pureCon_sparse",
-                   "pureCon_sparse",
                    "pureDec_dense", "pureDec_open", "pureDec_sparse",
                    "mixed_dense", "mixed_open", "mixed_sparse"), 
-  LCCclass = c(1,1,8,8,
-               2,2,2, 
-               7,7,7)) # HARDCODED TO MATCH RESOURCE TYPES
+  LCCclass = c(13,13,13,
+               11,11,11, 
+               12,12,12)) # HARDCODED TO MATCH RESOURCE TYPES
 
 # SpaDES Info -------------------------------------------------------------
 
@@ -53,17 +52,11 @@ spadesDatasheet <- datasheet(ssimObject = mySce, name = "ROFSim_SpaDESGeneral")
 
 # If datasheet is not empty, get the path
 if(nrow(spadesDatasheet) == 0){
-  
   stop("No SpaDES files specified.")
-  
 } else {
-  
   if (sum(is.na(spadesDatasheet$Filename))>0){
-    
     stop("No SpaDES files specified.")
-    
   }
-  
 }
 
 # Run control -------------------------------------------------------------
@@ -112,7 +105,7 @@ rasterFiles <- datasheet(mySce, "RasterFile", lookupsAsFactors = FALSE,
 outputSheet <- data.frame()
 
 for (theIter in iterationSet){
-  #theIter=2
+  #theIter=1
   # Load the spades object 
   spadesObjectPath <- spadesDatasheet %>% 
     filter(Iteration == theIter) %>% 
@@ -131,10 +124,11 @@ for (theIter in iterationSet){
   # For now, reconstruct the relative paths based on basenames
   outputs$file <- file.path(dirname(spadesObjectPath), basename(outputs$file))
   
-  rstLCC <- spadesObject$rasterToMatch
+  #rstLCC <- spadesObject$rasterToMatch
+  rstLCC<-raster("C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/ROFData/Used/plc250.tif")
   
   for (ts in sort(unique(outputs$Timestep))){
-    #ts=2100
+    #ts=2020
     
     outputsFiltered <- outputs %>% 
       filter(Timestep == ts)
@@ -151,8 +145,6 @@ for (theIter in iterationSet){
     rstLCC <- raster::resample(rstLCC,
                                pixelGroupMap)
     
-    
-    
     # Make file name
     filePath <- file.path(tmp, paste0("PLC", "_", paste(paste0("it_",theIter), 
                                                         paste0("ts_",ts), sep = "_"), 
@@ -163,6 +155,9 @@ for (theIter in iterationSet){
                                              pixelGroupMap = pixelGroupMap,
                                              rstLCC = rstLCC,
                                              lccClassTable = lccClassTable)
+    
+    staticMask = !((rstLCC==11)|(rstLCC==12)|(rstLCC==13))
+    updated_LCC_tmp[staticMask]=rstLCC[staticMask]
     
     writeRaster(updated_LCC_tmp, overwrite = TRUE,
                 filename = filePath)

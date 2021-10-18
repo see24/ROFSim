@@ -222,7 +222,7 @@ for (iteration in iterationSet) {
     }, error = function(cond) { NULL })
 
     #If this raster contains something that looks like ages, interpret as time since natural disturbance.
-    if(cellStats(natDistRas,"max")>10){
+    if(!is.null(natDistRas)&&(cellStats(natDistRas,"max")>10)){
       distPersistence=optArg(allParams$CaribouModelOptions$DisturbancePersistence)
       if(is.null(distPersistence)){distPersistence=40}
       natDistRas=natDistRas<=distPersistence
@@ -404,7 +404,7 @@ for (iteration in iterationSet) {
         linFeatSave = NULL,
         saveOutput = NULL
       )
-      
+     
       ## Save to DATA folder
       writeRaster(res@habitatUse, bylayer = TRUE, format = "GTiff",
                   suffix = paste(names(res@habitatUse), 

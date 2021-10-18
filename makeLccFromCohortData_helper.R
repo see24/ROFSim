@@ -32,7 +32,7 @@ makeLCCfromCohortData <- function(cohortData,
                                   pixelGroupMap,
                                   rstLCC, 
                                   lccClassTable){
-  
+  #cohortData=cohort_data
   library(LandR)
   library(data.table)
   library(raster)
@@ -92,9 +92,9 @@ makeLCCfromCohortData <- function(cohortData,
   
   sparsenessMap <- ratify(sparsenessMap)
   rat <- raster::levels(sparsenessMap)[[1]]
-  rat$sparseness <- c("dense", 
+  rat$sparseness <- c("dense")#, 
                       #"open", 
-                      "sparse")
+                      #"sparse")
   levels(sparsenessMap) <- rat
   names(sparsenessMap) <- "sparsenessMap"
   sparsenessMapDT <- raster::unique(na.omit(data.table::data.table(
