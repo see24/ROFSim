@@ -128,7 +128,7 @@ if(!grepl("M",allParams$CaribouModelOptions$survivalModelNumber)){
 }
 
 # Run model ---------------------------------------------------------------
-envBeginSimulation(length(iterationSet) * length(timestepSet))
+progressBar(type = "begin", totalSteps = length(iterationSet) * length(timestepSet))
 
 # Empty list to start
 habitatUseAll <- NULL
@@ -162,7 +162,7 @@ for (iteration in iterationSet) {
     }
     print(iteration)
     print(timestep)
-    envReportProgress(iteration, timestep)
+    progressBar(type = "report", iteration, timestep)
     
     # Filter inputs based on iteration and timestep
     InputRastersNA <- filterInputs(subset(allParams$RasterFile,is.na(Timestep)), 
@@ -252,9 +252,21 @@ for (iteration in iterationSet) {
     }
     
     projectPol <- tryCatch({
-      st_read(filter(InputVectors, CaribouVarID == "ProjectShapeFileID")$File) %>% 
+      projectPol1 <- st_read(filter(InputVectors, CaribouVarID == "ProjectShapeFileID")$File) 
         # TO DO implement better checks: verify if Range/RANGE_NAME are there 
-        rename(Range = RANGE_NAME)
+      if("RANGE_NAME" %in% colnames(projectPol1)){
+        return(rename(projectPol1, Range = RANGE_NAME))
+      }
+      if("Range" %in% colnames(projectPol1)){
+        return(projectPol1)
+      } else {
+        if(nrow(projectPol1) == 1){
+          mutate(projectPol1, Range = allParams$RunCaribouRange$Range)
+        } else{
+          stop("Caribou range polygons must have a Range column")
+        }
+      }
+        
     }, error = function(cond) { NULL })
     
     # Rename range in expected format
@@ -461,4 +473,4 @@ if(is.null(doDistMetrics)||doDistMetrics){
   }
 }
 
-envEndSimulation()
+progressBar("end")
