@@ -1,4 +1,5 @@
-#install.packages("C:/Users/HughesJo/Documents/rsyncrosim_1.3.0.tar.gz",repos=NULL,type="source")
+#install.packages("C:/Users/HughesJo/Documents/rsyncrosim_1.3.1.tar.gz",repos=NULL,type="source")
+
 library(rsyncrosim)
 
 cDir = "C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFModel/UI"
@@ -139,7 +140,7 @@ datasheet(spScn,cSheet)
 dependency(spScn,rcScnS)
 
 cSheet="ROFSim_SpaDESGeneral"
-cc=data.frame(Iteration=c(1,2),Filename=c(inPath,gsub("rep01","rep02",inPath,fixed=T)))
+cc=data.frame(Iteration=c(1,2),Filename=c(inPath,gsub("rep02","rep04",inPath,fixed=T)))
 saveDatasheet(spScn,cc,name=cSheet)
 datasheet(spScn,cSheet)
 
