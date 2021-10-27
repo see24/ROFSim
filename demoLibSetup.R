@@ -5,9 +5,10 @@ cDir = "C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFModel/UI"
 
 sourceData = "C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFData/Used"
 
-inPath = "C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFModel/SpaDESOutputs/v1/ROF_CCSM4_RCP45_res125_rep01/outputs/ROF_CCSM4_RCP45_res125_rep01/ROF_CCSM4_RCP45_res125_rep01.qs"
+#inPath = "C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFModel/SpaDESOutputs/v1/ROF_CCSM4_RCP45_res125_rep01/outputs/ROF_CCSM4_RCP45_res125_rep01/ROF_CCSM4_RCP45_res125_rep01.qs"
+inPath = "C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFModel/SpaDESOutputs/v2/ROF_CNRM-ESM2-1_SSP585_res125_rep02/ROF_CNRM-ESM2-1_SSP585_res125_rep02.qs"
 
-libName = "ROFDemo"
+libName = "ROFDemo1"
 
 #delete(paste0(cDir,"/",libName,".ssim"),force=T)
 
@@ -36,10 +37,10 @@ datasheet(cProj,cSheet,optional=T)
 
 ############
 #scenarios - run control
-rcScnS = scenario(cProj,"Run Control 2020, 2100")
+rcScnS = scenario(cProj,"Run Control 2020, 2060")
 #TO DO: Ask Val how to get "Total Iterations" option
 cSheet="ROFSim_RunControl"
-cc=data.frame(MinimumIteration=1,MaximumIteration=2,MinimumTimestep=2020,MaximumTimestep=2100,OutputFrequency=10)
+cc=data.frame(MinimumIteration=1,MaximumIteration=2,MinimumTimestep=2020,MaximumTimestep=2060,OutputFrequency=10)
 saveDatasheet(rcScnS,cc,name=cSheet)
 datasheet(rcScnS,cSheet,optional=T)
 
@@ -55,6 +56,7 @@ datasheet(rcScn,cSheet,optional=T)
 
 cbScn = scenario(cProj,"Caribou - current")
 
+datasheet(cbScn)
 cSheet="core_Pipeline"
 cc=data.frame(StageNameID="Caribou Habitat",RunOrder=1)
 saveDatasheet(cbScn,cc,name=cSheet)
@@ -128,6 +130,7 @@ cbcRes = run(cbcScn)
 #scenarios - import SpaDES
 spScn = scenario(cProj,"Import SpaDES")
 
+datasheet(spScn)
 cSheet="core_Pipeline"
 cc=data.frame(StageNameID="Spades Import",RunOrder=1)
 saveDatasheet(spScn,cc,name=cSheet)
@@ -136,7 +139,7 @@ datasheet(spScn,cSheet)
 dependency(spScn,rcScnS)
 
 cSheet="ROFSim_SpaDESGeneral"
-cc=data.frame(Iteration=c(1,2),Filename=c(inPath,gsub("rep01","rep03",inPath,fixed=T)))
+cc=data.frame(Iteration=c(1,2),Filename=c(inPath,gsub("rep01","rep02",inPath,fixed=T)))
 saveDatasheet(spScn,cc,name=cSheet)
 datasheet(spScn,cSheet)
 
