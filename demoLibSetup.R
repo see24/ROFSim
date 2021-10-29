@@ -7,8 +7,9 @@ cDir = "C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFModel/UI"
 sourceData = "C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFData/Used"
 
 #inPath = "C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFModel/SpaDESOutputs/v1/ROF_CCSM4_RCP45_res125_rep01/outputs/ROF_CCSM4_RCP45_res125_rep01/ROF_CCSM4_RCP45_res125_rep01.qs"
-inPath = "C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFModel/SpaDESOutputs/v2/ROF_CNRM-ESM2-1_SSP585_res125_rep02/ROF_CNRM-ESM2-1_SSP585_res125_rep02.qs"
+iters = c("ROF_CNRM-ESM2-1_SSP585_res125_rep02","ROF_CNRM-ESM2-1_SSP370_res125_rep04")
 
+inPath = c("C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFModel/SpaDESOutputs/v2/iter/iter.qs")
 libName = "ROFDemo1"
 
 #delete(paste0(cDir,"/",libName,".ssim"),force=T)
@@ -31,7 +32,7 @@ saveDatasheet(cProj,cc,name=cSheet)
 datasheet(cProj,cSheet)
 
 cSheet="ROFSim_Rasters"
-cc=data.frame(Name=c("Caribou Ranges","Harvest","Anthropogenic Disturbance","Natural Disturbances","Provincial Land Cover","Stand Age"))
+cc=data.frame(Name=c("Caribou Ranges","Harvest","Anthropogenic Disturbance","Natural Disturbances","Provincial Land Cover","Stand Age","Leading Type"))
 cc$SpaDESSimObject[cc$Name=="Stand Age"]="standAgeMap"
 saveDatasheet(cProj,cc,name=cSheet)
 datasheet(cProj,cSheet,optional=T)
@@ -141,7 +142,7 @@ datasheet(spScn,cSheet)
 dependency(spScn,rcScnS)
 
 cSheet="ROFSim_SpaDESGeneral"
-cc=data.frame(Iteration=c(1,2),Filename=c(inPath,gsub("rep02","rep04",inPath,fixed=T)))
+cc=data.frame(Iteration=c(1,2),Filename=c(gsub("iter",iters[1],inPath,fixed=T),gsub("iter",iters[2],inPath,fixed=T)))
 saveDatasheet(spScn,cc,name=cSheet)
 datasheet(spScn,cSheet)
 
@@ -202,9 +203,10 @@ library(raster)
 
 #example map
 filepath(cLib)
+#lccRes = scenario(cProj,27)
 scenarioId(lccRes)
-mapPath = paste0(filepath(cLib),".input/Scenario-",scenarioId(lccRes),"/ROFSim_RasterFile/PLC_it_1_ts_2020.tif")
-iMap = raster(mapPath)
+#mapPath = paste0(filepath(cLib),".input/Scenario-",scenarioId(lccRes),"/ROFSim_RasterFile/PLC_it_1_ts_2020.tif")
+iMap = datasheetRaster(lccRes,"ROFSim_RasterFile",timestep=2020,iteration=1,subset=expression(RastersID=="Provincial Land Cover"))
 fTab = freq(iMap)
 fTab
 
@@ -213,8 +215,9 @@ mapName <- "ChangeView"
 
 # Setting path to custom legend
 legendPath <- "."
-fileName <- "colormap_mapID_ROFSim_InputRastersMap-IDtemplateB.txt"
+fileName <- "colormap_mapID_ROFSim_InputRastersMap-IDtemplateC.txt"
 fileNameMod <- "colormap_mapID_ROFSim_InputRastersMap-ID.txt"
+
 
 # get the list of charts to identify which one needs a legend
 myCharts <- datasheet(cProj, 
@@ -260,87 +263,7 @@ names(omitRare)=c("ID","frequency")
 merge(lTab,omitRare)
 
 lTab
-#evergreens -
-evergreens = subset(lTab,is.element(Label,c("Coniferous Forest","Coniferous Swamp")))
-evergreens = evergreens[order(-evergreens$ID),]
-evergreenCols = brewer.pal(nrow(evergreens)+1,name="Greens")
-evergreenCols = col2rgb(evergreenCols)
-evergreenCols= evergreenCols[,-1]
-evergreens$RGB1=evergreenCols[1,]
-evergreens$RGB2=evergreenCols[2,]
-evergreens$RGB3=evergreenCols[3,]
-#evergreens$RGB1=0
-#evergreens$RGB2=109
-#evergreens$RGB3=44
-
-lTab
-#mixed
-mix = subset(lTab,is.element(Label,c("Mixed Forest","Sparse Forest","Treed Fen","Tree Bog")))
-mix = mix[order(-mix$ID),]
-mixCols = brewer.pal(nrow(mix)+1,name="Oranges")
-mixCols = col2rgb(mixCols)
-mixCols=mixCols[,-1]
-mix$RGB1=mixCols[1,]
-mix$RGB2=mixCols[2,]
-mix$RGB3=mixCols[3,]
-
-#decid
-decid = subset(lTab,is.element(Label,c("Deciduous Forest","Deciduous Swamp")))
-decid = decid[order(-decid$ID),]
-decidCols = brewer.pal(nrow(decid)+1,name="Purples")
-decidCols = col2rgb(decidCols)
-decidCols=decidCols[,-1]
-decid$RGB1=decidCols[1,]
-decid$RGB2=decidCols[2,]
-decid$RGB3=decidCols[3,]
-
-combo = rbind(evergreens,mix,decid)
-
-lTab
-#wet
-wet = subset(lTab,is.element(Label,c("Water - Deep or Clear","Water - Shallow or Sedimented","Mudflats"))|grepl("Marsh",Label)|grepl("Swamp",Label)|grepl("Fen",Label)|grepl("Bog",Label))
-wet=subset(wet,!is.element(ID,combo$ID))
-wet = wet[order(-wet$ID),]
-wetCols = brewer.pal(nrow(wet)+1,name="Blues")
-wetCols = col2rgb(wetCols)
-wetCols=wetCols[,-1]
-wet$RGB1=wetCols[1,]
-wet$RGB2=wetCols[2,]
-wet$RGB3=wetCols[3,]
-
-
-combo = rbind(evergreens,mix,decid,wet)
-
-remainder = subset(lTab,!is.element(ID,combo$ID))
-remainder
-
-#dryLow = subset(remainder,!grepl("No Data",remainder$Label,fixed=T)&!grepl("Burns",remainder$Label,fixed=T)&!grepl("Regenerating Depletion",remainder$Label,fixed=T)&!grepl("Cloud and Shadow",remainder$Label,fixed=T)&!grepl("Other",remainder$Label,fixed=T)&!grepl("Tundra Heath",remainder$Label,fixed=T))
-#dryLow = dryLow[order(dryLow$ID),]
-#dryCols = brewer.pal(nrow(dryLow)+1,name="Greys")
-#dryCols = col2rgb(dryCols)
-#dryCols=dryCols[,-1]
-#dryLow$RGB1=dryCols[1,]
-#dryLow$RGB2=dryCols[2,]
-#dryLow$RGB3=dryCols[3,]
-
-combo = rbind(evergreens,mix,decid,wet)
-
-remainder = subset(lTab,!is.element(ID,combo$ID))
-remainder
-remainder$RGB1 = 0
-remainder$RGB2 = 0
-remainder$RGB3 = 0
-
-remainder$RGB1[grepl("Burns",remainder$Label)] = 197
-remainder$RGB2[grepl("Burns",remainder$Label)] = 27
-remainder$RGB3[grepl("Burns",remainder$Label)] = 138
-
-remainder$RGB1[grepl("Regenerating Depletion",remainder$Label)] = 250
-remainder$RGB2[grepl("Regenerating Depletion",remainder$Label)] = 159
-remainder$RGB3[grepl("Regenerating Depletion",remainder$Label)] = 181
-
-
-combo = rbind(evergreens,mix,decid,wet,remainder)
+combo = farNorthLandcover(lTab,omitRare)
 
 lines = c("# Syncrosim Generated Provincial Land Cover Color Map (QGIS-compatible),,,,,",
   "INTERPOLATION:DISCRETE")

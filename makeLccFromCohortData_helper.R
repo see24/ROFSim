@@ -80,12 +80,12 @@ makeLCCfromCohortData <- function(cohortData,
   sparsenessMap[!sparsenessMap[] %in% lccClassTable[["LCCclass"]]] <- NA
   
   sparse <- lccClassTable[["LCCclass"]][grep(pattern = "sparse", x = lccClassTable[["standLeading"]])]
-  #open <- lccClassTable[["LCCclass"]][grep(pattern = "open", x = lccClassTable[["standLeading"]])]
+  open <- lccClassTable[["LCCclass"]][grep(pattern = "open", x = lccClassTable[["standLeading"]])]
   dense <- lccClassTable[["LCCclass"]][grep(pattern = "dense", x = lccClassTable[["standLeading"]])]
   
   # dense = 1; open = 2; sparse =  3
   sparsenessMap[sparsenessMap[] %in% dense] <- -1
-  #sparsenessMap[sparsenessMap[] %in% open] <- -2
+  sparsenessMap[sparsenessMap[] %in% open] <- -2
   sparsenessMap[sparsenessMap[] %in% sparse] <- -3
   
   sparsenessMap <- -sparsenessMap
@@ -104,7 +104,7 @@ makeLCCfromCohortData <- function(cohortData,
   
   finalDT <- merge(finalDT, data.table(sparsenessMap = c(1,2,3), 
                                        sparseness = c("dense", 
-                                                      #"open", 
+                                                      "open", 
                                                       "sparse")),
                    by = "sparsenessMap", all.x = TRUE)
   finalDT[, standLeading  := paste(standLeading, sparseness, sep = "_")]
