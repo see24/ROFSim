@@ -250,15 +250,13 @@ for (iteration in iterationSet) {
     } else {
       linFeatFinal <- linFeatListPol
     }
-    
-    projectPol <- tryCatch({
-      projectPol1 <- st_read(filter(InputVectors, CaribouVarID == "ProjectShapeFileID")$File) 
-        # TO DO implement better checks: verify if Range/RANGE_NAME are there 
-      if("RANGE_NAME" %in% colnames(projectPol1)){
-        return(rename(projectPol1, Range = RANGE_NAME))
-      }
+
+    projectPol1 <- st_read(filter(InputVectors, CaribouVarID == "ProjectShapeFileID")$File) 
+    if("RANGE_NAME" %in% colnames(projectPol1)){
+      projectPol = rename(projectPol1, Range = RANGE_NAME)
+    }else{
       if("Range" %in% colnames(projectPol1)){
-        return(projectPol1)
+        projectPol = projectPol1
       } else {
         if(nrow(projectPol1) == 1){
           mutate(projectPol1, Range = allParams$RunCaribouRange$Range)
@@ -266,9 +264,8 @@ for (iteration in iterationSet) {
           stop("Caribou range polygons must have a Range column")
         }
       }
-        
-    }, error = function(cond) { NULL })
-    
+    }  
+
     # Rename range in expected format
     renamedRange <- rename(allParams$RunCaribouRange, coefRange = CoeffRange)
     
