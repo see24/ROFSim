@@ -12,7 +12,7 @@ farNorthLandcover<-function(lTab,omitRare=NULL){
   evergreens$RGB1=evergreenCols[1,]
   evergreens$RGB2=evergreenCols[2,]
   evergreens$RGB3=evergreenCols[3,]
-  evergreens$type="conifer"
+  evergreens$type="conifer dense"
   evergreens$type[grepl("Swamp",evergreens$Label)|grepl("Fen",evergreens$Label)|grepl("Bog",evergreens$Label)]="conifer sparse wet"
 
   lTab
@@ -25,8 +25,8 @@ farNorthLandcover<-function(lTab,omitRare=NULL){
   mix$RGB1=mixCols[1,]
   mix$RGB2=mixCols[2,]
   mix$RGB3=mixCols[3,]
-  mix$type="mixed"
-  mix$type[grepl("Sparse Treed",mix$Label,fixed=T)]="Sparse Treed"
+  mix$type="mixed dense"
+  mix$type[grepl("Sparse Treed",mix$Label,fixed=T)]="mixed sparse"
   
   #decid
   decid = subset(lTab,grepl("Deciduous",lTab$Label))
@@ -37,8 +37,8 @@ farNorthLandcover<-function(lTab,omitRare=NULL){
   decid$RGB1=decidCols[1,]
   decid$RGB2=decidCols[2,]
   decid$RGB3=decidCols[3,]
-  decid$type="deciduous"
-  decid$type[grepl("Swamp",decid$Label)]="Deciduous Swamp"
+  decid$type="deciduous dense"
+  decid$type[grepl("Swamp",decid$Label)]="deciduous sparse wet"
   
   if(is.null(omitRare)){
     rare = subset(lTab,is.element(ID,"fred"))
@@ -197,7 +197,7 @@ nationalLandcover<-function(lTab,omitRare=NULL){
   evergreens$RGB2[grepl("Sparse NL",evergreens$Label,fixed=T)]=255
   evergreens$RGB3[grepl("Sparse NL",evergreens$Label,fixed=T)]=255
   evergreens$type[grepl("closed",evergreens$Label)]="conifer dense"
-  evergreens$type[grepl("medium",evergreens$Label)]="conifer medium"
+  evergreens$type[grepl("medium",evergreens$Label)]="conifer open"
   evergreens$type[grepl("Sparse",evergreens$Label)|grepl("low",evergreens$Label)]="conifer sparse"
   
   lTab
@@ -210,7 +210,7 @@ nationalLandcover<-function(lTab,omitRare=NULL){
   mix$RGB1=mixCols[1,]
   mix$RGB2=mixCols[2,]
   mix$RGB3=mixCols[3,]
-  mix$type="mixed low/med"
+  mix$type="mixed sparse"
   mix$type[grepl("closed",mix$Label)]="mixed dense"
 
   #decid
@@ -223,7 +223,7 @@ nationalLandcover<-function(lTab,omitRare=NULL){
   decid$RGB2=decidCols[2,]
   decid$RGB3=decidCols[3,]
   decid$type="deciduous"
-  decid$type="decid low/med"
+  decid$type="decid sparse"
   decid$type[grepl("closed",decid$Label)]="decid dense"
   
   if(is.null(omitRare)){

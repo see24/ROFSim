@@ -36,22 +36,40 @@ myDatasheetsNames <- myDatasheetsFiltered$name
 source(file.path(e$PackageDirectory, "makeLCCFromCohortData_helper.R"))
 source(file.path(e$PackageDirectory, "helpers.R"))
 
-# Hardcoded reclass table
+names(spadesObject)
+outLCC<-raster("C:/Users/HughesJo/Documents/gitprojects/ChurchillAnalysis/inputNV/Provincial-Landcover-2000/FarNorthLandCover/Version 1.4/TIF Format/New folder/Class/FarNorth_LandCover_Group_RoF.tif")
+
+inRat = levels(outLCC)[[1]]
+
+inRat[1:12,]
+
+# Output classes - in terms of outLCC
+inRat
+
 lccClassTable = data.table(
   standLeading = c("pureCon_dense", "pureCon_open", "pureCon_sparse",
-                   "pureDec_dense", "pureDec_open", "pureDec_sparse",
-                   "mixed_dense", "mixed_open", "mixed_sparse"), 
+                   "pureDec_dense","pureDec_open", "pureDec_sparse",
+                   "mixed_dense","mixed_open", "mixed_sparse"), 
   LCCclass = c(1,2,3,
                4,5,6, 
                7,8,9)) # HARDCODED TO MATCH RESOURCE TYPES
 
-leadingClassTable = data.table(
-  standLeading = c("pureCon_dense", "pureCon_open", "pureCon_sparse",
-                   "pureDec_dense", "pureDec_open", "pureDec_sparse",
-                   "mixed_dense", "mixed_open", "mixed_sparse"), 
-  LCCclass = c(1,2,3,
-               4,5,6, 
-               7,8,9)) # HARDCODED TO MATCH RESOURCE TYPES
+#sparseness classes - in terms of SpaDES far north landcover classes
+legendPath <- "."
+source(paste0(legendPath,"/legendHelpers.R"))
+fileName <- "colormap_mapID_ROFSim_InputRastersMap-IDtemplateC.txt"
+lTab = read.csv(paste(legendPath, fileName, sep="/"))
+names(lTab)=c("ID","RGB1","RGB2","RGB3","C","Label")
+lTab$ID = as.numeric(lTab$ID)
+lTab=subset(lTab,!is.na(RGB1))
+cTab = farNorthLandcover(lTab)
+
+lccSparsenessTable = subset(cTab,select=c("ID","type"))
+lccSparsenessTable$type[lccSparsenessTable$type=="young"]="young dense"
+
+names(lccSparsenessTable)=c("LCCclass","sparseness")
+lccSparsenessTable=subset(lccSparsenessTable,(grepl("sparse",sparseness)|grepl("dense",sparseness)|grepl("open",sparseness)))
+
 
 # SpaDES Info -------------------------------------------------------------
 
@@ -119,9 +137,24 @@ for (theIter in iterationSet){
     filter(Iteration == theIter) %>% 
     pull(Filename)
   #sort( sapply(ls(),function(x){object.size(get(x))})) 
-  rstLCC=NULL;spadesObject=NULL
+  spadesObject=NULL
   spadesObject <- qs::qread(spadesObjectPath)
   
+  preamblePath = strsplit(spadesObjectPath,"/",fixed=T)[[1]]
+  typeBit = preamblePath[length(preamblePath)]
+  preamblePath = preamblePath[1:(length(preamblePath)-2)]
+
+  typeBit = paste0("simOutPreamble_",typeBit)
+  typeBit = gsub("_SSP","_",typeBit,fixed=T)
+  typeBit = strsplit(typeBit,"_",fixed=T)[[1]]
+  typeBit = typeBit[1:(length(typeBit)-2)]  
+  typeBit=paste0(paste(typeBit,collapse="_"),".qs")
+  spadesPreamble<-qs::qread(paste0(c(preamblePath,typeBit),collapse="/"))
+  rstLCC <- spadesPreamble$LCC
+  rm(spadesPreamble)
+  #freq(rstLCC)
+  freq(outLCC)
+    
   # Filter them
   outputs <- outputs(spadesObject) %>% 
     make_paths_relative("outputs") %>% 
@@ -132,10 +165,7 @@ for (theIter in iterationSet){
   # For now, reconstruct the relative paths based on basenames
   outputs$file <- file.path(dirname(spadesObjectPath), basename(outputs$file))
   
-  rstLCC <- spadesObject$rasterToMatch
-  #rstLCC<-raster("C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/ROFData/Used/plc250.tif")
-  #rstLCC<-raster("C:/Users/HughesJo/Documents/gitprojects/ChurchillAnalysis/inputNV/Provincial-Landcover-2000/FarNorthLandCover/Version 1.4/TIF Format/New folder/Class")
-  
+
   for (ts in sort(unique(outputs$Timestep))){
     #ts=2020
     print(paste(theIter,ts))
@@ -153,11 +183,9 @@ for (theIter in iterationSet){
                               pull(file))
     names(pixelGroupMap) <- "pixelGroup"
     rstLCC <- raster::resample(rstLCC,
-                               pixelGroupMap)
-    rstLeading=rstLCC
-    rstLeading[is.na(pixelGroupMap)]=NA
-    rstLeading[!is.na(rstLeading)]=9
-    
+                               pixelGroupMap,method="ngb")
+
+    outLCC <- raster::resample(outLCC,pixelGroupMap,method="ngb")
     # Make file name
     filePathLeading <- file.path(tmp, paste0("Leading", "_", paste(paste0("it_",theIter), 
                                                         paste0("ts_",ts), sep = "_"), 
@@ -169,15 +197,18 @@ for (theIter in iterationSet){
     # Populate sheet
     updated_Leading_tmp <- makeLCCfromCohortData(cohortData = cohort_data,
                                              pixelGroupMap = pixelGroupMap,
-                                             rstLCC = rstLeading,
-                                             lccClassTable = leadingClassTable)
+                                             rstLCC = rstLCC,
+                                             lccClassTable = lccClassTable,
+                                             lccSparsenessTable=lccSparsenessTable)
+    
+    #freq(updated_Leading_tmp)
     
     #staticMask = !((rstLCC==11)|(rstLCC==12)|(rstLCC==13))
     #updated_LCC_tmp[staticMask]=rstLCC[staticMask]
     writeRaster(updated_Leading_tmp, overwrite = TRUE,
                 filename = filePathLeading)
 
-    writeRaster(rstLCC, overwrite = TRUE,
+    writeRaster(outLCC, overwrite = TRUE,
                 filename = filePathLCC)
     
     rm(cohort_data);rm(pixelGroupMap);rm(updated_LCC_tmp);rm(updated_Leading_tmp)
@@ -192,7 +223,7 @@ for (theIter in iterationSet){
     outputSheet <- bind_rows(outputSheet, tmpsheet)
     
   }
-  rstLCC=NULL
+  #rstLCC=NULL
   #sort( sapply(ls(),function(x){object.size(get(x))})) 
 }
 
