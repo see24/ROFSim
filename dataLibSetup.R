@@ -86,8 +86,13 @@ cc <- rbind(cc, data.frame(PolygonsID = "Linear Features",
                            File = file.path(rootPth, "utilities.shp")))
 cc <- rbind(cc, data.frame(PolygonsID = "Ranges", 
                            File = file.path(rootPth, "projectPoly.shp")))
+cc$Timestep <- NA
 cc <- rbind(cc, data.frame(PolygonsID = "Linear Features", 
+                           Timestep = 2020,
                            File = file.path(rootPth, "roads.shp")))
+cc <- rbind(cc, data.frame(PolygonsID = "Linear Features", 
+                           Timestep = 2040,
+                           File = file.path(rootPth, "esker.shp")))
 saveDatasheet(cbScn, cc, name = cSheet, append = FALSE)
 
 dependency(cbScn, rcScn)
