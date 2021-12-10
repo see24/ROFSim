@@ -52,26 +52,26 @@ allParams <- lapply(myDatasheetsNames, loadDatasheet)
 names(allParams) <- myDatasheetsNames
 
 # Modify the source data table
-allParams$CaribouDataSourceWide <- allParams$CaribouDataSource %>% 
-  pivot_longer(values_to = "VarID", names_to = "CaribouVarID", 
-               cols=tidyselect::all_of(names(allParams$CaribouDataSource))) %>% 
-  rowwise() %>% 
-  mutate(type=ifelse(grepl("Raster", CaribouVarID, fixed=TRUE), "raster", "shapefile")) %>% 
+allParams$CaribouDataSourceWide <- allParams$CaribouDataSource %>%
+  pivot_longer(values_to = "VarID", names_to = "CaribouVarID",
+               cols=tidyselect::all_of(names(allParams$CaribouDataSource))) %>%
+  rowwise() %>%
+  mutate(type=ifelse(grepl("Raster", CaribouVarID, fixed=TRUE), "raster", "shapefile")) %>%
   ungroup() %>% drop_na() %>% as.data.frame()
 
 # Get variables -----------------------------------------------------------
 
 if (nrow(allParams$RasterFile > 0)){
-  allParams$RasterFile <- allParams$RasterFile %>% 
-    left_join(filter(allParams$CaribouDataSourceWide, type=="raster"), 
-              by = c("RastersID" = "VarID")) %>% 
+  allParams$RasterFile <- allParams$RasterFile %>%
+    left_join(filter(allParams$CaribouDataSourceWide, type=="raster"),
+              by = c("RastersID" = "VarID")) %>%
     as.data.frame()
 }
 
 if (nrow(allParams$ExternalFile > 0)){
-  allParams$ExternalFile <- allParams$ExternalFile %>% 
-    left_join(filter(allParams$CaribouDataSourceWide, type == "shapefile"), 
-              by = c("PolygonsID" = "VarID")) %>% 
+  allParams$ExternalFile <- allParams$ExternalFile %>%
+    left_join(filter(allParams$CaribouDataSourceWide, type == "shapefile"),
+              by = c("PolygonsID" = "VarID")) %>%
     as.data.frame()
 }
 
@@ -128,13 +128,15 @@ if(!grepl("M",allParams$CaribouModelOptions$survivalModelNumber)){
 }
 
 # Run model ---------------------------------------------------------------
-envBeginSimulation(length(iterationSet) * length(timestepSet))
+progressBar(type = "begin", totalSteps = length(iterationSet) * length(timestepSet))
 
-# Empty list to start
-habitatUseAll <- NULL
-distMetricsAll <- NULL
-distMetricsTabAll <- NULL
-popMetricsTabAll <- NULL
+# Avoid growing list to help memory allocation time
+habitatUseAll <- vector("list", length = iterationSet)
+habitatUseAll <- lapply(habitatUseAll, 
+                        function(x){vector("list", length = length(timestepSet))})
+distMetricsAll <- habitatUseAll
+distMetricsTabAll <- habitatUseAll
+popMetricsTabAll <- habitatUseAll
 
 for (iteration in iterationSet) {
   if(is.null(doDemography)||doDemography){
@@ -149,7 +151,7 @@ for (iteration in iterationSet) {
   }  
 
   #Note: assuming timestepSet is ordered low to high
-  for (tt in 1:length(timestepSet)) {
+  for (tt in seq_along(timestepSet)) {
     #iteration=1;tt=1
     timestep=timestepSet[tt]
     if(tt==length(timestepSet)){
@@ -188,7 +190,7 @@ for (iteration in iterationSet) {
     # TO DO: need better way of recognizing landcover class types - maybe just require user to specify? # of classes assumptions will potentially cause trouble on reduced landscapes where not all classes are represented.
     if ((max(values(plcRas), na.rm = TRUE) <= 9)){
       warning(paste0("Assuming landcover classes are: ",paste(paste(resTypeCode$ResourceType,resTypeCode$code),collapse=",")))
-    }else if(is.element((max(values(plcRas), na.rm = TRUE)),c(29,30))){
+    }else if(is.element((max(values(plcRas), na.rm = TRUE)), c(28:30))){
       #TO DO: add PLC legend file to caribouMetrics package, and report here.
       warning(paste0("Assuming Ontario provincial landcover classes: ",paste(paste(plcToResType$ResourceType,plcToResType$PLCCode),collapse=",")))
       plcRas[plcRas==30]=29
@@ -202,16 +204,10 @@ for (iteration in iterationSet) {
     
     eskerRas <- tryCatch({
       raster(filter(InputRasters, CaribouVarID == "EskerRasterID")$File)
-    }, error = function(cond) { NULL })
-    eskerPol <- tryCatch({
-      st_read(filter(InputVectors, CaribouVarID == "EskerShapeFileID")$File)
-    }, error = function(cond) { NULL })
+    }, error = function(cond) { stop("Eskers are required")})
     
-    if(is.null(eskerPol)){
+    # always use raster esker since it has been converted to density
       eskerFinal <- eskerRas
-    } else {
-      eskerFinal <- eskerPol
-    }
     
     #ageRas <- tryCatch({
     #  raster(filter(InputRasters, CaribouVarID == "AgeRasterID")$File)
@@ -240,16 +236,9 @@ for (iteration in iterationSet) {
       filtered <- filter(InputRasters, CaribouVarID == "LinearFeatureRasterID")$File
       linFeatListRas <- lapply(filtered, raster)
     }, error = function(cond) { NULL })
-    linFeatPol <- tryCatch({
-      filtered <- filter(InputVectors, CaribouVarID == "LinearFeatureShapeFileID")$File
-      linFeatListPol <- lapply(filtered, st_read)
-    }, error = function(cond) { NULL })
-    
-    if(length(linFeatPol) == 0){
+
+    # don't use line linear feature because the raster has been processed
       linFeatFinal <- linFeatListRas
-    } else {
-      linFeatFinal <- linFeatListPol
-    }
     
     projectPol <- tryCatch({
       st_read(filter(InputVectors, CaribouVarID == "ProjectShapeFileID")$File) %>% 
@@ -274,6 +263,7 @@ for (iteration in iterationSet) {
         }
       }
       
+      #TODO: change to use preppedData list
       fullDist <- disturbanceMetrics(
         landCover=!is.na(plcRas),
         natDist = natDistRas,

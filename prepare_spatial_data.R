@@ -113,7 +113,11 @@ projectPolyPth <- projectPolyPth$File
 
 
 linFeatsList <- filter(allParams$ExternalFile, PolygonsID == "Linear Features") %>% 
+  rename(ID = PolygonsID) %>% 
+  bind_rows(filter(allParams$RasterFile, RastersID == "Linear Features") %>% 
+              rename(ID = RastersID)) %>% 
   mutate(Timestep = ifelse(is.na(Timestep), 0, Timestep)) %>%
+  rename(PolygonsID = ID) %>% 
   split(.$Timestep)
 
 # add linFeats in 0 Timestep to all the other timesteps
@@ -158,13 +162,16 @@ rasterFiles <- rasterFiles %>%
   pull(Filename) %>% as.list() %>% 
   set_names(rasterFiles$names)
 
-allSpatialInputs <- loadSpatialInputs(projectPoly = projectPolyPth, 
-                                      refRast = landCoverPth,
-                                      inputsList = splice(linFeatsListLines,
-                                                          linFeatsListRast,
-                                                          rasterFiles, 
-                                                          polyFiles),
-                                      convertToRast = names(linFeatsListRast))
+allSpatialInputs <- loadSpatialInputs(
+  projectPoly = projectPolyPth, 
+  refRast = landCoverPth,
+  inputsList = splice(linFeatsListLines,
+                      linFeatsListRast,
+                      rasterFiles, 
+                      polyFiles),
+  convertToRast = c(names(linFeatsListRast), 
+                    names(polyFiles)[which(grepl("Esker", names(polyFiles)))])
+)
 
 # walk2(allSpatialInputs, names(allSpatialInputs), ~plot(.x, main = .y))
 
