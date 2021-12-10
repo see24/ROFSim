@@ -33,7 +33,8 @@ saveDatasheet(cProj, cc, name = cSheet)
 
 cSheet <- "ROFSim_Rasters"
 cc <- data.frame(Name = c("Harvest", "Anthropogenic Disturbance",
-                          "Natural Disturbance", "Provincial Land Cover"))
+                          "Natural Disturbance", "Provincial Land Cover", 
+                          "Linear Features"))
 saveDatasheet(cProj, cc, name = cSheet)
 
 # scenarios - run control
@@ -86,13 +87,9 @@ cc <- rbind(cc, data.frame(PolygonsID = "Linear Features",
                            File = file.path(rootPth, "utilities.shp")))
 cc <- rbind(cc, data.frame(PolygonsID = "Ranges", 
                            File = file.path(rootPth, "projectPoly.shp")))
-cc$Timestep <- NA
 cc <- rbind(cc, data.frame(PolygonsID = "Linear Features", 
-                           Timestep = 2020,
                            File = file.path(rootPth, "roads.shp")))
-cc <- rbind(cc, data.frame(PolygonsID = "Linear Features", 
-                           Timestep = 2040,
-                           File = file.path(rootPth, "esker.shp")))
+
 saveDatasheet(cbScn, cc, name = cSheet, append = FALSE)
 
 dependency(cbScn, rcScn)
@@ -114,6 +111,10 @@ cc <- rbind(cc, data.frame(RastersID = "Harvest",
                            Filename = file.path(rootPth, "anthroDist.tif")))
 cc <- rbind(cc, data.frame(RastersID = "Provincial Land Cover", 
                            Filename = file.path(rootPth, "landCover.tif")))
+cc$Timestep <- NA
+cc <- rbind(cc, data.frame(RastersID = "Harvest", 
+                           Timestep = 2040,
+                           Filename = file.path(rootPth, "linFeatTif.tif")))
 saveDatasheet(datScn, cc, name = cSheet, append = FALSE)
 
 cSheet <- "ROFSim_ExternalFile"
@@ -124,8 +125,13 @@ cc <- rbind(cc, data.frame(PolygonsID = "Linear Features",
                            File = file.path(rootPth, "utilities.shp")))
 cc <- rbind(cc, data.frame(PolygonsID = "Ranges", 
                            File = file.path(rootPth, "projectPoly.shp")))
+cc$Timestep <- NA
 cc <- rbind(cc, data.frame(PolygonsID = "Linear Features", 
+                           Timestep = 2020,
                            File = file.path(rootPth, "roads.shp")))
+cc <- rbind(cc, data.frame(PolygonsID = "Linear Features", 
+                           Timestep = 2040,
+                           File = file.path(rootPth, "esker.shp")))
 saveDatasheet(datScn, cc, name = cSheet, append = FALSE)
 
 dependency(datScn, rcScn)

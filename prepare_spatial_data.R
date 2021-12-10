@@ -8,6 +8,7 @@ library(raster)
 library(sf)
 library(dplyr)
 library(tidyr)
+library(purrr)
 
 localDebug = F
 if(!localDebug){
@@ -78,12 +79,28 @@ allParams$CaribouDataSourceWide <- allParams$CaribouDataSource %>%
 
 # get landcover from first timestep
 landCoverPth <- filter(allParams$RasterFile, RastersID == "Provincial Land Cover") %>%
-  slice(1) %>% 
+  filter(Timestep == min(Timestep) | is.na(Timestep)) %>% 
+  mutate(names = paste0(gsub(" ", "_", RastersID), 
+                        "_iter_", Iteration,
+                        "_ts_", Timestep))
+
+landCoverName <- landCoverPth$names
+
+landCoverPth <- landCoverPth %>% 
   pull(Filename)
 
+
+
+#TODO: change names of polygons to study area. should Ranges be treated differently?
 # get projectPoly
-projectPolyPth <- filter(allParams$ExternalFile, PolygonsID == "Ranges") %>%
-  pull(File)
+projectPolyPth <- filter(allParams$ExternalFile, PolygonsID == "Ranges") %>% 
+  mutate(names = paste0(gsub(" ", "_", PolygonsID), 
+                        "_iter_", Iteration,
+                        "_ts_", Timestep))
+
+projectPolyName <- projectPolyPth$names
+
+projectPolyPth <- projectPolyPth$File
 
 # get linear features and make sublists that are appropriate for timesteps 
 
@@ -91,27 +108,110 @@ projectPolyPth <- filter(allParams$ExternalFile, PolygonsID == "Ranges") %>%
 # if there are roads and rail at ts 1 and new roads are added at ts 2 then the
 # rail should be combined with both. could maybe just always combine linearFeats
 # that are time step 0 and user needs to know to give a specific timestep if
-# they want to overwrite it later. But still need to know what it overrides!
+# they want to overwrite it later. This only works if only one type of linFeat
+# changes overtime
+
+
 linFeatsList <- filter(allParams$ExternalFile, PolygonsID == "Linear Features") %>% 
   mutate(Timestep = ifelse(is.na(Timestep), 0, Timestep)) %>%
   split(.$Timestep)
 
+# add linFeats in 0 Timestep to all the other timesteps
+# this is a lot of copies that will end up on disk... is there a better way?
+linFeatsList <- map(linFeatsList[-which(names(linFeatsList) == "0")],
+                     ~bind_rows(splice(.x, linFeatsList[which(names(linFeatsList) == "0")]))) %>% 
+  map(~mutate(.x, Timestep = max(Timestep), 
+              names = paste0(gsub(" ", "_", PolygonsID), 
+                             "_iter_", Iteration,
+                             "_ts_", Timestep))) 
 
+linFeatsListNames <- linFeatsList %>% splice() %>% bind_rows() %>%
+  pull(names) %>% unique()
 
+# need to make one version that will stay vector and one that will be raster
+linFeatsListLines <- linFeatsList %>% 
+  map(~pull(.x, File) %>% as.list()) %>% 
+  set_names(paste0(linFeatsListNames, "_lines"))
+
+linFeatsListRast <- linFeatsList %>% 
+  map(~pull(.x, File) %>% as.list()) %>% 
+  set_names(paste0(linFeatsListNames, "_rast"))
 
 # make other filenames into named list
-polyFilenames <- allParams$ExternalFile %>% 
+polyFiles <- allParams$ExternalFile %>% 
   filter(!PolygonsID %in% c("Linear Features", "Ranges")) %>% 
-  pull(File) %>% as.list() 
+  mutate(names = paste0(gsub(" ", "_", PolygonsID), 
+                        "_iter_", Iteration,
+                        "_ts_", Timestep))
 
-names(polyFilenames) <- paste0(gsub(" ", "_", allParams$ExternalFile$PolygonsID), 
-                               "iter_", allParams$ExternalFile$Iteration,
-                               "ts_", allParams$ExternalFile$Timestep)
+polyFiles <- polyFiles %>% 
+  pull(File) %>% as.list() %>% 
+  set_names(polyFiles$names)
 
-rastFilenames <- allParams$RasterFile %>% 
+rasterFiles <- allParams$RasterFile %>% 
   filter(Filename != landCoverPth) %>% 
-  pull(Filename) %>% as.list() 
+  mutate(names = paste0(gsub(" ", "_", RastersID), 
+                        "_iter_", Iteration,
+                        "_ts_", Timestep))
 
-names(rastFilenames) <- paste0(gsub(" ", "_", allParams$RasterFile$RastersID), 
-                               "iter_", allParams$RasterFile$Iteration,
-                               "ts_", allParams$RasterFile$Timestep)
+rasterFiles <- rasterFiles %>% 
+  pull(Filename) %>% as.list() %>% 
+  set_names(rasterFiles$names)
+
+allSpatialInputs <- loadSpatialInputs(projectPoly = projectPolyPth, 
+                                      refRast = landCoverPth,
+                                      inputsList = splice(linFeatsListLines,
+                                                          linFeatsListRast,
+                                                          rasterFiles, 
+                                                          polyFiles),
+                                      convertToRast = names(linFeatsListRast))
+
+# walk2(allSpatialInputs, names(allSpatialInputs), ~plot(.x, main = .y))
+
+# write raster and shp files 
+writeToFile <- function(x, dirPth, filePth){
+  if(is(x, "Raster")){
+    writeRaster(x, file.path(dirPth, filePth), format = "GTiff", overwrite = TRUE)
+  }
+  if(is(x, "sf")){
+    write_sf(x, file.path(dirPth, paste0(filePth, ".shp")))
+  }
+}
+
+# replace refRast with landCover name
+names(allSpatialInputs)[which(names(allSpatialInputs) == "refRast")] <- landCoverName
+
+# remove buffered poly and rename projectPoly 
+allSpatialInputs[["projectPoly"]] <- NULL
+names(allSpatialInputs)[which(names(allSpatialInputs) == "projectPolyOrig")] <- projectPolyName
+
+walk2(allSpatialInputs, names(allSpatialInputs), writeToFile, 
+      dirPth = e$TransferDirectory)
+
+# make tables to save to datasheet
+FilesOut <- data.frame(
+  TransformerID = NA,
+  Iteration = regmatches(names(allSpatialInputs),
+                         regexpr("(?<=_iter_)NA|(?<=_iter_)\\d*",
+                                 names(allSpatialInputs), perl = TRUE)),
+  Timestep = regmatches(names(allSpatialInputs),
+                        regexpr("(?<=_ts_)NA|(?<=_ts_)\\d*",
+                                names(allSpatialInputs), perl = TRUE)),
+  ID = gsub("_", " ", gsub("_iter.*", "", names(allSpatialInputs))),
+  Filename = file.path(e$TransferDirectory,
+                       paste0(names(allSpatialInputs), 
+                              ifelse(map_lgl(allSpatialInputs, is, "Raster"), 
+                                     ".tif", ".shp"))),
+  type = ifelse(map_lgl(allSpatialInputs, is, "Raster"), 
+                "raster", "sf") %>% as.factor()
+) %>% 
+  mutate(Iteration = ifelse(Iteration == "NA", NA_real_, Iteration),
+         Timestep = ifelse(Timestep == "NA", NA_real_, Timestep)) %>%
+  split(.$type)
+  
+saveDatasheet(ssimObject = mySce, name = "RasterFile",
+              data = FilesOut$raster %>% select(-type, RastersID = ID))
+
+saveDatasheet(ssimObject = mySce, name = "ExternalFile",
+              data = FilesOut$sf %>% 
+                select(-type, PolygonsID = ID, File = Filename))
