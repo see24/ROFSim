@@ -134,6 +134,8 @@ progressBar(type = "begin", totalSteps = length(iterationSet) * length(timestepS
 habitatUseAll <- vector("list", length = iterationSet)
 habitatUseAll <- lapply(habitatUseAll, 
                         function(x){vector("list", length = length(timestepSet))})
+habitatUseAll <- setNames(habitatUseAll, paste0("it_", iterationSet)) %>% 
+  lapply(function(x) {setNames(x, paste0("ts_", timestepSet))})
 distMetricsAll <- habitatUseAll
 distMetricsTabAll <- habitatUseAll
 popMetricsTabAll <- habitatUseAll
@@ -209,10 +211,6 @@ for (iteration in iterationSet) {
     # always use raster esker since it has been converted to density
       eskerFinal <- eskerRas
     
-    #ageRas <- tryCatch({
-    #  raster(filter(InputRasters, CaribouVarID == "AgeRasterID")$File)
-    #}, error = function(cond) { NULL })
-    
     natDistRas <- tryCatch({
       raster(filter(InputRasters, CaribouVarID == "NaturalDisturbanceRasterID")$File)
     }, error = function(cond) { NULL })
@@ -232,19 +230,31 @@ for (iteration in iterationSet) {
       raster(filter(InputRasters, CaribouVarID == "HarvestRasterID")$File)
     }, error = function(cond) { NULL })
     
+    # use linear feature raster in caribouMetrics and lines in disturbance
     linFeatRas <- tryCatch({
       filtered <- filter(InputRasters, CaribouVarID == "LinearFeatureRasterID")$File
-      linFeatListRas <- lapply(filtered, raster)
+      raster(filtered)
     }, error = function(cond) { NULL })
 
-    # don't use line linear feature because the raster has been processed
-      linFeatFinal <- linFeatListRas
-    
-    projectPol <- tryCatch({
-      st_read(filter(InputVectors, CaribouVarID == "ProjectShapeFileID")$File) %>% 
-        # TO DO implement better checks: verify if Range/RANGE_NAME are there 
-        rename(Range = RANGE_NAME)
+    linFeatShp <- tryCatch({
+      filtered <- filter(InputVectors, CaribouVarID == "LinearFeatureShapeFileID")$File
+      read_sf(filtered)
     }, error = function(cond) { NULL })
+    
+    projectPol1 <- st_read(filter(InputVectors, CaribouVarID == "ProjectShapeFileID")$File) 
+    if("RANGE_NAME" %in% colnames(projectPol1)){
+      projectPol = rename(projectPol1, Range = RANGE_NAME)
+    }else{
+      if("Range" %in% colnames(projectPol1)){
+        projectPol = projectPol1
+      } else {
+        if(nrow(projectPol1) == 1){
+          projectPol = mutate(projectPol1, Range = allParams$RunCaribouRange$Range)
+        } else{
+          stop("Caribou range polygons must have a Range column")
+        }
+      }
+    } 
     
     # Rename range in expected format
     renamedRange <- rename(allParams$RunCaribouRange, coefRange = CoeffRange)
@@ -263,13 +273,13 @@ for (iteration in iterationSet) {
         }
       }
       
-      #TODO: change to use preppedData list
+      # use preppedData list
       fullDist <- disturbanceMetrics(
-        landCover=!is.na(plcRas),
-        natDist = natDistRas,
-        anthroDist = combineAnthro,
-        linFeat = linFeatFinal,
-        projectPoly = projectPoltmp,
+        preppedData = list(refRast=!is.na(plcRas),
+                           natDist = natDistRas,
+                           anthroDist = combineAnthro,
+                           linFeat = linFeatShp,
+                           projectPolyOrig = projectPoltmp),
         padFocal = optArg(allParams$CaribouModelOptions$PadFocal),
         bufferWidth =  optArg(allParams$CaribouModelOptions$ECCCBufferWidth) 
       )
@@ -374,25 +384,20 @@ for (iteration in iterationSet) {
     #       padFocal = optArg(allParams$CaribouModelOptions$PadFocal),
     #       doScale = optArg(allParams$CaribouModelOptions$doScale))
     #saveRDS(d,paste0("C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFModel/UI/debugData.RDS"))
-    doCarHab=optArg(allParams$CaribouModelOptions$RunCaribouHabitat)
+    doCarHab <- optArg(allParams$CaribouModelOptions$RunCaribouHabitat)
     if(is.null(doCarHab)||doCarHab){
       res <- caribouHabitat(
-        landCover = plcRas , 
-        esker = eskerFinal, 
-        natDist = natDistRas,
-        anthroDist = anthroDistRas,
-        harv = harvRas,
-        linFeat = linFeatFinal, 
-        projectPoly = projectPoltmp,
+        preppedData = list(refRast = plcRas, 
+                           esker = eskerRas, 
+                           natDist = natDistRas,
+                           anthroDist = anthroDistRas,
+                           linFeat = linFeatRas, 
+                           projectPolyOrig = projectPoltmp),
         caribouRange = renamedRange,       # Caribou Range
         # Options
         padProjPoly = optArg(allParams$CaribouModelOptions$PadProjPoly),
         padFocal = optArg(allParams$CaribouModelOptions$PadFocal),
-        doScale = optArg(allParams$CaribouModelOptions$doScale),
-        # outputs are saved afterwards
-        eskerSave = NULL,
-        linFeatSave = NULL,
-        saveOutput = NULL
+        doScale = optArg(allParams$CaribouModelOptions$doScale)
       )
      
       ## Save to DATA folder
