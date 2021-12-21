@@ -361,6 +361,7 @@
           </datasheets>
         </datafeed>
 -->
+
       </datafeeds>
 
       <pipeline>
@@ -368,7 +369,6 @@
         <!--datafeed name="DataSummary" /-->
         <datafeed name="RasterFile" />
         <datafeed name="ExternalFile" />
-        <datafeed name="RunControl" />
 
       </pipeline>
 

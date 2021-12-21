@@ -8,7 +8,9 @@ rootPth <- system.file("extdata", package = "caribouMetrics")
 
 libName <-  "demoSSimLib2"
 
-cDir <- "C:/Users/endicotts/Documents/gitprojects/ROFSyncSim"
+#cDir <- "C:/Users/endicotts/Documents/gitprojects/ROFSyncSim"
+cDir = "C:/Users/HughesJo/Documents/InitialWork/OntarioFarNorth/RoFModel/UI"
+
 delete(paste0(cDir,"/",libName,".ssim"),force=T)
 
 dir.create(cDir)
