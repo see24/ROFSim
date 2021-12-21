@@ -32,7 +32,7 @@ cc <- data.frame(Name = c("James Bay", "Missisa", "Ozhiski", "Nipigon",
 saveDatasheet(cProj, cc, name = cSheet)
 
 cSheet <- "ROFSim_Rasters"
-cc <- data.frame(Name = c("Harvest", "Anthropogenic Disturbance",
+cc <- data.frame(Name = c("Anthropogenic Disturbance",
                           "Natural Disturbance", "Provincial Land Cover", 
                           "Linear Features", "Eskers"))
 saveDatasheet(cProj, cc, name = cSheet)
@@ -54,12 +54,12 @@ saveDatasheet(datScn, cc, name = cSheet)
 cSheet <- "ROFSim_RasterFile"
 cc <- data.frame(RastersID = "Natural Disturbance", 
                  Filename = file.path(rootPth, "natDist.tif"))
-cc <- rbind(cc, data.frame(RastersID = "Harvest", 
+cc <- rbind(cc, data.frame(RastersID = "Anthropogenic Disturbance", 
                            Filename = file.path(rootPth, "anthroDist.tif")))
 cc <- rbind(cc, data.frame(RastersID = "Provincial Land Cover", 
                            Filename = file.path(rootPth, "landCover.tif")))
 cc$Timestep <- NA
-cc <- rbind(cc, data.frame(RastersID = "Harvest", 
+cc <- rbind(cc, data.frame(RastersID = "Anthropogenic Disturbance", 
                            Timestep = 2040,
                            Filename = file.path(rootPth, "linFeatTif.tif")))
 saveDatasheet(datScn, cc, name = cSheet, append = FALSE)
@@ -103,7 +103,6 @@ cc <- data.frame(LandCoverRasterID = "Provincial Land Cover",
                  EskerRasterID = "Eskers",
                  LinearFeatureRasterID = "Linear Features",
                  NaturalDisturbanceRasterID = "Natural Disturbance", 
-                 HarvestRasterID = "Harvest", 
                  AnthropogenicRasterID = "Anthropogenic Disturbance")
 saveDatasheet(cbScn, cc, name = cSheet)
 
