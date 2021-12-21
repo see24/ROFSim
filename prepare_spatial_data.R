@@ -170,7 +170,9 @@ allSpatialInputs <- loadSpatialInputs(
                       rasterFiles, 
                       polyFiles),
   convertToRast = c(names(linFeatsListRast), 
-                    names(polyFiles)[which(grepl("Esker", names(polyFiles)))])
+                    names(polyFiles)[which(grepl("Esker", names(polyFiles)))]),
+  useTemplate = c(names(linFeatsListRast), 
+                  names(polyFiles)[which(grepl("Esker", names(polyFiles)))])
 )
 
 # walk2(allSpatialInputs, names(allSpatialInputs), ~plot(.x, main = .y))
